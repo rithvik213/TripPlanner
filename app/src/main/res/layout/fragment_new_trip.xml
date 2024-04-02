@@ -105,7 +105,7 @@
         android:text="min"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/priceRangeSeekBar"
-        android:layout_marginTop="16dp"/>
+        android:layout_marginTop="25dp"/>
 
     <SeekBar
         android:id="@+id/priceRangeSeekBar"
@@ -127,13 +127,13 @@
         android:fontFamily="@font/poppins"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/priceRangeSeekBar"
-        android:layout_marginTop="16dp"/>
+        android:layout_marginTop="25dp"/>
 
     <TextView
         android:id="@+id/textViewCurrentPrice"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="$600"
+        android:text="$0"
         android:fontFamily="@font/poppins"
         app:layout_constraintStart_toStartOf="@+id/priceRangeSeekBar"
         app:layout_constraintTop_toBottomOf="@id/priceRangeSeekBar"
