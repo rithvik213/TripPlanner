@@ -1,30 +1,34 @@
 package com.example.tripplanner
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.FrameLayout
+import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.NavController
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.NavigationUI
+import androidx.navigation.ui.setupActionBarWithNavController
+
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var navController: NavController
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main) // Make sure this is the correct layout
+        setContentView(R.layout.activity_main)
 
-        // Check that the activity is using the layout version with the fragment_container FrameLayout
-        if (findViewById<FrameLayout>(R.id.fragment_container) != null) {
+        // Set the ActionBar to null
+        supportActionBar?.setDisplayHomeAsUpEnabled(false)
+        supportActionBar?.setDisplayShowHomeEnabled(false)
 
-            // However, if we're being restored from a previous state,
-            // then we don't need to do anything and should return or else
-            // we could end up with overlapping fragments.
-            if (savedInstanceState != null) {
-                return
-            }
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        val navController = navHostFragment.navController
+    }
 
-            // Create an instance of the fragment
-            val firstFragment = OnboardingFragment1()
 
-            // Add the fragment to the 'fragment_container' FrameLayout
-            supportFragmentManager.beginTransaction()
-                .add(R.id.fragment_container, firstFragment).commit()
-        }
+
+    override fun onSupportNavigateUp(): Boolean {
+        return navController.navigateUp() || super.onSupportNavigateUp()
     }
 }
+
+

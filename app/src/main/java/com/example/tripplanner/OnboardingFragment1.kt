@@ -9,6 +9,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.NavHostFragment.Companion.findNavController
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.common.SignInButton
 
@@ -42,8 +44,16 @@ class OnboardingFragment1 : Fragment(), GoogleSignInHelper.SignInResultListener 
 
 
     override fun onSignInSuccess(account: GoogleSignInAccount) {
-        // Handle sign-in success, e.g., navigate to the next fragment or activity
+        // Obtain the NavHostFragment using the FragmentManager from the hosting activity
+        val navHostFragment = requireActivity().supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        // Get the NavController from the NavHostFragment
+        val navController = navHostFragment.navController
+
+        // Navigate to the desired fragment using the action defined in the navigation graph
+        navController.navigate(R.id.action_onboardingFragment_to_newTripFragment)
     }
+
+
 
     override fun onSignInFailure(errorMessage: String) {
         // Handle sign-in failure, e.g., show an error message to the user

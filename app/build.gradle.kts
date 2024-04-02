@@ -60,6 +60,9 @@ dependencies {
     implementation("com.google.api-client:google-api-client:1.32.1")
     implementation("com.google.apis:google-api-services-calendar:v3-rev305-1.23.0")
 
+    implementation("androidx.navigation:navigation-fragment-ktx:2.7.7")
+    implementation("androidx.navigation:navigation-ui-ktx:2.7.7")
+
 
 
 }
