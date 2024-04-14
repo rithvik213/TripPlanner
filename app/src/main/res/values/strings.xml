@@ -2,4 +2,21 @@
     <string name="app_name">TripPlanner</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="trip">New Trip</string>
+    <string name="depart">Depart</string>
+    <string name="returning">Return</string>
+    <string name="origin">Flying from</string>
+    <string name="destination">Flying to</string>
+    <string name="budget">Budget</string>
+    <string name="randomdestination">Choose Random Destination</string>
+    <string name="itinerary">Excursions and Itinerary</string>
+    <string name="themeparks">Theme Parks</string>
+    <string name="restaurants">Restaurants</string>
+    <string name="museums">Museums/Galleries</string>
+    <string name="beaches">Beaches/Nature</string>
+    <string name="planforme">Plan for Me</string>
+    <string name="results">Results</string>
+
+
+
 </resources>
