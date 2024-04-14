@@ -12,6 +12,10 @@
         <action
             android:id="@+id/action_onboardingFragment_to_newTripFragment"
             app:destination="@id/newTripFragment" />
+
+        <action
+            android:id="@+id/action_onboardingFragment_to_homeScreenFragment"
+            app:destination="@id/homeScreenFragment" />
     </fragment>
 
     <fragment
@@ -19,4 +23,14 @@
         android:name="com.example.tripplanner.NewTripFragment"
         android:label="fragment_new_trip"
         tools:layout="@layout/fragment_new_trip" />
+
+    <fragment
+        android:id="@+id/homeScreenFragment"
+        android:name="com.example.tripplanner.HomeScreenFragment"
+        android:label="fragment_home_screen"
+        tools:layout="@layout/fragment_home_screen" >
+        <action
+            android:id="@+id/action_homeScreenFragment_to_newTripFragment"
+            app:destination="@id/newTripFragment" />
+    </fragment>
 </navigation>

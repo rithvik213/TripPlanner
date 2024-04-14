@@ -50,7 +50,8 @@ class OnboardingFragment1 : Fragment(), GoogleSignInHelper.SignInResultListener 
         val navController = navHostFragment.navController
 
         // Navigate to the desired fragment using the action defined in the navigation graph
-        navController.navigate(R.id.action_onboardingFragment_to_newTripFragment)
+        //navController.navigate(R.id.action_onboardingFragment_to_newTripFragment)
+        navController.navigate(R.id.action_onboardingFragment_to_homeScreenFragment)
     }
 
 
