@@ -16,7 +16,12 @@
     <string name="beaches">Beaches/Nature</string>
     <string name="planforme">Plan for Me</string>
     <string name="results">Results</string>
-
+    <string name="addfriends">Add Friends</string>
+    <string name="owner">TripPlanner</string>
+    <string name="basicinfo">Basic Information</string>
+    <string name="travelinfo">Travel Information</string>
+    <string name="logout">Sign Out</string>
+    <string name="dates">Trip Dates</string>
 
 
 </resources>
