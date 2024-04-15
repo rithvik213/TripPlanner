@@ -23,7 +23,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Initialize BottomAppBar and FloatingActionButton and initially hide them
         bottomAppBar = findViewById(R.id.bottomAppBar)
         fabPerson = findViewById(R.id.fab_person)
         fabHome = findViewById(R.id.fab_home)
@@ -32,24 +31,20 @@ class MainActivity : AppCompatActivity() {
         fabPerson.visibility = View.GONE
         fabHome.visibility = View.GONE
 
-        // Set the ActionBar to null
         supportActionBar?.setDisplayHomeAsUpEnabled(false)
         supportActionBar?.setDisplayShowHomeEnabled(false)
 
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
 
-        // Add listener for navigation changes
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
                 R.id.onboardingFragment -> {
-                    // Hide BottomAppBar and FAB when on the onboarding screen
                     bottomAppBar.visibility = View.GONE
                     fabPerson.visibility = View.GONE
                     fabHome.visibility = View.GONE
                 }
                 else -> {
-                    // Show BottomAppBar and FAB on other screens
                     bottomAppBar.visibility = View.VISIBLE
                     fabPerson.visibility = View.VISIBLE
                     fabHome.visibility = View.VISIBLE
