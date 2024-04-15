@@ -50,8 +50,6 @@ class OnboardingFragment1 : Fragment(), GoogleSignInHelper.SignInResultListener 
         navController.navigate(R.id.action_onboardingFragment_to_homeScreenFragment)
     }
 
-
-
     override fun onSignInFailure(errorMessage: String) {
         Log.d("GoogleSignIn", "Sign-in failed with message: $errorMessage")
 
