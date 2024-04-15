@@ -18,17 +18,17 @@
         app:layout_constraintTop_toTopOf="parent">
     </com.google.android.material.appbar.MaterialToolbar>
 
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_add"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@drawable/ic_plus_icon"
-        app:tint="@android:color/white"
+        android:contentDescription="Add a Trip"
         app:backgroundTint="@color/appBackgroundColor"
         app:elevation="0dp"
-        android:contentDescription="Add a Trip"
-        app:maxImageSize="24dp" />
-
+        app:maxImageSize="24dp"
+        app:srcCompat="@drawable/ic_plus_icon"
+        app:tint="@android:color/white" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewTrips"
