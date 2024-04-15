@@ -3,6 +3,7 @@ package com.example.tripplanner
 import GoogleSignInHelper
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -32,35 +33,33 @@ class OnboardingFragment1 : Fragment(), GoogleSignInHelper.SignInResultListener 
         super.onViewCreated(view, savedInstanceState)
         googleSignInHelper = GoogleSignInHelper(this, this)
 
-        // Correctly reference the SignInButton
         val signInButton = view.findViewById<SignInButton>(R.id.sign_in_button)
         signInButton.setSize(SignInButton.SIZE_STANDARD)
         signInButton.setColorScheme(SignInButton.COLOR_LIGHT)
         signInButton.setOnClickListener {
-            // Invoke your sign-in helper here
             googleSignInHelper.startSignIn()
         }
     }
 
 
     override fun onSignInSuccess(account: GoogleSignInAccount) {
-        // Obtain the NavHostFragment using the FragmentManager from the hosting activity
+        Log.d("GoogleSignIn", "Sign-in successful for account: ${account.displayName}")
         val navHostFragment = requireActivity().supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-        // Get the NavController from the NavHostFragment
         val navController = navHostFragment.navController
 
-        // Navigate to the desired fragment using the action defined in the navigation graph
-        navController.navigate(R.id.action_onboardingFragment_to_newTripFragment)
+        navController.navigate(R.id.action_onboardingFragment_to_homeScreenFragment)
     }
 
 
 
     override fun onSignInFailure(errorMessage: String) {
-        // Handle sign-in failure, e.g., show an error message to the user
+        Log.d("GoogleSignIn", "Sign-in failed with message: $errorMessage")
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        Log.d("GoogleSignIn", "onActivityResult - requestCode: $requestCode, resultCode: $resultCode")
         googleSignInHelper.handleActivityResult(requestCode, resultCode, data)
     }
 }
