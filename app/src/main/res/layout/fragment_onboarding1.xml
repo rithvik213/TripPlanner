@@ -6,7 +6,6 @@
     android:background="@drawable/onboardingfragment1"
     tools:context=".OnboardingFragment1">
 
-    <!-- Use a FrameLayout to put the TextView over the ImageView -->
     <FrameLayout
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -15,20 +14,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- This TextView is positioned at the bottom of the ImageView -->
         <TextView
             android:id="@+id/textViewTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="trip planner"
-            android:fontFamily="@font/poppins"
-            android:textSize="32sp"
-            android:textColor="@android:color/black"
             android:layout_gravity="center_horizontal|top"
-            android:paddingTop="200dp" />
+            android:fontFamily="@font/poppins"
+            android:paddingTop="250dp"
+            android:text="trip planner"
+            android:textColor="@android:color/black"
+            android:textSize="32sp" />
     </FrameLayout>
 
-    <!-- Google Sign In Button -->
     <com.google.android.gms.common.SignInButton
         android:id="@+id/sign_in_button"
         android:layout_width="wrap_content"
