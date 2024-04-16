@@ -10,12 +10,13 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.SeekBar
-import android.widget.EditText
 import android.widget.ImageButton
 import java.util.Calendar
 import androidx.navigation.fragment.findNavController
 
 class TripSearch : Fragment() {
+
+
 
     @SuppressLint("MissingInflatedId")
     override fun onCreateView(
@@ -25,13 +26,22 @@ class TripSearch : Fragment() {
         val view = inflater.inflate(R.layout.fragment_trip_search, container, false)
 
         val buttonSearch = view.findViewById<Button>(R.id.searchButton)
-        val editText = view.findViewById<EditText>(R.id.flyingTo)
+        val editText = view.findViewById<EditText>(R.id.destinationAutoComplete)
+        val departdate: EditText = view.findViewById(R.id.departdate)
+        val returndate: EditText = view.findViewById(R.id.returndate)
+
         buttonSearch.setOnClickListener {
             val destination = editText.text.toString()
+            val departDate = departdate.text.toString()
+            val returnDate = returndate.text.toString()
+
             val bundle = Bundle()
             bundle.putString("cityName", destination)
+            bundle.putString("departDate", departDate)
+            bundle.putString("returnDate", returnDate)
             findNavController().navigate(R.id.action_tripSearchFragment_to_resultsFragment, bundle)
         }
+
 
         val budgetSeekbar: SeekBar = view.findViewById(R.id.budgetseekbar)
         val budget: EditText = view.findViewById(R.id.budget)
@@ -49,8 +59,6 @@ class TripSearch : Fragment() {
         val departcalendar = view.findViewById<ImageButton>(R.id.departcalendar)
         val returncalendar = view.findViewById<ImageButton>(R.id.returncalendar)
 
-        val departdate: EditText = view.findViewById(R.id.departdate)
-        val returndate: EditText = view.findViewById(R.id.returndate)
         departcalendar.setOnClickListener {
             showDatePickerDialog(departdate)
         }
