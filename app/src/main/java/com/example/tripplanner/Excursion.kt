@@ -1,10 +1,10 @@
 package com.example.tripplanner
 
-import java.io.Serializable
 
 data class Excursion(
     val name: String,
-    val time: String
+    val time: String,
+    val imageUrl: String = ""
 )
 
 data class DayItinerary(
