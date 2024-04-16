@@ -1,6 +1,5 @@
 package com.example.tripplanner
 
-import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,7 +11,7 @@ class ExcursionAdapter(private var excursionList: MutableList<Excursion>) :
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ExcursionViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(android.R.layout.simple_list_item_2, parent, false)
+            .inflate(R.layout.item_excursion, parent, false)
         return ExcursionViewHolder(view)
     }
 
@@ -31,8 +30,8 @@ class ExcursionAdapter(private var excursionList: MutableList<Excursion>) :
     }
 
     class ExcursionViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val titleTextView: TextView = view.findViewById(android.R.id.text1)
-        val subtitleTextView: TextView = view.findViewById(android.R.id.text2)
+        val titleTextView: TextView = view.findViewById(R.id.textViewTitle)
+        val subtitleTextView: TextView = view.findViewById(R.id.textViewSubtitle)
     }
 }
 

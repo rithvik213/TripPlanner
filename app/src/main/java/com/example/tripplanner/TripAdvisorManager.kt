@@ -53,12 +53,12 @@ class TripAdvisorManager(
                     val locationId = response.body()?.data?.firstOrNull()?.location_id ?: ""
                     callback(locationId)
                 } else {
-                    // Handle error, could log or display to user
+                    //Handle error, could log or display to user
                 }
             }
 
             override fun onFailure(call: Call<LocationSearchResponse>, t: Throwable) {
-                // Handle error, could log or display to user
+                //Handle error, could log or display to user
             }
         })
     }
