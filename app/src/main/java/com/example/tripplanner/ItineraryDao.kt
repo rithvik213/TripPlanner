@@ -1,5 +1,6 @@
 package com.example.tripplanner
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
@@ -14,4 +15,7 @@ interface ItineraryDao {
 
     @Query("SELECT * FROM itineraries")
     fun getAllItineraries(): List<Itinerary>
+
+    @Query("SELECT * FROM itineraries")
+    fun getAllItinerariesLiveData(): LiveData<List<Itinerary>>
 }

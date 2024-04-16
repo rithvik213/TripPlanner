@@ -5,24 +5,52 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.ui.NavigationUI
-import com.google.android.material.bottomappbar.BottomAppBar
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+
 class HomeScreenFragment : Fragment() {
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var viewModel: ItineraryViewModel
+    private lateinit var adapter: ItineraryAdapter
+    private lateinit var textViewEmpty: TextView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_home_screen, container, false)
+        val view = inflater.inflate(R.layout.fragment_home_screen, container, false)
+        recyclerView = view.findViewById(R.id.recyclerViewTrips)
+        textViewEmpty = view.findViewById(R.id.textViewEmpty)
+        recyclerView.layoutManager = LinearLayoutManager(context)
+
+        view.findViewById<FloatingActionButton>(R.id.fab_add)?.setOnClickListener {
+            findNavController().navigate(R.id.action_homeScreenFragment_to_tripSearchFragment)
+        }
+
+        return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        view.findViewById<FloatingActionButton>(R.id.fab_add)?.setOnClickListener {
-            findNavController().navigate(R.id.action_homeScreenFragment_to_tripSearchFragment)
+        viewModel = ViewModelProvider(this).get(ItineraryViewModel::class.java)
+
+        adapter = ItineraryAdapter(emptyList())
+        recyclerView.adapter = adapter
+
+        viewModel.allItineraries.observe(viewLifecycleOwner) { itineraries ->
+            adapter.updateData(itineraries)
+
+            if (itineraries.isEmpty()) {
+                textViewEmpty.visibility = View.VISIBLE
+            } else {
+                textViewEmpty.visibility = View.GONE
+            }
         }
+
     }
 }

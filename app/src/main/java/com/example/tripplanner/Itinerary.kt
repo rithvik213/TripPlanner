@@ -10,6 +10,7 @@ data class Itinerary(
     @ColumnInfo(name = "user_id") val userId: String,
     @ColumnInfo(name = "trip_dates") val tripDates: String,
     @ColumnInfo(name = "city_name") val cityName: String,
-    @ColumnInfo(name = "itinerary_details") val itineraryDetails: String
-)
+    @ColumnInfo(name = "itinerary_details") val itineraryDetails: String,
+    @ColumnInfo(name = "image_url") val imageUrl: String
 
+)
