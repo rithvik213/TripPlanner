@@ -23,7 +23,7 @@ interface SkyscannerApiService {
         @Query("children") children: Int = 0,
         @Query("infants") infants: Int = 0,
         @Query("cabinClass") cabinClass: String = "economy"
-    ): Call<FlightSearchResponse> // Ensure FlightSearchResponse is defined based on the JSON response structure.
+    ): Call<FlightSearchResponse>
 
     @GET("flights/auto-complete")
     @Headers(
@@ -33,7 +33,7 @@ interface SkyscannerApiService {
     fun autocompleteLocation(
         @Query("query") query: String,
         @Query("locale") locale: String = "en-US"
-    ): Call<AutocompleteResponse> // Assume AutocompleteResponse is your model class
+    ): Call<AutocompleteResponse>
 
 
 
