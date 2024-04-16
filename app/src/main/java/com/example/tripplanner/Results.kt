@@ -5,7 +5,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.ImageButton
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
@@ -19,7 +22,20 @@ class Results : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.id.excursionRecyclerView, container, false)
+        val view = inflater.inflate(R.layout.fragment_results, container, false)
+
+        val backButton = view.findViewById<ImageButton>(R.id.resultsbackbutton)
+        val saveButton = view.findViewById<Button>(R.id.saveButton)
+
+        backButton.setOnClickListener {
+            findNavController().navigate(R.id.action_resultsFragment_to_tripSearchFragment)
+        }
+
+        saveButton.setOnClickListener {
+            findNavController().navigate(R.id.action_resultsFragment_to_homeScreenFragment)
+        }
+
+        return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -27,11 +43,9 @@ class Results : Fragment() {
         recyclerView = view.findViewById(R.id.excursionRecyclerView)
         recyclerView.layoutManager = LinearLayoutManager(activity)
 
-        // Sample data for excursions
         val excursions = listOf(
             Excursion("Beach Volleyball", "10:00 AM"),
             Excursion("City Tour", "11:00 AM"),
-            // Add more excursions here
         )
 
         adapter = ExcursionAdapter(excursions)
