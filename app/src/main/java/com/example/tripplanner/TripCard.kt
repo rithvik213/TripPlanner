@@ -1,4 +1,9 @@
 package com.example.tripplanner
 
-class TripCard {
-}
+import java.io.Serializable
+
+data class TripCard(
+    val destination: String,
+)
+
+
