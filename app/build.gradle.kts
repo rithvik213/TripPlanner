@@ -66,6 +66,12 @@ dependencies {
     implementation ("com.squareup.retrofit2:retrofit:2.10.0")
     implementation ("com.squareup.retrofit2:converter-gson:2.10.0")
 
+    implementation("com.github.bumptech.glide:glide:4.13.2")
+    annotationProcessor("com.github.bumptech.glide:compiler:4.13.2")
+
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.3.1")
+
 
 
 
