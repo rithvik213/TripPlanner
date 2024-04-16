@@ -22,6 +22,7 @@
     <string name="travelinfo">Travel Information</string>
     <string name="logout">Sign Out</string>
     <string name="dates">Trip Dates</string>
+    <string name="my_trips">My Trips</string>
 
 
 </resources>
