@@ -7,7 +7,7 @@
     <string name="returning">Return</string>
     <string name="origin">Flying from</string>
     <string name="destination">Flying to</string>
-    <string name="budget">Budget</string>
+    <string name="budget">Budget:</string>
     <string name="randomdestination">Choose Random Destination</string>
     <string name="itinerary">Excursions and Itinerary</string>
     <string name="themeparks">Theme Parks</string>
