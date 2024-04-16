@@ -10,6 +10,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ProgressBar
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -29,7 +30,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class Results : Fragment() {
-    val cityIataCodes = mapOf(
+    private val cityIataCodes = mapOf(
         "London" to "LON",
         "New York" to "NYC",
         "Tokyo" to "TYO",
@@ -100,7 +101,7 @@ class Results : Fragment() {
             origin = it.getString("origin", "London")
             departDate = it.getString("departDate","")
             returnDate = it.getString("returnDate", "")
-            budget = it.getString("budget", "0").toInt()
+            budget = it.getString("budget", "0").removePrefix("$").toInt()
         }
 
         chatGPTService = ChatGPTService("OPEN_AI_KEY")
@@ -121,7 +122,7 @@ class Results : Fragment() {
         val app = requireActivity().application as MyApp
         database = app.database
         fetchAttractions(cityName)
-        fetchFlights()
+        fetchFlights(view)
 
         //fetchEvents(cityName)
     }
@@ -130,7 +131,7 @@ class Results : Fragment() {
         adapter.updateExcursions(ArrayList(excursions))
     }
 
-    private fun fetchFlights(){
+    private fun fetchFlights(view: View){
         lifecycleScope.launch {
             val flightInfo = fetchFlightOffers(
                 originLoc = cityIataCodes[origin]!!,
@@ -142,10 +143,36 @@ class Results : Fragment() {
                 currencyCode = "USD",
                 max = 1
             )
+            Log.i("originLoc",cityIataCodes[origin]!!)
+            Log.i("destLoc",cityIataCodes[cityName]!!)
+            Log.i("depdate",departDate)
+            Log.i("retdate",returnDate)
+            Log.i("budget",budget.toString())
 
-            val departAirport = flightInfo!!.flightOffers[0].itineraries[0].segments[0].departure.iataCode
-            val arrivalAirport = flightInfo.flightOffers[0].itineraries[0].segments[0].arrival.iataCode
-            val price = flightInfo.flightOffers[0].price.total
+            if (flightInfo == null){
+                Toast.makeText(context, "No flights found with given parameters", Toast.LENGTH_LONG).show()
+            } else {
+                val departAirport = flightInfo.flightOffers[0].itineraries[0].segments[0].departure.iataCode
+                val arrivalAirport = flightInfo.flightOffers[0].itineraries[0].segments[0].arrival.iataCode
+                val departAirport2 = flightInfo.flightOffers[0].itineraries[1].segments[0].departure.iataCode
+                val arrivalAirport2 = flightInfo.flightOffers[0].itineraries[1].segments[0].arrival.iataCode
+                val price = flightInfo.flightOffers[0].price.total
+                val departTime = flightInfo.flightOffers[0].itineraries[0].segments[0].departure.dateTime
+                val arrivalTime = flightInfo.flightOffers[0].itineraries[0].segments[0].arrival.dateTime
+                val departTime2 = flightInfo.flightOffers[0].itineraries[1].segments[0].departure.dateTime
+                val arrivalTime2 = flightInfo.flightOffers[0].itineraries[1].segments[0].arrival.dateTime
+
+                view.findViewById<EditText>(R.id.departingflightorigin).setText(departAirport)
+                view.findViewById<EditText>(R.id.departingflightdestination).setText(arrivalAirport)
+                view.findViewById<EditText>(R.id.returningflightorigin).setText(departAirport2)
+                view.findViewById<EditText>(R.id.returningflightdestination).setText(arrivalAirport2)
+                view.findViewById<EditText>(R.id.departingflightdeparture).setText(departTime)
+                view.findViewById<EditText>(R.id.departingflightarrival).setText(arrivalTime)
+                view.findViewById<EditText>(R.id.returningflightdeparture).setText(departTime2)
+                view.findViewById<EditText>(R.id.returningflightarrival).setText(arrivalTime2)
+                view.findViewById<TextView>(R.id.outboundcost).text = price
+            }
+
         }
 
     }
