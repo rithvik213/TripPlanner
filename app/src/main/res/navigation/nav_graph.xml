@@ -43,4 +43,30 @@
         android:name="com.example.tripplanner.TripSearch"
         android:label="Search Trip"
         tools:layout="@layout/fragment_trip_search" />
+        <action
+            android:id="@+id/action_tripSearchFragment_to_resultsFragment"
+            app:destination="@id/resultsFragment" />
+    <fragment
+        android:id="@+id/resultsFragment"
+        android:name="com.example.tripplanner.Results"
+        android:label="fragment_results"
+        tools:layout="@layout/fragment_results" />
+        <action
+            android:id="@+id/action_resultsFragment_to_tripSearchFragment"
+            app:destination="@id/tripSearchFragment" />
+        <action
+            android:id="@+id/action_resultsFragment_to_homeScreenFragment"
+            app:destination="@id/homeScreenFragment" />
+
+    <fragment
+        android:id="@+id/userProfileFragment"
+        android:name="com.example.tripplanner.UserProfile"
+        android:label="fragment_user_profile"
+        tools:layout="@layout/fragment_user_profile" />
+
+    <action android:id="@+id/global_action_to_homeScreen"
+        app:destination="@id/homeScreenFragment" />
+
+    <action android:id="@+id/global_action_to_personScreen"
+        app:destination="@id/userProfileFragment" />
 </navigation>
