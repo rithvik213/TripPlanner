@@ -7,50 +7,29 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
-
-import com.example.flightapitest.fetchFlightOffers
-
 import com.google.android.gms.auth.api.signin.GoogleSignIn
-
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class Results : Fragment() {
-    val cityIataCodes = mapOf(
-        "London" to "LON",
-        "New York" to "NYC",
-        "Tokyo" to "TYO",
-        "Paris" to "PAR",
-        "Sydney" to "SYD",
-        "Los Angeles" to "LAX",
-        "Rome" to "ROM",
-        "Berlin" to "BER",
-        "Beijing" to "BJS",
-        "Mumbai" to "BOM",
-        "Austin" to "AUS"
-    )
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: ExcursionAdapter
     private var excursions: MutableList<Excursion> = mutableListOf()
     private lateinit var viewModel: ExcursionsViewModel
     private lateinit var cityName: String
-    private lateinit var origin: String
     private lateinit var departDate: String
     private lateinit var returnDate: String
-    private var budget = 0
     private lateinit var chatGPTService: ChatGPTService
     private lateinit var viewPager: ViewPager2
     private var daysItinerary: MutableList<DayItinerary> = mutableListOf()
@@ -96,11 +75,9 @@ class Results : Fragment() {
         viewModel.excursions.observe(viewLifecycleOwner) { updateRecyclerView() }
 
         arguments?.let {
-            cityName = it.getString("cityName", "Austin") //Default to "Austin" if no argument is passed
-            origin = it.getString("origin", "London")
+            cityName = it.getString("cityName", "Austin")  //Default to "Austin" if no argument is passed
             departDate = it.getString("departDate","")
             returnDate = it.getString("returnDate", "")
-            budget = it.getString("budget", "0").toInt()
         }
 
         chatGPTService = ChatGPTService("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")
@@ -121,33 +98,11 @@ class Results : Fragment() {
         val app = requireActivity().application as MyApp
         database = app.database
         fetchAttractions(cityName)
-        fetchFlights()
-
         //fetchEvents(cityName)
     }
 
     private fun updateRecyclerView() {
         adapter.updateExcursions(ArrayList(excursions))
-    }
-
-    private fun fetchFlights(){
-        lifecycleScope.launch {
-            val flightInfo = fetchFlightOffers(
-                originLoc = cityIataCodes[origin]!!,
-                destLoc = cityIataCodes[cityName]!!,
-                departureDate = departDate,
-                returnDate = returnDate,
-                adults = 1,
-                maxPrice = budget,
-                currencyCode = "USD",
-                max = 1
-            )
-
-            val departAirport = flightInfo!!.flightOffers[0].itineraries[0].segments[0].departure.iataCode
-            val arrivalAirport = flightInfo.flightOffers[0].itineraries[0].segments[0].arrival.iataCode
-            val price = flightInfo.flightOffers[0].price.total
-        }
-
     }
 
     private fun fetchAttractions(cityName: String) {

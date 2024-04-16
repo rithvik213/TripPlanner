@@ -16,6 +16,8 @@ import androidx.navigation.fragment.findNavController
 
 class TripSearch : Fragment() {
 
+
+
     @SuppressLint("MissingInflatedId")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -27,20 +29,22 @@ class TripSearch : Fragment() {
         val editText = view.findViewById<EditText>(R.id.destinationAutoComplete)
         val departdate: EditText = view.findViewById(R.id.departdate)
         val returndate: EditText = view.findViewById(R.id.returndate)
-        val budget: EditText = view.findViewById(R.id.budget)
-        val origin: EditText = view.findViewById(R.id.originAutoComplete)
+
         buttonSearch.setOnClickListener {
             val destination = editText.text.toString()
+            val departDate = departdate.text.toString()
+            val returnDate = returndate.text.toString()
+
             val bundle = Bundle()
             bundle.putString("cityName", destination)
-            bundle.putString("origin", origin.text.toString())
-            bundle.putString("departDate", departdate.text.toString())
-            bundle.putString("returnDate", returndate.text.toString())
-            bundle.putString("budget", budget.text.toString())
+            bundle.putString("departDate", departDate)
+            bundle.putString("returnDate", returnDate)
             findNavController().navigate(R.id.action_tripSearchFragment_to_resultsFragment, bundle)
         }
 
+
         val budgetSeekbar: SeekBar = view.findViewById(R.id.budgetseekbar)
+        val budget: EditText = view.findViewById(R.id.budget)
         budgetSeekbar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             @SuppressLint("SetTextI18n")
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
@@ -72,12 +76,12 @@ class TripSearch : Fragment() {
         val day = calendar.get(Calendar.DAY_OF_MONTH)
 
         val datePickerDialog = DatePickerDialog(requireContext(), { _, selectedYear, selectedMonth, selectedDay ->
-            val formattedDate = String.format("%d-%02d-%02d", selectedYear, selectedMonth + 1, selectedDay)
+            val formattedDate = String.format("%02d/%02d/%d", selectedDay, selectedMonth + 1, selectedYear)
             dateEditText.setText(formattedDate)
         }, year, month, day)
 
+
         datePickerDialog.show()
     }
-
 
 }
