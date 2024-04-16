@@ -24,6 +24,7 @@
     <string name="dates">Trip Dates</string>
     <string name="my_trips">My Trips</string>
     <string name="flying_to">Flying to</string>
+    <string name="starttext">No trips yet. Click the + button to get started!</string>
 
 
 </resources>
