@@ -53,8 +53,8 @@ interface AmadeusApiService {
     @Headers("Content-Type: application/x-www-form-urlencoded")
     @POST("/v1/security/oauth2/token")
     fun getToken(
-        @Field("client_id") clientId: String = "CLIENT_ID",
-        @Field("client_secret") clientSecret: String = "CLIENT_SECRET",
+        @Field("client_id") clientId: String = "AMADEUS_ID",
+        @Field("client_secret") clientSecret: String = "AMADEUS_SECRET",
         @Field("grant_type") grantType: String = "client_credentials"
     ): Call<TokenResponse>
 
