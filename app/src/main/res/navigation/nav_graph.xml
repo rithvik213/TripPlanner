@@ -50,7 +50,12 @@
         android:id="@+id/resultsFragment"
         android:name="com.example.tripplanner.Results"
         android:label="fragment_results"
-        tools:layout="@layout/fragment_results" />
+        tools:layout="@layout/fragment_results" >
+        <argument
+            android:name="cityName"
+            app:argType="string" />
+    </fragment>
+
         <action
             android:id="@+id/action_resultsFragment_to_tripSearchFragment"
             app:destination="@id/tripSearchFragment" />

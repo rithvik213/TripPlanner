@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.EditText
 import android.widget.SeekBar
 import android.widget.EditText
 import android.widget.ImageButton
@@ -24,8 +25,12 @@ class TripSearch : Fragment() {
         val view = inflater.inflate(R.layout.fragment_trip_search, container, false)
 
         val buttonSearch = view.findViewById<Button>(R.id.searchButton)
+        val editText = view.findViewById<EditText>(R.id.flyingTo)
         buttonSearch.setOnClickListener {
-            findNavController().navigate(R.id.action_tripSearchFragment_to_resultsFragment)
+            val destination = editText.text.toString()
+            val bundle = Bundle()
+            bundle.putString("cityName", destination)
+            findNavController().navigate(R.id.action_tripSearchFragment_to_resultsFragment, bundle)
         }
 
         val budgetSeekbar: SeekBar = view.findViewById(R.id.budgetseekbar)
