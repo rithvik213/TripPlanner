@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageButton
+import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -15,9 +16,11 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
+import com.google.android.gms.auth.api.signin.GoogleSignIn
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class Results : Fragment() {
     private lateinit var recyclerView: RecyclerView
@@ -30,6 +33,9 @@ class Results : Fragment() {
     private lateinit var chatGPTService: ChatGPTService
     private lateinit var viewPager: ViewPager2
     private var daysItinerary: MutableList<DayItinerary> = mutableListOf()
+    private lateinit var database: AppDatabase
+    private lateinit var userId: String
+    private lateinit var progressBar: ProgressBar
 
     @SuppressLint("ResourceType")
     override fun onCreateView(
@@ -38,10 +44,12 @@ class Results : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_results, container, false)
         initializeUI(view)
+        initializeGoogleUser()
         return view
     }
 
     private fun initializeUI(view: View) {
+        progressBar = view.findViewById(R.id.progressBar)
         //recyclerView = view.findViewById(R.id.excursionRecyclerView)
         //recyclerView.layoutManager = LinearLayoutManager(activity)
         adapter = ExcursionAdapter(excursions)
@@ -57,7 +65,10 @@ class Results : Fragment() {
         }
 
         saveButton.setOnClickListener {
+            val formattedItinerary = formatItineraryForSaving(daysItinerary)
+            saveItinerary(cityName, formattedItinerary)
             findNavController().navigate(R.id.action_resultsFragment_to_homeScreenFragment)
+            fetchItineraries()
         }
 
         viewModel = ViewModelProvider(requireActivity()).get(ExcursionsViewModel::class.java)
@@ -72,14 +83,26 @@ class Results : Fragment() {
         chatGPTService = ChatGPTService("OPEN_AI_KEY")
     }
 
+    private fun initializeGoogleUser() {
+        val account = GoogleSignIn.getLastSignedInAccount(requireContext())
+        if (account != null) {
+            userId = account.id ?: ""
+        } else {
+            Toast.makeText(context, "User not logged in", Toast.LENGTH_LONG).show()
+            //findNavController().navigate(R.id.loginFragment)
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val app = requireActivity().application as MyApp
+        database = app.database
         fetchAttractions(cityName)
         //fetchEvents(cityName)
     }
 
     private fun updateRecyclerView() {
-        adapter.updateExcursions(ArrayList(excursions))  // Refresh data in adapter
+        adapter.updateExcursions(ArrayList(excursions))
     }
 
     private fun fetchAttractions(cityName: String) {
@@ -130,6 +153,7 @@ class Results : Fragment() {
 
     private fun generateItinerary() {
         if (excursions.isNotEmpty()) {
+            showLoading(true)
             CoroutineScope(Dispatchers.IO).launch {
                 try {
                     val prompt = buildItineraryPrompt()
@@ -142,18 +166,22 @@ class Results : Fragment() {
                             notifyDataSetChanged()
                         }
                         Log.d("ResultsFragment", "Itinerary updated in ViewPager")
+                        showLoading(false)
                     }
                 } catch (e: Exception) {
                     Log.e("ResultsFragment", "Failed to generate itinerary", e)
                     CoroutineScope(Dispatchers.Main).launch {
                         Toast.makeText(context, "Failed to generate itinerary: ${e.localizedMessage}", Toast.LENGTH_LONG).show()
+                        showLoading(false)
                     }
                 }
             }
         }
     }
 
-
+    private fun showLoading(show: Boolean) {
+        progressBar.visibility = if (show) View.VISIBLE else View.GONE
+    }
 
     private fun buildItineraryPrompt(): String {
         val itineraryBuilder = StringBuilder()
@@ -183,7 +211,7 @@ class Results : Fragment() {
 
     private fun parseItinerary(itineraryString: String): List<DayItinerary> {
         val days = itineraryString.split(Regex("(?=Day \\d+:)"))
-            .filter { it.isNotBlank() } // Ensure we don't take any empty strings from split artifacts
+            .filter { it.isNotBlank() }
 
         return days.map { dayInfo ->
             val lines = dayInfo.trim().split("\n")
@@ -206,5 +234,47 @@ class Results : Fragment() {
             DayItinerary(date, activities)
         }
     }
+
+    private fun formatItineraryForSaving(daysItinerary: List<DayItinerary>): String {
+        return daysItinerary.joinToString(separator = "\n") { day ->
+            "Date: ${day.date}\nExcursions: ${day.excursions.joinToString(separator = ", ") { it.name }}"
+        }
+    }
+
+    fun saveItinerary(cityName: String, itineraryDetails: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val itinerary = Itinerary(
+                    userId = userId,
+                    tripDates = "$departDate to $returnDate",
+                    cityName = cityName,
+                    itineraryDetails = itineraryDetails
+                )
+                database.itineraryDao().insertItinerary(itinerary)
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(context, "Itinerary saved successfully", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(context, "Failed to save itinerary: ${e.localizedMessage}", Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+    }
+
+    fun fetchItineraries() {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val itineraries = database.itineraryDao().getAllItineraries()
+                itineraries.forEach {
+                    Log.d("FetchData", "Itinerary: ${it.cityName}, Dates: ${it.tripDates}")
+                }
+            } catch (e: Exception) {
+                Log.e("FetchData", "Error fetching itineraries", e)
+            }
+        }
+    }
+
+
 
 }
