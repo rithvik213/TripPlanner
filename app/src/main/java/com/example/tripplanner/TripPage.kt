@@ -88,11 +88,9 @@ class TripPage : Fragment() {
             object : TripAdvisorManager.ImageFetchListener {
                 override fun onImageFetched(imageUrl: String) {
                     activity?.runOnUiThread {
-                        // Use Glide to load the image
                         Glide.with(this@TripPage)
                             .load(imageUrl)
                             .into(imageView)
-                        // Show the image URL in a toast
                         Log.d("TripPage", "Fetched image URL: $imageUrl")
                         Toast.makeText(context, "Image URL: $imageUrl", Toast.LENGTH_LONG).show()
                     }

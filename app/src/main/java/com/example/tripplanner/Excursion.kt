@@ -7,3 +7,8 @@ data class Excursion(
     val time: String
 )
 
+data class DayItinerary(
+    val date: String,
+    val excursions: List<Excursion>
+)
+
