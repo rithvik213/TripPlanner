@@ -13,7 +13,6 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -36,6 +35,7 @@ class Results : Fragment() {
     private lateinit var database: AppDatabase
     private lateinit var userId: String
     private lateinit var progressBar: ProgressBar
+    private lateinit var imageUrl: String
 
     @SuppressLint("ResourceType")
     override fun onCreateView(
@@ -125,7 +125,18 @@ class Results : Fragment() {
                 override fun onAttractionFetchFailed(errorMessage: String) {
                     Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
                 }
-            }
+            },
+            object : TripAdvisorManager.ImageFetchListener {
+                override fun onImageFetched(imageUrl: String) {
+                    this@Results.imageUrl = imageUrl
+                }
+
+                override fun onImageFetchFailed(errorMessage: String) {
+                    Toast.makeText(context, "Image fetch failed: $errorMessage", Toast.LENGTH_LONG).show()
+                    imageUrl = "default_image_url"
+                }
+
+        }
         )
         tripAdvisorManager.fetchData()
     }
@@ -248,7 +259,8 @@ class Results : Fragment() {
                     userId = userId,
                     tripDates = "$departDate to $returnDate",
                     cityName = cityName,
-                    itineraryDetails = itineraryDetails
+                    itineraryDetails = itineraryDetails,
+                    imageUrl = imageUrl
                 )
                 database.itineraryDao().insertItinerary(itinerary)
                 withContext(Dispatchers.Main) {
