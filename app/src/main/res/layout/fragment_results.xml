@@ -89,12 +89,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/excursionRecyclerView"
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/itineraryViewPager"
         android:layout_width="371dp"
         android:layout_height="265dp"
         android:layout_marginTop="412dp"
         android:layout_weight="1 "
+        android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.6"
         app:layout_constraintStart_toStartOf="parent"
