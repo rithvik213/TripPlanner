@@ -9,13 +9,16 @@
 
     <ProgressBar
         android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:indeterminateTint="@color/white"
         android:visibility="gone"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
 
 
     <ImageButton
@@ -293,13 +296,13 @@
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/itineraryViewPager"
-        android:layout_width="371dp"
-        android:layout_height="265dp"
-        android:layout_marginTop="432dp"
+        android:layout_width="384dp"
+        android:layout_height="240dp"
+        android:layout_marginTop="428dp"
         android:layout_weight="1 "
         android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.6"
+        app:layout_constraintHorizontal_bias="0.592"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
