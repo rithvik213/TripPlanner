@@ -18,13 +18,22 @@
     <string name="results">Results</string>
     <string name="addfriends">Add Friends</string>
     <string name="owner">TripPlanner</string>
+    <string name="titletext">Trip Planner</string>
     <string name="basicinfo">Basic Information</string>
     <string name="travelinfo">Travel Information</string>
-    <string name="logout">Sign Out</string>
+    <string name="logout">SIGN OUT</string>
     <string name="dates">Trip Dates</string>
     <string name="my_trips">My Trips</string>
     <string name="flying_to">Flying to</string>
     <string name="starttext">No trips yet. Click the + button to get started!</string>
+    <string name="destinationtext">Destination</string>
+    <string name="flightinfo">Flight Info</string>
+    <string name="save">SAVE</string>
+    <string name="search">SEARCH</string>
+    <string name="precheck">TSA Precheck Number</string>
+    <string name="passprot">Passport Number</string>
+    <string name="KTN">Known Traveler Number</string>
+    <string name="name">Name</string>
 
 
 </resources>
