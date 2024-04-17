@@ -38,6 +38,7 @@ class Results : Fragment() {
     private lateinit var imageUrl: String
     private var isAttractionsFetched = false
     private var isEventsFetched = false
+    private lateinit var viewModelPrefs: SharedViewModel
 
     @SuppressLint("ResourceType")
     override fun onCreateView(
@@ -45,6 +46,7 @@ class Results : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_results, container, false)
+        viewModelPrefs = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
         initializeUI(view)
         initializeGoogleUser()
         return view
@@ -214,7 +216,8 @@ class Results : Fragment() {
 
     private fun buildItineraryPrompt(): String {
         val itineraryBuilder = StringBuilder()
-        itineraryBuilder.append("Generate a detailed day-by-day itinerary for a trip to $cityName from $departDate to $returnDate with the following attractions only including attractions from this list if they match the dates of the trip:\n")
+        val selectedAttractions = viewModelPrefs.selectedAttractions.value?.joinToString(separator = ", ") { it }
+        itineraryBuilder.append("Generate a detailed day-by-day itinerary for a trip to $cityName from $departDate to $returnDate with the following attractions only including attractions from this list if they match the dates of the trip while prioritizing attractions that include $selectedAttractions:\n")
 
         for (excursion in excursions) {
             itineraryBuilder.append("- ${excursion.name}")
