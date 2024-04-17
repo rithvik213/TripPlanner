@@ -40,11 +40,17 @@ public class EventFetcher {
 
     private EventFetchListener listener;
 
-    public EventFetcher(String cityName, Context context, EventFetchListener listener) {
+    private String returnDate;
+
+    private String departDate;
+
+    public EventFetcher(String cityName, Context context, String returnDate, String departDate, EventFetchListener listener) {
         //this.recyclerView = recyclerView;
         this.cityName = cityName;
         this.context = context;
         this.listener = listener;
+        this.returnDate = returnDate;
+        this.departDate = departDate;
     }
 
     public void fetchEvents() {
@@ -57,7 +63,7 @@ public class EventFetcher {
 
         Map<String, String> parameters = new HashMap<>();
         parameters.put("engine", "google_events");
-        parameters.put("q", "Events in " + cityName);
+        parameters.put("q", "Events in " + cityName + " " + departDate + " to " + returnDate);
         parameters.put("hl", "en");
         parameters.put("gl", "us");
         parameters.put("api_key", "9212fd8f821b387637eb1f6c78b9f36f11d8d0f13b321533022b0568d4b8392f");
