@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Reiseplaner</string>
+    <string name="hello_blank_fragment">Hallo leeres Fragment</string>
+    <string name="trip">Neue Reise</string>
+    <string name="depart">Abfahrt</string>
+    <string name="returning">Rückkehr</string>
+    <string name="origin">Abflug von</string>
+    <string name="destination">Zielort</string>
+    <string name="budget">Budget:</string>
+    <string name="randomdestination">Zufälliges Ziel wählen</string>
+    <string name="itinerary">Ausflüge und Reiseplan</string>
+    <string name="themeparks">Freizeitparks</string>
+    <string name="restaurants">Restaurants</string>
+    <string name="museums">Museen/Galerien</string>
+    <string name="beaches">Strände/Natur</string>
+    <string name="planforme">Für mich planen</string>
+    <string name="results">Ergebnisse</string>
+    <string name="addfriends">Freunde hinzufügen</string>
+    <string name="owner">Reiseplaner</string>
+    <string name="titletext">Reiseplaner</string>
+    <string name="basicinfo">Grundlegende Informationen</string>
+    <string name="travelinfo">Reiseinformationen</string>
+    <string name="logout">ABMELDEN</string>
+    <string name="dates">Reisedaten</string>
+    <string name="my_trips">Meine Reisen</string>
+    <string name="flying_to">Flug nach</string>
+    <string name="starttext">Noch keine Reisen. Klicken Sie auf die + Taste, um zu beginnen!</string>
+    <string name="destinationtext">Reiseziel</string>
+    <string name="flightinfo">Fluginformationen</string>
+    <string name="save">SPEICHERN</string>
+    <string name="search">SUCHEN</string>
+    <string name="precheck">TSA-Precheck-Nummer</string>
+    <string name="passprot">Reisepassnummer</string>
+    <string name="KTN">Bekannte Reisendennummer</string>
+    <string name="name">Name</string>
+</resources>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Planificador de Viajes</string>
+    <string name="hello_blank_fragment">Hola fragmento en blanco</string>
+    <string name="trip">Nuevo Viaje</string>
+    <string name="depart">Salida</string>
+    <string name="returning">Regreso</string>
+    <string name="origin">Volando desde</string>
+    <string name="destination">Volando hacia</string>
+    <string name="budget">Presupuesto:</string>
+    <string name="randomdestination">Elegir Destino Aleatorio</string>
+    <string name="itinerary">Excursiones e Itinerario</string>
+    <string name="themeparks">Parques Temáticos</string>
+    <string name="restaurants">Restaurantes</string>
+    <string name="museums">Museos/Galerías</string>
+    <string name="beaches">Playas/Naturaleza</string>
+    <string name="planforme">Planifícame</string>
+    <string name="results">Resultados</string>
+    <string name="addfriends">Agregar Amigos</string>
+    <string name="owner">Planificador de Viajes</string>
+    <string name="titletext">Planificador de Viajes</string>
+    <string name="basicinfo">Información Básica</string>
+    <string name="travelinfo">Información de Viaje</string>
+    <string name="logout">CERRAR SESIÓN</string>
+    <string name="dates">Fechas del Viaje</string>
+    <string name="my_trips">Mis Viajes</string>
+    <string name="flying_to">Volando hacia</string>
+    <string name="starttext">No hay viajes aún. ¡Haz clic en el botón + para comenzar!</string>
+    <string name="destinationtext">Destino</string>
+    <string name="flightinfo">Información de Vuelo</string>
+    <string name="save">GUARDAR</string>
+    <string name="search">BUSCAR</string>
+    <string name="precheck">Número de Prechequeo de la TSA</string>
+    <string name="passprot">Número de Pasaporte</string>
+    <string name="KTN">Número de Viajero Conocido</string>
+    <string name="name">Nombre</string>
+</resources>
