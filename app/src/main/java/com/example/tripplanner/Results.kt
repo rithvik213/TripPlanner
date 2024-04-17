@@ -36,6 +36,8 @@ class Results : Fragment() {
     private lateinit var userId: String
     private lateinit var progressBar: ProgressBar
     private lateinit var imageUrl: String
+    private var isAttractionsFetched = false
+    private var isEventsFetched = false
 
     @SuppressLint("ResourceType")
     override fun onCreateView(
@@ -98,11 +100,17 @@ class Results : Fragment() {
         val app = requireActivity().application as MyApp
         database = app.database
         fetchAttractions(cityName)
-        //fetchEvents(cityName)
+        fetchEvents(cityName)
     }
 
     private fun updateRecyclerView() {
         adapter.updateExcursions(ArrayList(excursions))
+    }
+
+    private fun tryGenerateItinerary() {
+        if (isAttractionsFetched && isEventsFetched) {
+            generateItinerary()
+        }
     }
 
     private fun fetchAttractions(cityName: String) {
@@ -118,12 +126,16 @@ class Results : Fragment() {
                         excursions.addAll(newExcursions)
                         //updateRecyclerView()
                         viewModel.addExcursions(newExcursions)
-                        generateItinerary()
+                        //generateItinerary()
+                        isAttractionsFetched = true
+                        tryGenerateItinerary()
                     }
                 }
 
                 override fun onAttractionFetchFailed(errorMessage: String) {
                     Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
+                    isAttractionsFetched = true
+                    tryGenerateItinerary()
                 }
             },
             object : TripAdvisorManager.ImageFetchListener {
@@ -142,21 +154,27 @@ class Results : Fragment() {
     }
 
     private fun fetchEvents(cityName: String) {
-        val eventFetcher = EventFetcher(cityName, requireContext(), object : EventFetcher.EventFetchListener {
+        val eventFetcher = EventFetcher(cityName, requireContext(), departDate, returnDate, object : EventFetcher.EventFetchListener {
             override fun onEventsFetched(events: List<EventFetcher.EventResult>) {
                 val eventsExcursions = events.map { event ->
                     Excursion(event.title, event.date.`when`)
                 }
+                //Toast.makeText(context, "TEST", Toast.LENGTH_LONG).show()
+
                 activity?.runOnUiThread {
                     excursions.addAll(eventsExcursions)
-                    updateRecyclerView()
-                    viewModel.addExcursions(eventsExcursions)
-                    generateItinerary()
+                    //updateRecyclerView()
+                    //viewModel.addExcursions(eventsExcursions)
+                    //generateItinerary()
+                    isEventsFetched = true
+                    tryGenerateItinerary()
                 }
             }
 
             override fun onEventFetchFailed(errorMessage: String) {
                 Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
+                isEventsFetched = true
+                tryGenerateItinerary()
             }
         })
         eventFetcher.fetchEvents()
