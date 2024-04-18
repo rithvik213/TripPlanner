@@ -5,6 +5,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 
 object AmadeusApiClient {
 
@@ -22,14 +23,16 @@ object AmadeusApiClient {
     private fun createOkHttpClient(): OkHttpClient {
         return OkHttpClient.Builder()
             .addInterceptor(TokenInterceptor())
+            .readTimeout(30, TimeUnit.SECONDS)
+            .writeTimeout(30, TimeUnit.SECONDS)
+            .connectTimeout(30, TimeUnit.SECONDS)
             .build()
     }
+
 }
 
 
 class TokenInterceptor : Interceptor {
-
-    @Synchronized
     override fun intercept(chain: Interceptor.Chain): Response {
         val token = SimpleTokenManager.getToken()
 
