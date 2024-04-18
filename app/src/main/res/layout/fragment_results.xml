@@ -19,8 +19,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
-
-
     <ImageButton
         android:id="@+id/resultsbackbutton"
         android:layout_width="wrap_content"
@@ -98,11 +96,11 @@
         app:layout_constraintVertical_bias="0.423" />
 
     <EditText
-        android:id="@+id/destination"
         android:layout_width="wrap_content"
+        android:id="@+id/destination"
         android:layout_height="wrap_content"
         android:fontFamily="@font/poppins"
-        android:text="City"
+        android:text="@string/destinationtext"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -127,30 +125,30 @@
         app:layout_constraintVertical_bias="0.198" />
 
     <EditText
-        android:id="@+id/returndates"
+        android:id="@+id/dates"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/poppins"
-        android:text="Date"
+        android:text="@string/dates"
         android:textColor="@color/white"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.792"
+        app:layout_constraintHorizontal_bias="0.111"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.198" />
+        app:layout_constraintVertical_bias="0.297" />
 
     <EditText
         android:id="@+id/returningflightorigin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/poppins"
-        android:text="Origin"
+        android:text="@string/flightinfo"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.12"
+        app:layout_constraintHorizontal_bias="0.11"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.425" />
@@ -295,20 +293,19 @@
         android:textSize="22dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.503"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.641" />
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/itineraryViewPager"
-        android:layout_width="374dp"
-        android:layout_height="172dp"
-        android:layout_marginTop="496dp"
+        android:layout_width="371dp"
+        android:layout_height="265dp"
+        android:layout_marginTop="412dp"
         android:layout_weight="1 "
         android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.486"
+        app:layout_constraintHorizontal_bias="0.6"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -316,11 +313,11 @@
         android:id="@+id/saveButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="SAVE"
+        android:text="@string/save"
         android:backgroundTint="@color/navy"
         android:textColor="@color/white"
-        android:fontFamily="@font/poppins"
-        android:textSize="18dp"
+        android:fontFamily="@font/poppinsbold"
+        android:textSize="19dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"

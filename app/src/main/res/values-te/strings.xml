@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ట్రిప్ ప్లానర్</string>
+    <string name="hello_blank_fragment">ఖాళీ ఫ్రాగ్మెంట్‌కి హలో</string>
+    <string name="trip">కొత్త ట్రిప్</string>
+    <string name="depart">ప్రయాణం</string>
+    <string name="returning">తిరిగి రావడం</string>
+    <string name="origin">నుండి ఎగిరే</string>
+    <string name="destination">దాకా ఎగిరే</string>
+    <string name="budget">బడ్జెట్:</string>
+    <string name="randomdestination">యాదృచ్ఛిక గమ్యస్థానం ఎంచుకోండి</string>
+    <string name="itinerary">ప్రయాణాలు మరియు షెడ్యూల్</string>
+    <string name="themeparks">థీమ్ పార్క్‌లు</string>
+    <string name="restaurants">రెస్టారెంట్లు</string>
+    <string name="museums">మ్యూజియంలు/గ్యాలరీలు</string>
+    <string name="beaches">బీచ్‌లు/ప్రకృతి</string>
+    <string name="planforme">నాకోసం ప్లాన్ చేయండి</string>
+    <string name="results">ఫలితాలు</string>
+    <string name="addfriends">స్నేహితులను జోడించండి</string>
+    <string name="owner">ట్రిప్ ప్లానర్</string>
+    <string name="titletext">ట్రిప్ ప్లానర్</string>
+    <string name="basicinfo">మౌలిక సమాచారం</string>
+    <string name="travelinfo">ప్రయాణ సమాచారం</string>
+    <string name="logout">సైన్ అవుట్</string>
+    <string name="dates">ట్రిప్ తేదీలు</string>
+    <string name="my_trips">నా ప్రయాణాలు</string>
+    <string name="flying_to">దాకా ఎగిరే</string>
+    <string name="starttext">ఇంకా ప్రయాణాలు లేవు. ప్రారంభించడానికి + బటన్‌ని నొక్కండి!</string>
+    <string name="destinationtext">గమ్యస్థానం</string>
+    <string name="flightinfo">విమాన సమాచారం</string>
+    <string name="save">సేవ్</string>
+    <string name="search">శోధన</string>
+    <string name="precheck">TSA ప్రీచెక్ నంబర్</string>
+    <string name="passprot">పాస్‌పోర్ట్ నంబర్</string>
+    <string name="KTN">తెలిసిన ట్రావెలర్ నంబర్</string>
+    <string name="name">పేరు</string>
+</resources>
