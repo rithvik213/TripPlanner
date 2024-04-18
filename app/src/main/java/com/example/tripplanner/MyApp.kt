@@ -11,6 +11,6 @@ class MyApp : Application() {
         database = Room.databaseBuilder(
             applicationContext,
             AppDatabase::class.java, "trip-planner-database"
-        ).build()
+        ).fallbackToDestructiveMigration().build()
     }
 }
