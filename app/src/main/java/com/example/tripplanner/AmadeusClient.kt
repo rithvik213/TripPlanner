@@ -49,7 +49,6 @@ class TokenInterceptor : Interceptor {
             chain.request()
         }
 
-
         var response = chain.proceed(request)
 
         if (response.code() == 401) {
