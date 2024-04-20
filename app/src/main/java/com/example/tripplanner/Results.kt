@@ -7,20 +7,25 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
+import com.example.flightapitest.fetchFlightOffers
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class Results : Fragment() {
     private val cityIataCodes = mapOf(
@@ -42,6 +47,8 @@ class Results : Fragment() {
     private lateinit var viewModel: ExcursionsViewModel
     private lateinit var cityName: String
     private lateinit var departDate: String
+    private var budget = 0
+    private lateinit var origin: String
     private lateinit var returnDate: String
     private lateinit var chatGPTService: ChatGPTService
     private lateinit var viewPager: ViewPager2
@@ -92,6 +99,7 @@ class Results : Fragment() {
             cityName = it.getString("cityName", "Austin")  //Default to "Austin" if no argument is passed
             departDate = it.getString("departDate","")
             returnDate = it.getString("returnDate", "")
+            origin = it.getString("origin", "")
             budget = it.getString("budget", "0").removePrefix("$").toInt()
         }
 
@@ -147,20 +155,38 @@ class Results : Fragment() {
                 val departAirport2 = flightInfo.flightOffers[0].itineraries[1].segments[0].departure.iataCode
                 val arrivalAirport2 = flightInfo.flightOffers[0].itineraries[1].segments[0].arrival.iataCode
                 val price = flightInfo.flightOffers[0].price.total
-                val departTime = flightInfo.flightOffers[0].itineraries[0].segments[0].departure.dateTime
-                val arrivalTime = flightInfo.flightOffers[0].itineraries[0].segments[0].arrival.dateTime
-                val departTime2 = flightInfo.flightOffers[0].itineraries[1].segments[0].departure.dateTime
-                val arrivalTime2 = flightInfo.flightOffers[0].itineraries[1].segments[0].arrival.dateTime
 
-                view.findViewById<EditText>(R.id.departingflightorigin).setText(departAirport)
-                view.findViewById<EditText>(R.id.departingflightdestination).setText(arrivalAirport)
-                view.findViewById<EditText>(R.id.returningflightorigin).setText(departAirport2)
-                view.findViewById<EditText>(R.id.returningflightdestination).setText(arrivalAirport2)
-                view.findViewById<EditText>(R.id.departingflightdeparture).setText(departTime)
-                view.findViewById<EditText>(R.id.departingflightarrival).setText(arrivalTime)
-                view.findViewById<EditText>(R.id.returningflightdeparture).setText(departTime2)
-                view.findViewById<EditText>(R.id.returningflightarrival).setText(arrivalTime2)
-                view.findViewById<TextView>(R.id.outboundcost).text = price
+                val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US)
+
+                val departTime = dateFormat.parse(flightInfo.flightOffers[0].itineraries[0].segments[0].departure.dateTime)
+                val arrivalTime = dateFormat.parse(flightInfo.flightOffers[0].itineraries[0].segments[0].arrival.dateTime)
+                val departTime2 = dateFormat.parse(flightInfo.flightOffers[0].itineraries[1].segments[0].departure.dateTime)
+                val arrivalTime2 = dateFormat.parse(flightInfo.flightOffers[0].itineraries[1].segments[0].arrival.dateTime)
+                val departTerminal = flightInfo.flightOffers[0].itineraries[0].segments[0].departure.terminal ?: "N/A"
+                val arrivalTerminal = flightInfo.flightOffers[0].itineraries[0].segments[0].arrival.terminal ?: "N/A"
+                val departTerminal2 = flightInfo.flightOffers[0].itineraries[1].segments[0].departure.terminal ?: "N/A"
+                val arrivalTerminal2 = flightInfo.flightOffers[0].itineraries[1].segments[0].arrival.terminal ?: "N/A"
+
+
+                val dateFormatter = SimpleDateFormat("EEEE,\nMMMM d, yyyy", Locale.US)
+                val timeFormatter = SimpleDateFormat("HH:mm", Locale.US)
+
+                view.findViewById<TextView>(R.id.destination).text = cityName
+                view.findViewById<TextView>(R.id.departureAirportCode).text = departAirport
+                view.findViewById<TextView>(R.id.arrivalAirportCode).text = arrivalAirport
+                view.findViewById<TextView>(R.id.departureAirportCode2).text = departAirport2
+                view.findViewById<TextView>(R.id.arrivalAirportCode2).text = arrivalAirport2
+                view.findViewById<TextView>(R.id.departuredate).text = dateFormatter.format(departTime!!)
+                view.findViewById<TextView>(R.id.returndates).text = dateFormatter.format(arrivalTime2!!)
+                view.findViewById<TextView>(R.id.departureTime).text = timeFormatter.format(departTime)
+                view.findViewById<TextView>(R.id.arrivalTime).text = timeFormatter.format(arrivalTime!!)
+                view.findViewById<TextView>(R.id.departureTime2).text = timeFormatter.format(departTime2!!)
+                view.findViewById<TextView>(R.id.arrivalTime2).text = timeFormatter.format(arrivalTime2)
+                view.findViewById<TextView>(R.id.departureTerminal).text = "Terminal " + departTerminal
+                view.findViewById<TextView>(R.id.arrivalTerminal).text = "Terminal " + arrivalTerminal
+                view.findViewById<TextView>(R.id.departureTerminal2).text = "Terminal " + departTerminal2
+                view.findViewById<TextView>(R.id.arrivalTerminal2).text = "Terminal " + arrivalTerminal2
+                view.findViewById<TextView>(R.id.totalprice).text = "$" + price
             }
 
         }
