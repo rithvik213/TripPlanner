@@ -15,8 +15,8 @@ import java.util.Calendar
 import androidx.navigation.fragment.findNavController
 
 class TripSearch : Fragment() {
-
-
+    private var departFormatted = "2025-01-01"
+    private var returnFormatted = "2025-01-01"
 
     @SuppressLint("MissingInflatedId")
     override fun onCreateView(
@@ -32,13 +32,15 @@ class TripSearch : Fragment() {
 
         buttonSearch.setOnClickListener {
             val destination = editText.text.toString()
-            val departDate = departdate.text.toString()
-            val returnDate = returndate.text.toString()
+            val origin = view.findViewById<EditText>(R.id.originAutoComplete).text.toString()
+            val budget = view.findViewById<EditText>(R.id.budget).text.toString()
 
             val bundle = Bundle()
             bundle.putString("cityName", destination)
-            bundle.putString("departDate", departDate)
-            bundle.putString("returnDate", returnDate)
+            bundle.putString("departDate", departFormatted)
+            bundle.putString("returnDate", returnFormatted)
+            bundle.putString("origin", origin)
+            bundle.putString("budget", budget)
             findNavController().navigate(R.id.action_tripSearchFragment_to_resultsFragment, bundle)
         }
 
@@ -60,16 +62,16 @@ class TripSearch : Fragment() {
         val returncalendar = view.findViewById<ImageButton>(R.id.returncalendar)
 
         departcalendar.setOnClickListener {
-            showDatePickerDialog(departdate)
+            showDatePickerDialog(departdate, departFormatted)
         }
 
         returncalendar.setOnClickListener {
-            showDatePickerDialog(returndate)
+            showDatePickerDialog(returndate, returnFormatted)
         }
         return view
     }
 
-    private fun showDatePickerDialog(dateEditText: EditText) {
+    private fun showDatePickerDialog(dateEditText: EditText, otherFormat: String) {
         val calendar = Calendar.getInstance()
         val year = calendar.get(Calendar.YEAR)
         val month = calendar.get(Calendar.MONTH)
@@ -78,6 +80,10 @@ class TripSearch : Fragment() {
         val datePickerDialog = DatePickerDialog(requireContext(), { _, selectedYear, selectedMonth, selectedDay ->
             val formattedDate = String.format("%02d/%02d/%d", selectedDay, selectedMonth + 1, selectedYear)
             dateEditText.setText(formattedDate)
+            if(dateEditText.id == R.id.departdate)
+                departFormatted = String.format("%d-%02d-%02d", selectedYear, selectedMonth + 1, selectedDay)
+            else
+                returnFormatted = String.format("%d-%02d-%02d", selectedYear, selectedMonth + 1, selectedDay)
         }, year, month, day)
 
 
