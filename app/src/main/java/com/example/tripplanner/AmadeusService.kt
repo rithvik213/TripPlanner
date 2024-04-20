@@ -28,6 +28,7 @@ interface AmadeusApiService {
         @Query("destinationLocationCode") destinationLocationCode: String,
         @Query("departureDate") departureDate: String,
         @Query("returnDate") returnDate: String,
+        @Query("nonStop") nonStop: Boolean = true,
         @Query("adults") adults: Int,
         @Query("maxPrice") maxPrice: Int,
         @Query("currencyCode") currencyCode: String,
@@ -53,8 +54,8 @@ interface AmadeusApiService {
     @Headers("Content-Type: application/x-www-form-urlencoded")
     @POST("/v1/security/oauth2/token")
     fun getToken(
-        @Field("client_id") clientId: String = "CLIENT_ID",
-        @Field("client_secret") clientSecret: String = "CLIENT_SECRET",
+        @Field("client_id") clientId: String = "AMADEUS_ID",
+        @Field("client_secret") clientSecret: String = "AMADEUS_SECRET",
         @Field("grant_type") grantType: String = "client_credentials"
     ): Call<TokenResponse>
 
