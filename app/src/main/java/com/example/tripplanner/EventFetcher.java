@@ -66,7 +66,7 @@ public class EventFetcher {
         parameters.put("q", "Events in " + cityName + " " + departDate + " to " + returnDate);
         parameters.put("hl", "en");
         parameters.put("gl", "us");
-        parameters.put("api_key", "9212fd8f821b387637eb1f6c78b9f36f11d8d0f13b321533022b0568d4b8392f");
+        parameters.put("api_key", "NEW_SERP_KEY");
 
         Call<JsonObject> call = service.getEvents(parameters);
         call.enqueue(new Callback<JsonObject>() {
