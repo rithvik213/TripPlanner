@@ -57,6 +57,9 @@ class Results : Fragment() {
     private lateinit var userId: String
     private lateinit var progressBar: ProgressBar
     private lateinit var imageUrl: String
+    private var isAttractionsFetched = false
+    private var isEventsFetched = false
+    private lateinit var viewModelPrefs: SharedViewModel
 
     @SuppressLint("ResourceType")
     override fun onCreateView(
@@ -64,6 +67,7 @@ class Results : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_results, container, false)
+        viewModelPrefs = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
         initializeUI(view)
         initializeGoogleUser()
         return view
@@ -121,13 +125,25 @@ class Results : Fragment() {
         val app = requireActivity().application as MyApp
         database = app.database
         fetchAttractions(cityName)
+
+        fetchEvents(cityName)
+
         fetchFlights(view)
         //fetchEvents(cityName)
+
     }
 
     private fun updateRecyclerView() {
         adapter.updateExcursions(ArrayList(excursions))
     }
+
+
+    private fun tryGenerateItinerary() {
+        if (isAttractionsFetched && isEventsFetched) {
+            generateItinerary()
+        }
+    }
+
 
     private fun fetchFlights(view: View){
         lifecycleScope.launch {
@@ -192,6 +208,7 @@ class Results : Fragment() {
         }
 
     }
+
     private fun fetchAttractions(cityName: String) {
         val tripAdvisorManager = TripAdvisorManager(
             requireContext(),
@@ -205,12 +222,16 @@ class Results : Fragment() {
                         excursions.addAll(newExcursions)
                         //updateRecyclerView()
                         viewModel.addExcursions(newExcursions)
-                        generateItinerary()
+                        //generateItinerary()
+                        isAttractionsFetched = true
+                        tryGenerateItinerary()
                     }
                 }
 
                 override fun onAttractionFetchFailed(errorMessage: String) {
                     Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
+                    isAttractionsFetched = true
+                    tryGenerateItinerary()
                 }
             },
             object : TripAdvisorManager.ImageFetchListener {
@@ -229,21 +250,27 @@ class Results : Fragment() {
     }
 
     private fun fetchEvents(cityName: String) {
-        val eventFetcher = EventFetcher(cityName, requireContext(), object : EventFetcher.EventFetchListener {
+        val eventFetcher = EventFetcher(cityName, requireContext(), departDate, returnDate, object : EventFetcher.EventFetchListener {
             override fun onEventsFetched(events: List<EventFetcher.EventResult>) {
                 val eventsExcursions = events.map { event ->
                     Excursion(event.title, event.date.`when`)
                 }
+                //Toast.makeText(context, "TEST", Toast.LENGTH_LONG).show()
+
                 activity?.runOnUiThread {
                     excursions.addAll(eventsExcursions)
-                    updateRecyclerView()
-                    viewModel.addExcursions(eventsExcursions)
-                    generateItinerary()
+                    //updateRecyclerView()
+                    //viewModel.addExcursions(eventsExcursions)
+                    //generateItinerary()
+                    isEventsFetched = true
+                    tryGenerateItinerary()
                 }
             }
 
             override fun onEventFetchFailed(errorMessage: String) {
                 Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
+                isEventsFetched = true
+                tryGenerateItinerary()
             }
         })
         eventFetcher.fetchEvents()
@@ -283,7 +310,8 @@ class Results : Fragment() {
 
     private fun buildItineraryPrompt(): String {
         val itineraryBuilder = StringBuilder()
-        itineraryBuilder.append("Generate a detailed day-by-day itinerary for a trip to $cityName from $departDate to $returnDate with the following attractions only including attractions from this list if they match the dates of the trip:\n")
+        val selectedAttractions = viewModelPrefs.selectedAttractions.value?.joinToString(separator = ", ") { it }
+        itineraryBuilder.append("Generate a detailed day-by-day itinerary for a trip to $cityName from $departDate to $returnDate with the following attractions only including attractions from this list if they match the dates of the trip while prioritizing attractions that include $selectedAttractions:\n")
 
         for (excursion in excursions) {
             itineraryBuilder.append("- ${excursion.name}")

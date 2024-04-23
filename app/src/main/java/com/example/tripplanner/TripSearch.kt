@@ -11,12 +11,20 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.SeekBar
 import android.widget.ImageButton
+import android.widget.RadioButton
+import android.widget.RadioGroup
+import androidx.lifecycle.ViewModelProvider
 import java.util.Calendar
 import androidx.navigation.fragment.findNavController
 
 class TripSearch : Fragment() {
+
+    private lateinit var viewModel: SharedViewModel
+
+
     private var departFormatted = "2025-01-01"
     private var returnFormatted = "2025-01-01"
+
 
     @SuppressLint("MissingInflatedId")
     override fun onCreateView(
@@ -24,6 +32,7 @@ class TripSearch : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_trip_search, container, false)
+        viewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
 
         val buttonSearch = view.findViewById<Button>(R.id.searchButton)
         val editText = view.findViewById<EditText>(R.id.destinationAutoComplete)
@@ -68,7 +77,23 @@ class TripSearch : Fragment() {
         returncalendar.setOnClickListener {
             showDatePickerDialog(returndate, returnFormatted)
         }
+
+        setupRadioButtonListeners(view)
+
         return view
+    }
+
+
+    private fun setupRadioButtonListeners(view: View) {
+        val radioGroup = view.findViewById<RadioGroup>(R.id.radioGroup)
+        radioGroup.setOnCheckedChangeListener { group, checkedId ->
+            val radioButton = view.findViewById<RadioButton>(checkedId)
+            val attraction = radioButton.text.toString()
+            // Update the ViewModel
+            val currentSelections = viewModel.selectedAttractions.value?.toMutableList() ?: mutableListOf()
+            currentSelections.add(attraction)
+            viewModel.selectedAttractions.value = currentSelections
+        }
     }
 
     private fun showDatePickerDialog(dateEditText: EditText, otherFormat: String) {
