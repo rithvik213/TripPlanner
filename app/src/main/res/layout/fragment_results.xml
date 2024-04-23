@@ -19,6 +19,199 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
+    <androidx.cardview.widget.CardView
+        android:id="@+id/outboundcard"
+        android:layout_width="240dp"
+        android:layout_height="96dp"
+        android:layout_margin="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:backgroundTint="@color/navy"
+        app:cardCornerRadius="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/inboundcard"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/destination">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="16dp">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+
+                <TextView
+                    android:id="@+id/departureAirportCode"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins"
+                    android:gravity="center"
+                    android:textColor="#FFFFFF"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/departureTime"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins"
+                    android:gravity="center"
+                    android:textColor="#FFFFFF" />
+
+                <TextView
+                    android:id="@+id/departureTerminal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins"
+                    android:gravity="center"
+                    android:textColor="#FFFFFF" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:fontFamily="@font/poppins"
+                android:gravity="center"
+                android:text=">"
+                android:textColor="#FFFFFF"
+                android:textSize="36sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/arrivalAirportCode"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins"
+                    android:gravity="center"
+                    android:textColor="#FFFFFF"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/arrivalTime"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins"
+                    android:gravity="center"
+                    android:textColor="#FFFFFF" />
+
+                <TextView
+                    android:id="@+id/arrivalTerminal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins"
+                    android:gravity="center"
+                    android:textColor="#FFFFFF" />
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/inboundcard"
+        android:layout_width="240dp"
+        android:layout_height="96dp"
+        android:layout_margin="16dp"
+        android:layout_marginBottom="8dp"
+        android:backgroundTint="@color/navy"
+        app:cardCornerRadius="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/textView7"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="16dp">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/departureAirportCode2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins"
+                    android:gravity="center"
+                    android:textColor="#FFFFFF"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/departureTime2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins"
+                    android:gravity="center"
+                    android:textColor="#FFFFFF" />
+
+                <TextView
+                    android:id="@+id/departureTerminal2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins"
+                    android:gravity="center"
+                    android:textColor="#FFFFFF" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:fontFamily="@font/poppins"
+                android:gravity="center"
+                android:text=">"
+                android:textColor="#FFFFFF"
+                android:textSize="36sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+
+                <TextView
+                    android:id="@+id/arrivalAirportCode2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins"
+                    android:gravity="center"
+                    android:textColor="#FFFFFF"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/arrivalTime2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins"
+                    android:gravity="center"
+                    android:textColor="#FFFFFF" />
+
+                <TextView
+                    android:id="@+id/arrivalTerminal2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins"
+                    android:gravity="center"
+                    android:textColor="#FFFFFF" />
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+
+
     <ImageButton
         android:id="@+id/resultsbackbutton"
         android:layout_width="wrap_content"
@@ -46,67 +239,99 @@
         app:layout_constraintVertical_bias="0.04" />
 
 
-    <EditText
-        android:layout_width="wrap_content"
+    <TextView
         android:id="@+id/destination"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/poppins"
-        android:text="Destination"
-        android:textColor="@color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.115"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.222" />
-
-    <EditText
-        android:id="@+id/dates"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:backgroundTint="@color/navy"
         android:fontFamily="@font/poppins"
-        android:text="Dates"
         android:textColor="@color/white"
+        android:textSize="30sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.099"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.297" />
-
-    <EditText
-        android:id="@+id/flight"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/poppins"
-        android:text="Flight Info"
-        android:textColor="@color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.11"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.372" />
+        app:layout_constraintVertical_bias="0.123" />
 
     <TextView
+        android:id="@+id/totalprice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:fontFamily="@font/poppins"
+        android:textColor="@color/white"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.123" />
+
+    <TextView
+        android:id="@+id/departuredate"
+        android:layout_width="124dp"
+        android:layout_height="96dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:fontFamily="@font/poppins"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/returndates"
+        app:layout_constraintEnd_toStartOf="@+id/outboundcard"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/destination"
+        app:layout_constraintVertical_bias="0.476" />
+
+    <TextView
+        android:id="@+id/returndates"
+        android:layout_width="124dp"
+        android:layout_height="96dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:fontFamily="@font/poppins"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/textView7"
+        app:layout_constraintEnd_toStartOf="@+id/inboundcard"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.97" />
+
+    <TextView
+        android:id="@+id/textView7"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/poppins"
         android:text="@string/itinerary"
         android:textColor="@color/white"
-        android:textSize="22dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:textSize="22sp"
+        app:layout_constraintBottom_toTopOf="@+id/itineraryViewPager"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.979" />
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/itineraryViewPager"
-        android:layout_width="371dp"
-        android:layout_height="265dp"
-        android:layout_marginTop="412dp"
+        android:layout_width="384dp"
+        android:layout_height="240dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="428dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
         android:layout_weight="1 "
         android:textColor="@color/white"
+        app:layout_constraintBottom_toTopOf="@+id/saveButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.592"
         app:layout_constraintStart_toStartOf="parent"
@@ -116,16 +341,18 @@
         android:id="@+id/saveButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="SAVE"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
         android:backgroundTint="@color/navy"
-        android:textColor="@color/white"
         android:fontFamily="@font/poppins"
-        android:textSize="18dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:text="SAVE"
+        android:textColor="@color/white"
+        android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintVertical_bias="0.95" />
+        app:layout_constraintStart_toStartOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
