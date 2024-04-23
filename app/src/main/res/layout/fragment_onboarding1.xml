@@ -7,12 +7,13 @@
     tools:context=".OnboardingFragment1">
 
     <FrameLayout
+        android:id="@+id/frameLayout"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/textViewTitle"
@@ -21,9 +22,13 @@
             android:layout_gravity="center_horizontal|top"
             android:fontFamily="@font/poppins"
             android:paddingTop="250dp"
-            android:text="trip planner"
+            android:text="@string/titletext"
             android:textColor="@android:color/black"
             android:textSize="32sp" />
+
+
+
+
     </FrameLayout>
 
     <com.google.android.gms.common.SignInButton
