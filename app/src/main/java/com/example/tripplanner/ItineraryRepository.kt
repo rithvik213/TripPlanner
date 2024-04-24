@@ -8,4 +8,8 @@ class ItineraryRepository(private val itineraryDao: ItineraryDao) {
     suspend fun insert(itinerary: Itinerary) {
         itineraryDao.insertItinerary(itinerary)
     }
+
+    fun getItineraryById(itineraryId: Int): LiveData<Itinerary> {
+        return itineraryDao.getItineraryById(itineraryId)
+    }
 }

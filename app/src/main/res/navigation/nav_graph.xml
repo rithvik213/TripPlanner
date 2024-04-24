@@ -36,7 +36,19 @@
         <action
             android:id="@+id/action_homeScreenFragment_to_tripSearchFragment"
             app:destination="@id/tripSearchFragment" />
+
+        <action
+            android:id="@+id/action_homeScreenFragment_to_tripPage"
+            app:destination="@id/tripPage" />
+
+
     </fragment>
+
+    <fragment
+        android:id="@+id/tripPage"
+        android:name="com.example.tripplanner.TripPage"
+        android:label="Trip Page"
+        tools:layout="@layout/fragment_trip_page" />
 
     <fragment
         android:id="@+id/tripSearchFragment"
