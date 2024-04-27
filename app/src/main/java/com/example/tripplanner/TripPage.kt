@@ -1,106 +1,91 @@
 package com.example.tripplanner
 
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.Toast
+import android.widget.TextView
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [TripPage.newInstance] factory method to
- * create an instance of this fragment.
- */
 class TripPage : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
     private lateinit var imageView: ImageView
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var adapter: ExcursionAdapter
-    private lateinit var viewModel: ExcursionsViewModel
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private lateinit var departDateTextView: TextView
+    private lateinit var returnDateTextView: TextView
+    private lateinit var departureAirportTextView: TextView
+    private lateinit var departureAirport2TextView: TextView
+    private lateinit var arrivalAirportTextView: TextView
+    private lateinit var arrivalAirport2TextView: TextView
+    private lateinit var departTimeTextView: TextView
+    private lateinit var departTime2TextView: TextView
+    private lateinit var arrivalTimeTextView: TextView
+    private lateinit var arrivalTime2TextView: TextView
+    private lateinit var viewModel: ItineraryViewModel
+    //private lateinit var itineraryViewPager: ViewPager2
+    //private lateinit var excursionAdapter: ExcursionAdapter
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_trip_page, container, false)
 
-        recyclerView = view.findViewById(R.id.excursionRecyclerView)
-        recyclerView.layoutManager = LinearLayoutManager(context)
-        adapter = ExcursionAdapter(mutableListOf())
-        recyclerView.adapter = adapter
+        imageView = view.findViewById(R.id.trippagepicture)
+        departDateTextView = view.findViewById(R.id.departDate)
+        returnDateTextView = view.findViewById(R.id.returnDate)
+        departureAirportTextView = view.findViewById(R.id.departureAirport)
+        departureAirport2TextView = view.findViewById(R.id.departureAirport2)
+        arrivalAirportTextView = view.findViewById(R.id.arrivalAirport)
+        arrivalAirport2TextView = view.findViewById(R.id.arrivalAirport2)
+        departTimeTextView = view.findViewById(R.id.departTime)
+        departTime2TextView = view.findViewById(R.id.departTime2)
+        arrivalTimeTextView = view.findViewById(R.id.arrivalTime)
+        arrivalTime2TextView = view.findViewById(R.id.arrivalTime2)
 
-        viewModel = ViewModelProvider(requireActivity()).get(ExcursionsViewModel::class.java)  // Use requireActivity() for shared ViewModel across fragments
-        viewModel.excursions.observe(viewLifecycleOwner) { excursions ->
-            adapter.updateExcursions(ArrayList(excursions))  // Update adapter
-        }
+        val tripId = arguments?.getInt("tripId") ?: -1
+        setupViewModel(tripId)
 
-        imageView = view.findViewById(R.id.trippagepicture) // Bind ImageView
-        fetchImage("Austin")  // Example city name
-        return view    }
-
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment TripPage.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            TripPage().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+        return view
     }
 
-    private fun fetchImage(cityName: String){
-        val tripAdvisorManager = TripAdvisorManager(
-            requireContext(),
-            cityName, null,
-            object : TripAdvisorManager.ImageFetchListener {
-                override fun onImageFetched(imageUrl: String) {
-                    activity?.runOnUiThread {
-                        Glide.with(this@TripPage)
-                            .load(imageUrl)
-                            .into(imageView)
-                        Log.d("TripPage", "Fetched image URL: $imageUrl")
-                        Toast.makeText(context, "Image URL: $imageUrl", Toast.LENGTH_LONG).show()
-                    }
-                }
-                override fun onImageFetchFailed(errorMessage: String) {
-                    // Handle failure
-                }
-            },
-        )
-        tripAdvisorManager.fetchData()
+    private fun setupViewModel(tripId: Int) {
+        viewModel = ViewModelProvider(this).get(ItineraryViewModel::class.java)
+        if (tripId != -1) {
+            viewModel.getItineraryById(tripId).observe(viewLifecycleOwner) { itinerary ->
+                Glide.with(this).load(itinerary.imageUrl).into(imageView)
+                departDateTextView.text = itinerary.departureDate
+                returnDateTextView.text = itinerary.returnDate
+                departureAirportTextView.text = itinerary.departureAirport
+                departureAirport2TextView.text = itinerary.departureAirport2
+                arrivalAirportTextView.text = itinerary.arrivalAirport
+                arrivalAirport2TextView.text = itinerary.arrivalAirport2
+                departTimeTextView.text = itinerary.departureTime
+                departTime2TextView.text = itinerary.departureTime2
+                arrivalTimeTextView.text = itinerary.arrivalTime
+                arrivalTime2TextView.text = itinerary.arrivalTime2
 
+                //val daysItinerary = parseItineraryDetails(itinerary.itineraryDetails)
+                //val itineraryPagerAdapter = ItineraryPagerAdapter(daysItinerary, this)
+                //itineraryViewPager.adapter = itineraryPagerAdapter
+
+                //excursionAdapter.updateExcursions(itinerary.excursions)
+
+
+            }
+        } else {
+
+        }
+    }
+
+    private fun parseItineraryDetails(details: String): List<DayItinerary> {
+        return try {
+            val type = object : TypeToken<List<DayItinerary>>() {}.type
+            Gson().fromJson(details, type)
+        } catch (e: Exception) {
+            listOf<DayItinerary>()
+        }
     }
 }
