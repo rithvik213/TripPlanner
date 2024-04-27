@@ -18,4 +18,7 @@ interface ItineraryDao {
 
     @Query("SELECT * FROM itineraries")
     fun getAllItinerariesLiveData(): LiveData<List<Itinerary>>
+
+    @Query("SELECT * FROM itineraries WHERE id = :itineraryId")
+    fun getItineraryById(itineraryId: Int): LiveData<Itinerary>
 }

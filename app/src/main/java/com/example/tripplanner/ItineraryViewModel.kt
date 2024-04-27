@@ -16,6 +16,10 @@ class ItineraryViewModel(application: Application) : AndroidViewModel(applicatio
         repository = ItineraryRepository(itineraryDao)
         allItineraries = repository.allItineraries
     }
+
+    fun getItineraryById(itineraryId: Int): LiveData<Itinerary> {
+        return repository.getItineraryById(itineraryId)
+    }
 }
 
 

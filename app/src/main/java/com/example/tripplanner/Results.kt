@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -16,7 +15,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.example.flightapitest.fetchFlightOffers
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -25,6 +23,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 
 class Results : Fragment() {
@@ -41,7 +40,6 @@ class Results : Fragment() {
         "Mumbai" to "BOM",
         "Austin" to "AUS"
     )
-    private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: ExcursionAdapter
     private var excursions: MutableList<Excursion> = mutableListOf()
     private lateinit var viewModel: ExcursionsViewModel
@@ -61,6 +59,25 @@ class Results : Fragment() {
     private var isEventsFetched = false
     private lateinit var viewModelPrefs: SharedViewModel
 
+    private lateinit var departAirport: String
+    private lateinit var arrivalAirport: String
+    private lateinit var departAirport2: String
+    private lateinit var arrivalAirport2: String
+    private lateinit var departTime: Date
+    private lateinit var arrivalTime: Date
+    private lateinit var departTime2: Date
+    private lateinit var arrivalTime2: Date
+    private lateinit var departTerminal: String
+    private lateinit var arrivalTerminal: String
+    private lateinit var departTerminal2: String
+    private lateinit var arrivalTerminal2: String
+    private lateinit var price: String
+
+    private val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US)
+    private val dateFormatter = SimpleDateFormat("EEEE, MMMM d, yyyy", Locale.US)
+    private val timeFormatter = SimpleDateFormat("HH:mm", Locale.US)
+
+
     @SuppressLint("ResourceType")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -75,10 +92,7 @@ class Results : Fragment() {
 
     private fun initializeUI(view: View) {
         progressBar = view.findViewById(R.id.progressBar)
-        //recyclerView = view.findViewById(R.id.excursionRecyclerView)
-        //recyclerView.layoutManager = LinearLayoutManager(activity)
         adapter = ExcursionAdapter(excursions)
-        //recyclerView.adapter = adapter
         viewPager = view.findViewById(R.id.itineraryViewPager)
         viewPager.adapter = ItineraryPagerAdapter(daysItinerary, this)
 
@@ -91,10 +105,33 @@ class Results : Fragment() {
 
         saveButton.setOnClickListener {
             val formattedItinerary = formatItineraryForSaving(daysItinerary)
-            saveItinerary(cityName, formattedItinerary)
-            findNavController().navigate(R.id.action_resultsFragment_to_homeScreenFragment)
-            fetchItineraries()
+            if (this::departAirport.isInitialized && this::arrivalAirport.isInitialized) {  // Ensure variables are initialized
+                saveItinerary(
+                    cityName = cityName,
+                    itineraryDetails = formattedItinerary,
+                    departureAirport = departAirport,
+                    arrivalAirport = arrivalAirport,
+                    departureDate = dateFormatter.format(departTime),
+                    returnDate = dateFormatter.format(arrivalTime2),
+                    departureTime = timeFormatter.format(departTime),
+                    arrivalTime = timeFormatter.format(arrivalTime),
+                    departureAirport2 = departAirport2,
+                    arrivalAirport2 = arrivalAirport2,
+                    departureTime2 = timeFormatter.format(departTime2),
+                    arrivalTime2 = timeFormatter.format(arrivalTime2),
+                    departureTerminal = departTerminal,
+                    arrivalTerminal = arrivalTerminal,
+                    departureTerminal2 = departTerminal2,
+                    arrivalTerminal2 = arrivalTerminal2,
+                    totalPrice = price
+                )
+                findNavController().navigate(R.id.action_resultsFragment_to_homeScreenFragment)
+                fetchItineraries()
+            } else {
+                Toast.makeText(context, "Flight information not fully available", Toast.LENGTH_LONG).show()
+            }
         }
+
 
         viewModel = ViewModelProvider(requireActivity()).get(ExcursionsViewModel::class.java)
         viewModel.excursions.observe(viewLifecycleOwner) { updateRecyclerView() }
@@ -166,26 +203,20 @@ class Results : Fragment() {
             if (flightInfo == null){
                 Toast.makeText(context, "No flights found with given parameters", Toast.LENGTH_LONG).show()
             } else {
-                val departAirport = flightInfo.flightOffers[0].itineraries[0].segments[0].departure.iataCode
-                val arrivalAirport = flightInfo.flightOffers[0].itineraries[0].segments[0].arrival.iataCode
-                val departAirport2 = flightInfo.flightOffers[0].itineraries[1].segments[0].departure.iataCode
-                val arrivalAirport2 = flightInfo.flightOffers[0].itineraries[1].segments[0].arrival.iataCode
-                val price = flightInfo.flightOffers[0].price.total
+                departAirport = flightInfo.flightOffers[0].itineraries[0].segments[0].departure.iataCode
+                arrivalAirport = flightInfo.flightOffers[0].itineraries[0].segments[0].arrival.iataCode
+                departAirport2 = flightInfo.flightOffers[0].itineraries[1].segments[0].departure.iataCode
+                arrivalAirport2 = flightInfo.flightOffers[0].itineraries[1].segments[0].arrival.iataCode
+                price = flightInfo.flightOffers[0].price.total
 
-                val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US)
-
-                val departTime = dateFormat.parse(flightInfo.flightOffers[0].itineraries[0].segments[0].departure.dateTime)
-                val arrivalTime = dateFormat.parse(flightInfo.flightOffers[0].itineraries[0].segments[0].arrival.dateTime)
-                val departTime2 = dateFormat.parse(flightInfo.flightOffers[0].itineraries[1].segments[0].departure.dateTime)
-                val arrivalTime2 = dateFormat.parse(flightInfo.flightOffers[0].itineraries[1].segments[0].arrival.dateTime)
-                val departTerminal = flightInfo.flightOffers[0].itineraries[0].segments[0].departure.terminal ?: "N/A"
-                val arrivalTerminal = flightInfo.flightOffers[0].itineraries[0].segments[0].arrival.terminal ?: "N/A"
-                val departTerminal2 = flightInfo.flightOffers[0].itineraries[1].segments[0].departure.terminal ?: "N/A"
-                val arrivalTerminal2 = flightInfo.flightOffers[0].itineraries[1].segments[0].arrival.terminal ?: "N/A"
-
-
-                val dateFormatter = SimpleDateFormat("EEEE,\nMMMM d, yyyy", Locale.US)
-                val timeFormatter = SimpleDateFormat("HH:mm", Locale.US)
+                departTime = dateFormat.parse(flightInfo.flightOffers[0].itineraries[0].segments[0].departure.dateTime)!!
+                arrivalTime = dateFormat.parse(flightInfo.flightOffers[0].itineraries[0].segments[0].arrival.dateTime)!!
+                departTime2 = dateFormat.parse(flightInfo.flightOffers[0].itineraries[1].segments[0].departure.dateTime)!!
+                arrivalTime2 = dateFormat.parse(flightInfo.flightOffers[0].itineraries[1].segments[0].arrival.dateTime)!!
+                departTerminal = flightInfo.flightOffers[0].itineraries[0].segments[0].departure.terminal ?: "N/A"
+                arrivalTerminal = flightInfo.flightOffers[0].itineraries[0].segments[0].arrival.terminal ?: "N/A"
+                departTerminal2 = flightInfo.flightOffers[0].itineraries[1].segments[0].departure.terminal ?: "N/A"
+                arrivalTerminal2 = flightInfo.flightOffers[0].itineraries[1].segments[0].arrival.terminal ?: "N/A"
 
                 view.findViewById<TextView>(R.id.destination).text = cityName
                 view.findViewById<TextView>(R.id.departureAirportCode).text = departAirport
@@ -367,7 +398,25 @@ class Results : Fragment() {
         }
     }
 
-    fun saveItinerary(cityName: String, itineraryDetails: String) {
+    fun saveItinerary(
+        cityName: String,
+        itineraryDetails: String,
+        departureAirport: String,
+        arrivalAirport: String,
+        departureDate: String,
+        returnDate: String,
+        departureTime: String,
+        arrivalTime: String,
+        departureAirport2: String?,
+        arrivalAirport2: String?,
+        departureTime2: String?,
+        arrivalTime2: String?,
+        departureTerminal: String,
+        arrivalTerminal: String,
+        departureTerminal2: String?,
+        arrivalTerminal2: String?,
+        totalPrice: String
+    ) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val itinerary = Itinerary(
@@ -375,7 +424,22 @@ class Results : Fragment() {
                     tripDates = "$departDate to $returnDate",
                     cityName = cityName,
                     itineraryDetails = itineraryDetails,
-                    imageUrl = imageUrl
+                    imageUrl = imageUrl,
+                    departureAirport = departureAirport,
+                    arrivalAirport = arrivalAirport,
+                    departureDate = departureDate,
+                    returnDate = returnDate,
+                    departureTime = departureTime,
+                    arrivalTime = arrivalTime,
+                    departureAirport2 = departureAirport2,
+                    arrivalAirport2 = arrivalAirport2,
+                    departureTime2 = departureTime2,
+                    arrivalTime2 = arrivalTime2,
+                    departureTerminal = departureTerminal,
+                    arrivalTerminal = arrivalTerminal,
+                    departureTerminal2 = departureTerminal2,
+                    arrivalTerminal2 = arrivalTerminal2,
+                    totalPrice = totalPrice
                 )
                 database.itineraryDao().insertItinerary(itinerary)
                 withContext(Dispatchers.Main) {
@@ -388,6 +452,7 @@ class Results : Fragment() {
             }
         }
     }
+
 
     fun fetchItineraries() {
         CoroutineScope(Dispatchers.IO).launch {
