@@ -39,18 +39,15 @@ class HomeScreenFragment : Fragment() {
 
         viewModel = ViewModelProvider(this).get(ItineraryViewModel::class.java)
 
-        adapter = ItineraryAdapter(emptyList())
+        adapter = ItineraryAdapter(emptyList()) { tripId ->
+            val bundle = Bundle().apply { putInt("tripId", tripId) }
+            findNavController().navigate(R.id.action_homeScreenFragment_to_tripPage, bundle)
+        }
         recyclerView.adapter = adapter
 
         viewModel.allItineraries.observe(viewLifecycleOwner) { itineraries ->
             adapter.updateData(itineraries)
-
-            if (itineraries.isEmpty()) {
-                textViewEmpty.visibility = View.VISIBLE
-            } else {
-                textViewEmpty.visibility = View.GONE
-            }
+            textViewEmpty.visibility = if (itineraries.isEmpty()) View.VISIBLE else View.GONE
         }
-
     }
 }
