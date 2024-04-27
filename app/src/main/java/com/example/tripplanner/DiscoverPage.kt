@@ -15,6 +15,8 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationResult
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 
 class DiscoverPage : Fragment() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
@@ -46,7 +48,80 @@ class DiscoverPage : Fragment() {
         val view = inflater.inflate(R.layout.fragment_discover_page, container, false)
         tripAdvisorManager = TripAdvisorManager(requireContext(), cityName = "Current Location")
         requestLocationPermission()
+
+        val destinationsrecyclerView: RecyclerView = view.findViewById(R.id.recyclerviewdestinations)
+        val attractionsrecyclerView: RecyclerView = view.findViewById(R.id.nearbydestinationsrecycler)
+
+        // Set LinearLayoutManager with horizontal orientation
+        val attractionsLayoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+        val destinationslayoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+        destinationsrecyclerView.layoutManager = destinationslayoutManager
+        attractionsrecyclerView.layoutManager = attractionsLayoutManager
+
+
+        val destinations = getDestinations()
+        val attractions = getAttractions()
+        destinationsrecyclerView.adapter = PopularDestinationsAdapter(destinations)
+        attractionsrecyclerView.adapter = NearbyAttractionsAdapter(attractions)
         return view
+    }
+
+    private fun getAttractions(): List<Attraction> {
+        // TO DO
+        return listOf(
+            Attraction(
+                title = "Attraction",
+                imageUrl = null
+            ),
+            Attraction(
+                title = "Birthday",
+                imageUrl = null
+            )
+
+        )
+    }
+
+
+    private fun getDestinations(): List<Destination> {
+        return listOf(
+            Destination(
+                title = "New York City",
+                imageUrl = "https://images.unsplash.com/photo-1546436836-07a91091f160?q=80&w=2948&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+            ),
+            Destination(
+                title = "Paris",
+                imageUrl = "https://images.unsplash.com/photo-1522093007474-d86e9bf7ba6f?q=80&w=1600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+            ),
+            Destination(
+                title = "Tokyo",
+                imageUrl = "https://images.unsplash.com/photo-1545569341-9eb8b30979d9?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+            ),
+            Destination(
+                title = "London",
+                imageUrl = "https://images.unsplash.com/photo-1529655683826-aba9b3e77383?q=80&w=2865&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+            ),
+            Destination(
+                title = "Sydney",
+                imageUrl = "https://images.unsplash.com/photo-1523428096881-5bd79d043006?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+            ),
+            Destination(
+                title = "Los Angeles",
+                imageUrl = "https://images.unsplash.com/flagged/photo-1575555201693-7cd442b8023f?q=80&w=3000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+            ),
+            Destination(
+                title = "Rome",
+                imageUrl = "https://images.unsplash.com/photo-1491566102020-21838225c3c8?q=80&w=3000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+            ),
+            Destination(
+                title = "Beijing",
+                imageUrl = "https://images.unsplash.com/photo-1590301729964-23833732ee04?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+            ),
+            Destination(
+                title = "Mumbai",
+                imageUrl = "https://images.unsplash.com/photo-1570168007204-dfb528c6958f?q=80&w=2835&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+            )
+
+        )
     }
 
     private fun fetchNearbyAttractions(latitude: Double, longitude: Double) {
