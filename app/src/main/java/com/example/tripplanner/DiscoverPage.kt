@@ -1,12 +1,17 @@
 package com.example.tripplanner
 
+
+import android.app.AlertDialog
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
+import android.widget.ImageButton
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -53,6 +58,40 @@ class DiscoverPage : Fragment() {
         attractionsrecyclerView.adapter = NearbyAttractionsAdapter(attractions)
         return view
     }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+
+
+        // Inflate the custom dialog layout
+        val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog, null)
+        val userPromptEditText: EditText = dialogView.findViewById<EditText>(R.id.userpromptname)
+
+        // Set the custom view to the dialog builder
+        val dialog = AlertDialog.Builder(context)
+            .setView(dialogView)
+            .create()  // Create the AlertDialog instance
+
+        // Find buttons within the custom layout
+        val okButton = dialogView.findViewById<ImageButton>(R.id.dialogButtonOk)
+
+        // Set click listeners for the buttons
+        okButton.setOnClickListener {
+            performOkAction()
+            dialog.dismiss()  // Dismiss the dialog when OK button is clicked
+        }
+
+
+
+        // Show the dialog
+        dialog.show()
+    }
+
+    fun performOkAction() {
+        //to do
+    }
+
+
 
     private fun getAttractions(): List<Attraction> {
         // TO DO

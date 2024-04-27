@@ -27,9 +27,9 @@
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/bottomAppBar"
         android:layout_width="match_parent"
-        android:layout_height="54dp"
+        android:layout_height="60dp"
         android:layout_gravity="bottom"
-        android:background="@color/white"
+        android:background="@color/bottomappbar"
         app:layout_constraintEnd_toEndOf="parent">
 
         <LinearLayout
@@ -40,17 +40,36 @@
 
             <ImageButton
                 android:id="@+id/fab_home"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/home"
-                android:layout_marginRight="32dp" />
+                android:layout_width="64dp"
+                android:layout_height="55dp"
+                android:layout_marginTop="3dp"
+                android:layout_marginRight="5dp"
+                android:background="@drawable/house" />
+            <ImageButton
+                android:layout_width="60dp"
+                android:layout_height="52dp"
+                android:id="@+id/fab_suitcase"
+                android:background="@drawable/suitcase"
+                android:layout_marginRight="8dp"/>
 
             <ImageButton
                 android:id="@+id/fab_person"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/person" />
+                android:layout_width="50dp"
+                android:layout_height="53dp"
+                android:layout_marginRight="23dp"
+                android:background="@drawable/profile" />
         </LinearLayout>
     </androidx.appcompat.widget.Toolbar>
 
 </LinearLayout>
+
+
+
+
+
+
+
+
+
+
+
