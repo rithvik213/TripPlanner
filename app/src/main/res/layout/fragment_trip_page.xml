@@ -46,8 +46,8 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.447" />
 
-    <EditText
-        android:id="@+id/departcity"
+    <TextView
+        android:id="@+id/departDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/poppins"
@@ -72,8 +72,8 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.499" />
 
-    <EditText
-        android:id="@+id/outboundairport"
+    <TextView
+        android:id="@+id/departureAirport"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/poppins"
@@ -86,8 +86,8 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.667" />
 
-    <EditText
-        android:id="@+id/destination2"
+    <TextView
+        android:id="@+id/arrivalAirport2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/poppins"
@@ -100,8 +100,8 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.667" />
 
-    <EditText
-        android:id="@+id/arrivaltimeoutbound"
+    <TextView
+        android:id="@+id/arrivalTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/poppinslight"
@@ -114,8 +114,8 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.741" />
 
-    <EditText
-        android:id="@+id/departuretimereturn"
+    <TextView
+        android:id="@+id/departTime2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/poppinslight"
@@ -128,8 +128,8 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.741" />
 
-    <EditText
-        android:id="@+id/arrivsltimereturn"
+    <TextView
+        android:id="@+id/arrivalTime2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/poppinslight"
@@ -142,8 +142,8 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.741" />
 
-    <EditText
-        android:id="@+id/departtimeoutbound"
+    <TextView
+        android:id="@+id/departTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/poppinslight"
@@ -156,8 +156,8 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.741" />
 
-    <EditText
-        android:id="@+id/destinationairport1"
+    <TextView
+        android:id="@+id/arrivalAirport"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/poppins"
@@ -170,8 +170,8 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.667" />
 
-    <EditText
-        android:id="@+id/originairport2"
+    <TextView
+        android:id="@+id/departureAirport2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/poppins"
@@ -184,8 +184,8 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.667" />
 
-    <EditText
-        android:id="@+id/returncity"
+    <TextView
+        android:id="@+id/returnDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/poppins"
@@ -211,6 +211,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.823" />
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/itineraryViewPager"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        app:layout_constraintTop_toBottomOf="@id/arrivalTime2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/excursionRecyclerView" />
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/excursionRecyclerView"
