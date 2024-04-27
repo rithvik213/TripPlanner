@@ -96,7 +96,29 @@ class TripAdvisorManager(
         })
     }
 
-/*
+    fun fetchSearchTheLocation(category: String, latLong: String, searchQuery: String) {
+        val url = "search?key=$apiKey&searchQuery=${searchQuery.urlEncode()}&category=$category&latLong=$latLong&language=en"
+        val call = service.searchLocations(baseUrl + url)
+        call.enqueue(object : retrofit2.Callback<LocationSearchResponse> {
+            override fun onResponse(call: Call<LocationSearchResponse>, response: retrofit2.Response<LocationSearchResponse>) {
+                if (response.isSuccessful) {
+                    val locations = response.body()?.data?.map { it.name } ?: listOf()
+                    listener?.onAttractionsFetched(locations)
+                } else {
+                    listener?.onAttractionFetchFailed("Error fetching data: ${response.errorBody()?.string()}")
+                }
+            }
+
+            override fun onFailure(call: Call<LocationSearchResponse>, t: Throwable) {
+                listener?.onAttractionFetchFailed("Network error: ${t.message}")
+            }
+        })
+    }
+
+    fun String.urlEncode(): String = java.net.URLEncoder.encode(this, "UTF-8")
+
+  
+  /*
     private fun updateAttractionsUI(attractions: List<String>) {
         val adapter = AttractionsAdapter(attractions)
         attractionsRecyclerView.adapter = adapter
