@@ -34,6 +34,10 @@
     <string name="passprot">Passport Number</string>
     <string name="KTN">Known Traveler Number</string>
     <string name="name">Name</string>
+    <string name="welcome">Welcome, User</string>
+    <string name="nearby">Nearby</string>
+    <string name="discover">Discover</string>
+    <string name="explorepop">Explore Popular Destinations</string>
 
 
 </resources>
