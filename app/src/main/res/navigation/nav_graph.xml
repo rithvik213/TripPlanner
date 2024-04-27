@@ -16,6 +16,10 @@
         <action
             android:id="@+id/action_onboardingFragment_to_homeScreenFragment"
             app:destination="@id/homeScreenFragment" />
+
+        <action
+            android:id="@+id/action_onboardingFragment_to_discoverPageFragment"
+            app:destination="@+id/discoverPageFragment" />
     </fragment>
 
     <fragment
@@ -68,6 +72,12 @@
         android:name="com.example.tripplanner.UserProfile"
         android:label="fragment_user_profile"
         tools:layout="@layout/fragment_user_profile" />
+
+    <fragment
+        android:id="@+id/discoverPageFragment"
+        android:name="com.example.tripplanner.DiscoverPage"
+        android:label="fragment_discover_page"
+        tools:layout="@layout/fragment_discover_page"/>
 
     <action android:id="@+id/global_action_to_homeScreen"
         app:destination="@id/homeScreenFragment" />
