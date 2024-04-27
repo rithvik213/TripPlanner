@@ -46,7 +46,8 @@ class OnboardingFragment1 : Fragment(), GoogleSignInHelper.SignInResultListener 
         val navHostFragment = requireActivity().supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
 
-        navController.navigate(R.id.action_onboardingFragment_to_homeScreenFragment)
+        //navController.navigate(R.id.action_onboardingFragment_to_homeScreenFragment)
+        navController.navigate(R.id.action_onboardingFragment_to_discoverPageFragment)
     }
 
     override fun onSignInFailure(errorMessage: String) {
