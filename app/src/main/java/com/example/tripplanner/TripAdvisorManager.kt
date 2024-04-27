@@ -44,6 +44,7 @@ class TripAdvisorManager(
         }
     }
 
+
     private fun fetchLocationId(callback: (String) -> Unit) {
         val url = "search?searchQuery=$cityName&language=en&key=$apiKey"
         val call = service.searchLocations(url)
@@ -68,7 +69,7 @@ class TripAdvisorManager(
         val call = service.getLocationPhotos(url)
         call.enqueue(object : retrofit2.Callback<PhotoResponse> {
             override fun onResponse(call: Call<PhotoResponse>, response: retrofit2.Response<PhotoResponse>) {
-                val imageUrl = response.body()?.data?.firstOrNull()?.images?.large?.url ?: ""
+                val imageUrl = response.body()?.data?.firstOrNull()?.images?.original?.url ?: ""
                 imageListener?.onImageFetched(imageUrl)
                 //Picasso.get().load(imageUrl).into(imageView)
             }
@@ -116,7 +117,8 @@ class TripAdvisorManager(
 
     fun String.urlEncode(): String = java.net.URLEncoder.encode(this, "UTF-8")
 
-    /*
+  
+  /*
     private fun updateAttractionsUI(attractions: List<String>) {
         val adapter = AttractionsAdapter(attractions)
         attractionsRecyclerView.adapter = adapter
@@ -153,6 +155,7 @@ class TripAdvisorManager(
     data class LocationData(val location_id: String, val name: String)
     data class PhotoResponse(val data: List<PhotoData>)
     data class PhotoData(val images: ImageDetail)
-    data class ImageDetail(val large: Large)
-    data class Large(val url: String)
+    data class ImageDetail(val original: Original)
+
+    data class Original(val url: String)
 }
