@@ -18,13 +18,16 @@ class TripAdvisorManager(
 
     interface AttractionFetchListener {
         fun onAttractionsFetched(attractions: List<String>)
+
         fun onAttractionFetchFailed(errorMessage: String)
+
     }
 
     interface ImageFetchListener {
-        fun onImageFetched(imageUrl: String)
-        fun onImageFetchFailed(errorMessage: String)
+        fun onImageFetched(attraction: String, imageUrl: String)
+        fun onImageFetchFailed(attraction: String, errorMessage: String)
     }
+
 
     private val apiKey = "TRIP_ADVISOR_KEY"
     private val baseUrl = "https://api.content.tripadvisor.com/api/v1/location/"
@@ -35,6 +38,8 @@ class TripAdvisorManager(
         .build()
 
     private val service = retrofit.create(TripAdvisorService::class.java)
+
+    private val locationIdToNameMap = mutableMapOf<String, String>()
 
     fun fetchData() {
         fetchLocationId { locationId ->
@@ -64,18 +69,20 @@ class TripAdvisorManager(
         })
     }
 
-    private fun fetchImage(locationId: String) {
+    fun fetchImage(locationId: String) {
         val url = "$locationId/photos?language=en&key=$apiKey"
         val call = service.getLocationPhotos(url)
         call.enqueue(object : retrofit2.Callback<PhotoResponse> {
             override fun onResponse(call: Call<PhotoResponse>, response: retrofit2.Response<PhotoResponse>) {
                 val imageUrl = response.body()?.data?.firstOrNull()?.images?.original?.url ?: ""
-                imageListener?.onImageFetched(imageUrl)
-                //Picasso.get().load(imageUrl).into(imageView)
+                val attractionName = locationIdToNameMap[locationId] ?: "Unknown Attraction"
+                imageListener?.onImageFetched(attractionName, imageUrl)
             }
 
             override fun onFailure(call: Call<PhotoResponse>, t: Throwable) {
-                imageListener?.onImageFetchFailed("Network error: ${t.message}")
+                val attractionName = locationIdToNameMap[locationId] ?: "Unknown Location"
+                imageListener?.onImageFetchFailed(attractionName, "Network error: ${t.message}")
+
             }
         })
     }
@@ -101,9 +108,12 @@ class TripAdvisorManager(
         val call = service.searchLocations(baseUrl + url)
         call.enqueue(object : retrofit2.Callback<LocationSearchResponse> {
             override fun onResponse(call: Call<LocationSearchResponse>, response: retrofit2.Response<LocationSearchResponse>) {
-                if (response.isSuccessful) {
-                    val locations = response.body()?.data?.map { it.name } ?: listOf()
-                    listener?.onAttractionsFetched(locations)
+                if (response.isSuccessful && response.body() != null) {
+                    val locations = response.body()!!.data
+                    locations.forEach { locationData ->
+                        fetchImage(locationData.location_id)
+                        locationIdToNameMap[locationData.location_id] = locationData.name
+                    }
                 } else {
                     listener?.onAttractionFetchFailed("Error fetching data: ${response.errorBody()?.string()}")
                 }
@@ -114,6 +124,10 @@ class TripAdvisorManager(
             }
         })
     }
+
+
+
+
 
     fun String.urlEncode(): String = java.net.URLEncoder.encode(this, "UTF-8")
 
