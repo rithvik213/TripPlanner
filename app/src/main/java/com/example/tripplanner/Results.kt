@@ -247,13 +247,10 @@ class Results : Fragment() {
             object : TripAdvisorManager.AttractionFetchListener {
                 override fun onAttractionsFetched(attractions: List<String>) {
                     val newExcursions = attractions.map { attraction ->
-                        Excursion(attraction, "All Day")
+                        Excursion(attraction, "All Day", "default_image_url") // Initialize with a default image URL
                     }
                     activity?.runOnUiThread {
-                        excursions.addAll(newExcursions)
-                        //updateRecyclerView()
-                        viewModel.addExcursions(newExcursions)
-                        //generateItinerary()
+                        viewModel.addExcursions(newExcursions)  // Add all fetched excursions initially
                         isAttractionsFetched = true
                         tryGenerateItinerary()
                     }
@@ -266,18 +263,28 @@ class Results : Fragment() {
                 }
             },
             object : TripAdvisorManager.ImageFetchListener {
-                override fun onImageFetched(imageUrl: String) {
-                    this@Results.imageUrl = imageUrl
+                override fun onImageFetched(attraction: String, imageUrl: String) {
+                    activity?.runOnUiThread {
+                        val updatedExcursions = viewModel.excursions.value?.map { excursion ->
+                            if (excursion.name == attraction && imageUrl.isNotEmpty()) {
+                                excursion.copy(imageUrl = imageUrl) // Assume Excursion is a data class
+                            } else {
+                                excursion
+                            }
+                        }
+                        viewModel.excursions.value = updatedExcursions?.toMutableList()
+                    }
                 }
 
-                override fun onImageFetchFailed(errorMessage: String) {
-                    Toast.makeText(context, "Image fetch failed: $errorMessage", Toast.LENGTH_LONG).show()
-                    imageUrl = "default_image_url"
+                override fun onImageFetchFailed(attraction: String, errorMessage: String) {
+                    Toast.makeText(context, "Image fetch failed for $attraction: $errorMessage", Toast.LENGTH_LONG).show()
                 }
-
-            })
+            }
+        )
         tripAdvisorManager.fetchData()
     }
+
+
 
     private fun fetchEvents(cityName: String) {
         val eventFetcher = EventFetcher(cityName, requireContext(), departDate, returnDate, object : EventFetcher.EventFetchListener {
