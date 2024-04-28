@@ -91,6 +91,8 @@
         android:label="fragment_discover_page"
         tools:layout="@layout/fragment_discover_page"/>
 
+
+
     <action android:id="@+id/global_action_to_homeScreen"
         app:destination="@id/homeScreenFragment" />
 
