@@ -8,7 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 
-class NearbyAttractionsAdapter(private val items: List<Attraction>) : RecyclerView.Adapter<NearbyAttractionsAdapter.ViewHolder>() {
+class NearbyAttractionsAdapter(private var items: List<Attraction>) : RecyclerView.Adapter<NearbyAttractionsAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val imageView: ImageView = view.findViewById(R.id.nearbyattractionimageView)
@@ -33,4 +33,9 @@ class NearbyAttractionsAdapter(private val items: List<Attraction>) : RecyclerVi
 
 
     override fun getItemCount() = items.size
+
+    fun updateData(newItems: List<Attraction>) {
+        items = newItems
+        notifyDataSetChanged()
+    }
 }
