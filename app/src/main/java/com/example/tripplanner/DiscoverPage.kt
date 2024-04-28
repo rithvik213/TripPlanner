@@ -30,6 +30,8 @@ class DiscoverPage : Fragment() {
     private lateinit var attractionsAdapter: NearbyAttractionsAdapter
     private lateinit var attractionsRecyclerView: RecyclerView
     private lateinit var userLocationTextView: EditText
+    private var loadingDialog: AlertDialog? = null
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -87,7 +89,6 @@ class DiscoverPage : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
 
-
         // Inflate the custom dialog layout
         val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog, null)
         val userPromptEditText: EditText = dialogView.findViewById<EditText>(R.id.userpromptname)
@@ -114,6 +115,19 @@ class DiscoverPage : Fragment() {
 
     fun performOkAction() {
         //to do
+    }
+
+    private fun showLoadingDialog() {
+        val builder = AlertDialog.Builder(requireContext())
+        val inflater = layoutInflater
+        builder.setView(inflater.inflate(R.layout.loading_dialog, null))
+        builder.setCancelable(false)  // Make it non-cancellable, so it doesn't dismiss on back press
+        loadingDialog = builder.create()
+        loadingDialog?.show()
+    }
+
+    private fun hideLoadingDialog() {
+        loadingDialog?.dismiss()
     }
 
 
