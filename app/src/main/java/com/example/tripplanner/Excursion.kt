@@ -4,7 +4,7 @@ package com.example.tripplanner
 data class Excursion(
     val name: String,
     val time: String,
-    val imageUrl: String = ""
+    var imageUrl: String = ""
 )
 
 data class DayItinerary(
