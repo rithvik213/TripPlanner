@@ -71,6 +71,16 @@ class OnboardingFragment1 : Fragment(), GoogleSignInHelper.SignInResultListener 
 
     override fun onSignInSuccess(account: GoogleSignInAccount) {
         Log.d("GoogleSignIn", "Sign-in successful for account: ${account.displayName}")
+        val navHostFragment = requireActivity().supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        val navController = navHostFragment.navController
+
+        //navController.navigate(R.id.action_onboardingFragment_to_homeScreenFragment)
+
+        val bundle = Bundle().apply {
+            putString("userName", account.displayName)
+        }
+
+        navController.navigate(R.id.action_onboardingFragment_to_discoverPageFragment, bundle)
         switchToLayout(R.layout.start_exploring)
     }
 
