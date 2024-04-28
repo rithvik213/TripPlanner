@@ -12,22 +12,14 @@ import androidx.recyclerview.widget.RecyclerView
 import android.Manifest
 import android.content.pm.PackageManager
 import android.location.Geocoder
-import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.EditText
 import android.widget.TextView
 import androidx.core.app.ActivityCompat
-import androidx.fragment.app.Fragment
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationResult
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import java.io.IOException
 import java.util.Locale
 
@@ -74,10 +66,19 @@ class DiscoverPage : Fragment() {
 
         tripAdvisorManager = TripAdvisorManager(requireContext(), cityName = "Current Location")
 
+        val destinationsrecyclerView: RecyclerView = view.findViewById(R.id.recyclerviewdestinations)
+
         attractionsRecyclerView = view.findViewById(R.id.nearbydestinationsrecycler)
         attractionsRecyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         attractionsAdapter = NearbyAttractionsAdapter(listOf())
         attractionsRecyclerView.adapter = attractionsAdapter
+        val destinationslayoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+        destinationsrecyclerView.layoutManager = destinationslayoutManager
+
+
+        val destinations = getDestinations()
+        destinationsrecyclerView.adapter = PopularDestinationsAdapter(destinations)
+
 
         requestLocationPermission()
         return view
@@ -108,7 +109,7 @@ class DiscoverPage : Fragment() {
 
 
         // Show the dialog
-        dialog.show()
+        //dialog.show()
     }
 
     fun performOkAction() {
@@ -233,6 +234,49 @@ class DiscoverPage : Fragment() {
         if (requestCode == 1000 && grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             startLocationUpdates() // Start location updates only if permission is granted
         }
+    }
+
+
+    private fun getDestinations(): List<Destination> {
+        return listOf(
+            Destination(
+                title = "New York City",
+                imageUrl = "https://images.unsplash.com/photo-1546436836-07a91091f160?q=80&w=2948&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+            ),
+            Destination(
+                title = "Paris",
+                imageUrl = "https://images.unsplash.com/photo-1522093007474-d86e9bf7ba6f?q=80&w=1600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+            ),
+            Destination(
+                title = "Tokyo",
+                imageUrl = "https://images.unsplash.com/photo-1545569341-9eb8b30979d9?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+            ),
+            Destination(
+                title = "London",
+                imageUrl = "https://images.unsplash.com/photo-1529655683826-aba9b3e77383?q=80&w=2865&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+            ),
+            Destination(
+                title = "Sydney",
+                imageUrl = "https://images.unsplash.com/photo-1523428096881-5bd79d043006?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+            ),
+            Destination(
+                title = "Los Angeles",
+                imageUrl = "https://images.unsplash.com/flagged/photo-1575555201693-7cd442b8023f?q=80&w=3000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+            ),
+            Destination(
+                title = "Rome",
+                imageUrl = "https://images.unsplash.com/photo-1491566102020-21838225c3c8?q=80&w=3000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+            ),
+            Destination(
+                title = "Beijing",
+                imageUrl = "https://images.unsplash.com/photo-1590301729964-23833732ee04?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+            ),
+            Destination(
+                title = "Mumbai",
+                imageUrl = "https://images.unsplash.com/photo-1570168007204-dfb528c6958f?q=80&w=2835&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+            )
+
+        )
     }
 
     override fun onPause() {
