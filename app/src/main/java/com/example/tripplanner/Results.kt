@@ -275,8 +275,7 @@ class Results : Fragment() {
                     imageUrl = "default_image_url"
                 }
 
-        }
-        )
+            })
         tripAdvisorManager.fetchData()
     }
 
