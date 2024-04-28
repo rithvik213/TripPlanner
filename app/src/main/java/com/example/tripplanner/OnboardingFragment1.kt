@@ -1,21 +1,21 @@
 package com.example.tripplanner
 
 import GoogleSignInHelper
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ImageButton
-import android.widget.ImageView
-import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.fragment.NavHostFragment.Companion.findNavController
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
-import com.google.android.gms.common.SignInButton
+import com.google.android.gms.auth.api.signin.GoogleSignIn
 
 class OnboardingFragment1 : Fragment(), GoogleSignInHelper.SignInResultListener {
 
@@ -61,27 +61,18 @@ class OnboardingFragment1 : Fragment(), GoogleSignInHelper.SignInResultListener 
     }
 
     private fun setupStartExploringLayout(view: View) {
-        val grantPermissionsButton = view.findViewById<ImageButton>(R.id.grantPermissions)
-        val noPermissionsButton = view.findViewById<ImageButton>(R.id.noPermissions)
-
-        grantPermissionsButton.setOnClickListener {
-            findNavController().navigate(R.id.action_onboardingFragment_to_discoverPageFragment)
+        view.findViewById<ImageButton>(R.id.grantPermissions).setOnClickListener {
+            requestLocationPermission()
         }
     }
 
     override fun onSignInSuccess(account: GoogleSignInAccount) {
         Log.d("GoogleSignIn", "Sign-in successful for account: ${account.displayName}")
-        val navHostFragment = requireActivity().supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-        val navController = navHostFragment.navController
-
-        //navController.navigate(R.id.action_onboardingFragment_to_homeScreenFragment)
-
-        val bundle = Bundle().apply {
-            putString("userName", account.displayName)
+        if (hasLocationPermission()) {
+            account.displayName?.let { navigateToDiscoverPage(it) }
+        } else {
+            switchToLayout(R.layout.start_exploring)
         }
-
-        navController.navigate(R.id.action_onboardingFragment_to_discoverPageFragment, bundle)
-        switchToLayout(R.layout.start_exploring)
     }
 
     override fun onSignInFailure(errorMessage: String) {
@@ -92,5 +83,36 @@ class OnboardingFragment1 : Fragment(), GoogleSignInHelper.SignInResultListener 
         super.onActivityResult(requestCode, resultCode, data)
         googleSignInHelper.handleActivityResult(requestCode, resultCode, data)
     }
-}
 
+    private fun hasLocationPermission(): Boolean {
+        return ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun requestLocationPermission() {
+        requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION), 1000)
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        Log.d("GoogleSignIn", "Request code: $requestCode, grantResults: ${grantResults.joinToString()}")
+        if (requestCode == 1000 && grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            val account = GoogleSignIn.getLastSignedInAccount(requireContext())
+            if (account != null) {
+                Log.d("GoogleSignIn", "Permission granted and account retrieved: ${account.displayName}")
+                account.displayName?.let { navigateToDiscoverPage(it) }
+            } else {
+                Log.d("GoogleSignIn", "Google account retrieval failed after permission granted.")
+            }
+        } else {
+            Log.d("GoogleSignIn", "Location permission was denied by user.")
+        }
+    }
+
+
+    private fun navigateToDiscoverPage(userName: String) {
+        val bundle = Bundle().apply {
+            putString("userName", userName)
+        }
+        findNavController().navigate(R.id.action_onboardingFragment_to_discoverPageFragment, bundle)
+    }
+}
