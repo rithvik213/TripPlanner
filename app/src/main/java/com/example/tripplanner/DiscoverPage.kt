@@ -29,7 +29,7 @@ class DiscoverPage : Fragment() {
     private var tripAdvisorManager: TripAdvisorManager? = null
     private lateinit var attractionsAdapter: NearbyAttractionsAdapter
     private lateinit var attractionsRecyclerView: RecyclerView
-    private lateinit var userLocationTextView: EditText
+    private lateinit var userLocationTextView: TextView
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -90,26 +90,21 @@ class DiscoverPage : Fragment() {
 
         // Inflate the custom dialog layout
         val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog, null)
-        val userPromptEditText: EditText = dialogView.findViewById<EditText>(R.id.userpromptname)
+        //val userPromptEditText: EditText = dialogView.findViewById<EditText>(R.id.userpromptname)
 
         // Set the custom view to the dialog builder
         val dialog = AlertDialog.Builder(context)
             .setView(dialogView)
             .create()  // Create the AlertDialog instance
 
-        // Find buttons within the custom layout
-        val okButton = dialogView.findViewById<ImageButton>(R.id.dialogButtonOk)
 
-        // Set click listeners for the buttons
-        okButton.setOnClickListener {
-            performOkAction()
-            dialog.dismiss()  // Dismiss the dialog when OK button is clicked
-        }
+
+
 
 
 
         // Show the dialog
-        //dialog.show()
+        dialog.show()
     }
 
     fun performOkAction() {
