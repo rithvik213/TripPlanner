@@ -7,39 +7,57 @@
     android:background="@color/appBackgroundColor"
     tools:context=".DestinationsPage">
 
-    <ImageView
+
+
+    <FrameLayout
         android:layout_width="match_parent"
-        android:id="@+id/destinationimage"
-        android:layout_height="348dp" />
+        android:layout_height="wrap_content" >
+
+        <ImageView
+            android:id="@+id/destinationimage"
+            android:layout_width="match_parent"
+            android:layout_height="320dp"
+            android:scaleType="centerCrop" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:layout_gravity="bottom"
+            android:background="@drawable/destinationcardcorners" />
+
+    </FrameLayout>
+
 
     <TextView
+        android:id="@+id/destinationname"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:fontFamily="@font/poppins"
-        android:id="@+id/destinationname"
         android:text="Title"
-        android:layout_marginLeft="10dp"
         android:textColor="@color/white"
         android:textSize="30dp" />
 
     <TextView
         android:id="@+id/destinationdescription"
-        android:layout_width="385dp"
-        android:layout_height="186dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:fontFamily="@font/poppins"
-        android:text="Description"
-        android:textColor="@color/white" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:id="@+id/plantripbutton"
-        android:layout_height="wrap_content"
+        android:layout_width="340dp"
+        android:layout_height="233dp"
         android:layout_gravity="center"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="40dp"
-        android:text="Plan a Trip"/>
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginRight="15dp"
+        android:fontFamily="@font/poppinslight"
+        android:text="description"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="16sp" />
+
+    <ImageButton
+        android:id="@+id/plantripbutton"
+        android:layout_width="350dp"
+        android:layout_height="43dp"
+        android:layout_gravity="center"
+        android:background="@drawable/plantripbutton" />
 
 
 
