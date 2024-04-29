@@ -8,30 +8,25 @@
     android:gravity="center">
 
 
-    <EditText
+    <TextView
         android:layout_width="wrap_content"
         android:id="@+id/userpromptname"
         android:layout_height="wrap_content"
-        android:text="What is your name?"
+        android:text="@string/please_wait_as_we_personalize_your_experience"
         android:fontFamily="@font/poppins"
         android:textColor="@color/white"/>
 
-
-
-    <LinearLayout
+    <ProgressBar
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
+        android:layout_marginTop="10dp"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:indeterminateTintMode="src_atop"
+        android:indeterminateTint="@color/white"
+        android:id="@+id/progressbar"/>
 
-        <ImageButton
-            android:id="@+id/dialogButtonOk"
-            android:layout_width="wrap_content"
-            android:background="@drawable/save"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="OK"
-            android:textColor="#FFFFFF"
-            android:layout_marginEnd="8dp" />
-    </LinearLayout>
+
+
 
 
 </LinearLayout>
