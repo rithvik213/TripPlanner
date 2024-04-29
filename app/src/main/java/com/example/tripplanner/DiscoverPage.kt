@@ -29,7 +29,7 @@ class DiscoverPage : Fragment() {
     private var tripAdvisorManager: TripAdvisorManager? = null
     private lateinit var attractionsAdapter: NearbyAttractionsAdapter
     private lateinit var attractionsRecyclerView: RecyclerView
-    private lateinit var userLocationTextView: TextView
+    private lateinit var userLocationTextView: EditText
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
