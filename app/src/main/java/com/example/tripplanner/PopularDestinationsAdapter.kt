@@ -9,17 +9,25 @@ import android.view.View
 import com.bumptech.glide.Glide
 
 
-class PopularDestinationsAdapter(private val items: List<Destination>) : RecyclerView.Adapter<PopularDestinationsAdapter.ViewHolder>() {
+class PopularDestinationsAdapter(private val items: List<Destination>, private val onDestinationClicked: (Destination) -> Unit) : RecyclerView.Adapter<PopularDestinationsAdapter.ViewHolder>() {
 
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    class ViewHolder(view: View, onClick: (Int) -> Unit) : RecyclerView.ViewHolder(view) {
         val imageView: ImageView = view.findViewById(R.id.populardestinationimageView)
         val titleView: TextView = view.findViewById(R.id.populardestinationTitle)
+
+        init {
+            view.setOnClickListener {
+                onClick(adapterPosition)
+            }
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.populardestinationscards, parent, false)
-        return ViewHolder(view)
+        return ViewHolder(view) { position ->
+            onDestinationClicked(items[position])
+        }
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
