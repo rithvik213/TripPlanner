@@ -20,12 +20,8 @@ import androidx.navigation.fragment.findNavController
 class TripSearch : Fragment() {
 
     private lateinit var viewModel: SharedViewModel
-
-
     private var departFormatted = "2025-01-01"
     private var returnFormatted = "2025-01-01"
-
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -33,7 +29,6 @@ class TripSearch : Fragment() {
         val destinationAutoComplete = view.findViewById<EditText>(R.id.destinationAutoComplete)
         destinationAutoComplete.setText(city)
     }
-    @SuppressLint("MissingInflatedId")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -65,7 +60,6 @@ class TripSearch : Fragment() {
         val budgetSeekbar: SeekBar = view.findViewById(R.id.budgetseekbar)
         val budget: EditText = view.findViewById(R.id.budget)
         budgetSeekbar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            @SuppressLint("SetTextI18n")
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 if (fromUser) {
                     budget.setText("$" + progress.toString())
@@ -94,7 +88,7 @@ class TripSearch : Fragment() {
 
     private fun setupRadioButtonListeners(view: View) {
         val radioGroup = view.findViewById<RadioGroup>(R.id.radioGroup)
-        radioGroup.setOnCheckedChangeListener { group, checkedId ->
+        radioGroup.setOnCheckedChangeListener { _, checkedId ->
             val radioButton = view.findViewById<RadioButton>(checkedId)
             val attraction = radioButton.text.toString()
             // Update the ViewModel
