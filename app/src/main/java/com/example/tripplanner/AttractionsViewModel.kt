@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.LiveData
+import com.example.tripplanner.apis.tripadvisor.TripAdvisorManager
 
 class AttractionsViewModel : ViewModel() {
     private var tripAdvisorManager: TripAdvisorManager = TripAdvisorManager()
