@@ -113,6 +113,39 @@ class DiscoverPage : Fragment() {
         viewModel.attractions.observe(viewLifecycleOwner) { attractions ->
             (view?.findViewById<RecyclerView>(R.id.nearbydestinationsrecycler)?.adapter as? NearbyAttractionsAdapter)?.updateData(attractions)
         }
+
+        val destinationsAdapter = PopularDestinationsAdapter(destinations) { destination ->
+            val bundle = Bundle().apply {
+                putString("destinationTitle", destination.title)
+                putString("destinationImageURL", destination.imageUrl)
+                putString("destinationDescription", destination.description)
+            }
+            findNavController().navigate(R.id.action_discoverPage_to_destinationDetailsFragment, bundle)
+        }
+        destinationsrecyclerView.adapter = destinationsAdapter
+
+        requestLocationPermission()
+        return view
+    }
+    
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        // Inflate the custom dialog layout
+        val dialogView = LayoutInflater.from(context).inflate(R.layout.personalize_dialog, null)
+        //val userPromptEditText: EditText = dialogView.findViewById<EditText>(R.id.userpromptname)
+
+        // Set the custom view to the dialog builder
+        val dialog = AlertDialog.Builder(context)
+            .setView(dialogView)
+            .create()  // Create the AlertDialog instance
+
+        // Show the dialog
+        dialog.show()
+    }
+
+    fun performOkAction() {
+        //to do
     }
 
     private fun updateLocationName(latitude: Double, longitude: Double) {
