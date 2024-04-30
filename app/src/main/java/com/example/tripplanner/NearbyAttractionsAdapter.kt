@@ -7,6 +7,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.tripplanner.apis.tripadvisor.TripAdvisorManager
 
 class NearbyAttractionsAdapter(var items: List<TripAdvisorManager.AttractionDetail>, private val onAttractionClick: (Int) -> Unit) :
     RecyclerView.Adapter<NearbyAttractionsAdapter.ViewHolder>() {

@@ -1,4 +1,4 @@
-package com.example.tripplanner;
+package com.example.tripplanner.apis.serp;
 
 import com.google.gson.JsonObject;
 

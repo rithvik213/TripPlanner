@@ -10,6 +10,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
+import com.example.tripplanner.apis.tripadvisor.TripAdvisorManager
 
 class AttractionsFragment : Fragment() {
     private lateinit var viewModel: AttractionsViewModel
