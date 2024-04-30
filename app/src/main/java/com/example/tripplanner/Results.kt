@@ -39,7 +39,8 @@ class Results : Fragment() {
         "Berlin" to "BER",
         "Beijing" to "BJS",
         "Mumbai" to "BOM",
-        "Austin" to "AUS"
+        "Austin" to "AUS",
+        "Boston" to "BOS"
     )
     private lateinit var adapter: ExcursionAdapter
     private var excursions: MutableList<Excursion> = mutableListOf()
@@ -132,6 +133,7 @@ class Results : Fragment() {
             } else {
                 Toast.makeText(context, "Flight information not fully available", Toast.LENGTH_LONG).show()
             }
+
         }
 
 
@@ -191,61 +193,98 @@ class Results : Fragment() {
 
 
     private fun fetchFlights(view: View){
-        lifecycleScope.launch {
-            val flightInfo = fetchFlightOffers(
-                originLoc = cityIataCodes[origin]!!,
-                destLoc = cityIataCodes[cityName]!!,
-                departureDate = departDate,
-                returnDate = returnDate,
-                adults = 1,
-                maxPrice = budget,
-                currencyCode = "USD",
-                max = 1
-            )
-            Log.i("originLoc",cityIataCodes[origin]!!)
-            Log.i("destLoc",cityIataCodes[cityName]!!)
-            Log.i("depdate",departDate)
-            Log.i("retdate",returnDate)
-            Log.i("budget",budget.toString())
+        if (cityIataCodes[origin] == null || cityIataCodes[cityName] == null){
+            val errorMessage = "No flights found for the given parameters."
+            ErrorDialogFragment.newInstance(errorMessage).show(childFragmentManager, "error_dialog")
+        } else {
+            lifecycleScope.launch {
+                val flightInfo = fetchFlightOffers(
+                    originLoc = cityIataCodes[origin]!!,
+                    destLoc = cityIataCodes[cityName]!!,
+                    departureDate = departDate,
+                    returnDate = returnDate,
+                    adults = 1,
+                    maxPrice = budget,
+                    currencyCode = "USD",
+                    max = 1
+                )
+                Log.i("originLoc", cityIataCodes[origin]!!)
+                Log.i("destLoc", cityIataCodes[cityName]!!)
+                Log.i("depdate", departDate)
+                Log.i("retdate", returnDate)
+                Log.i("budget", budget.toString())
 
-            if (flightInfo == null){
-                Toast.makeText(context, "No flights found with given parameters", Toast.LENGTH_LONG).show()
-            } else {
-                departAirport = flightInfo.flightOffers[0].itineraries[0].segments[0].departure.iataCode
-                arrivalAirport = flightInfo.flightOffers[0].itineraries[0].segments[0].arrival.iataCode
-                departAirport2 = flightInfo.flightOffers[0].itineraries[1].segments[0].departure.iataCode
-                arrivalAirport2 = flightInfo.flightOffers[0].itineraries[1].segments[0].arrival.iataCode
-                price = flightInfo.flightOffers[0].price.total
+                if (flightInfo == null) {
+                    Toast.makeText(
+                        context,
+                        "No flights found with given parameters",
+                        Toast.LENGTH_LONG
+                    ).show()
+                    val errorMessage = "An error occurred. Please try again later."
+                    ErrorDialogFragment.newInstance(errorMessage)
+                        .show(childFragmentManager, "error_dialog")
+                } else {
+                    departAirport =
+                        flightInfo.flightOffers[0].itineraries[0].segments[0].departure.iataCode
+                    arrivalAirport =
+                        flightInfo.flightOffers[0].itineraries[0].segments[0].arrival.iataCode
+                    departAirport2 =
+                        flightInfo.flightOffers[0].itineraries[1].segments[0].departure.iataCode
+                    arrivalAirport2 =
+                        flightInfo.flightOffers[0].itineraries[1].segments[0].arrival.iataCode
+                    price = flightInfo.flightOffers[0].price.total
 
-                departTime = dateFormat.parse(flightInfo.flightOffers[0].itineraries[0].segments[0].departure.dateTime)!!
-                arrivalTime = dateFormat.parse(flightInfo.flightOffers[0].itineraries[0].segments[0].arrival.dateTime)!!
-                departTime2 = dateFormat.parse(flightInfo.flightOffers[0].itineraries[1].segments[0].departure.dateTime)!!
-                arrivalTime2 = dateFormat.parse(flightInfo.flightOffers[0].itineraries[1].segments[0].arrival.dateTime)!!
-                departTerminal = flightInfo.flightOffers[0].itineraries[0].segments[0].departure.terminal ?: "N/A"
-                arrivalTerminal = flightInfo.flightOffers[0].itineraries[0].segments[0].arrival.terminal ?: "N/A"
-                departTerminal2 = flightInfo.flightOffers[0].itineraries[1].segments[0].departure.terminal ?: "N/A"
-                arrivalTerminal2 = flightInfo.flightOffers[0].itineraries[1].segments[0].arrival.terminal ?: "N/A"
+                    departTime =
+                        dateFormat.parse(flightInfo.flightOffers[0].itineraries[0].segments[0].departure.dateTime)!!
+                    arrivalTime =
+                        dateFormat.parse(flightInfo.flightOffers[0].itineraries[0].segments[0].arrival.dateTime)!!
+                    departTime2 =
+                        dateFormat.parse(flightInfo.flightOffers[0].itineraries[1].segments[0].departure.dateTime)!!
+                    arrivalTime2 =
+                        dateFormat.parse(flightInfo.flightOffers[0].itineraries[1].segments[0].arrival.dateTime)!!
+                    departTerminal =
+                        flightInfo.flightOffers[0].itineraries[0].segments[0].departure.terminal
+                            ?: "N/A"
+                    arrivalTerminal =
+                        flightInfo.flightOffers[0].itineraries[0].segments[0].arrival.terminal
+                            ?: "N/A"
+                    departTerminal2 =
+                        flightInfo.flightOffers[0].itineraries[1].segments[0].departure.terminal
+                            ?: "N/A"
+                    arrivalTerminal2 =
+                        flightInfo.flightOffers[0].itineraries[1].segments[0].arrival.terminal
+                            ?: "N/A"
 
-                view.findViewById<TextView>(R.id.destination).text = cityName
-                view.findViewById<TextView>(R.id.departureAirportCode).text = departAirport
-                view.findViewById<TextView>(R.id.arrivalAirportCode).text = arrivalAirport
-                view.findViewById<TextView>(R.id.departureAirportCode2).text = departAirport2
-                view.findViewById<TextView>(R.id.arrivalAirportCode2).text = arrivalAirport2
-                view.findViewById<TextView>(R.id.departuredate).text = dateFormatter.format(departTime!!)
-                view.findViewById<TextView>(R.id.returndates).text = dateFormatter.format(arrivalTime2!!)
-                view.findViewById<TextView>(R.id.departureTime).text = timeFormatter.format(departTime)
-                view.findViewById<TextView>(R.id.arrivalTime).text = timeFormatter.format(arrivalTime!!)
-                view.findViewById<TextView>(R.id.departureTime2).text = timeFormatter.format(departTime2!!)
-                view.findViewById<TextView>(R.id.arrivalTime2).text = timeFormatter.format(arrivalTime2)
-                view.findViewById<TextView>(R.id.departureTerminal).text = "Terminal " + departTerminal
-                view.findViewById<TextView>(R.id.arrivalTerminal).text = "Terminal " + arrivalTerminal
-                view.findViewById<TextView>(R.id.departureTerminal2).text = "Terminal " + departTerminal2
-                view.findViewById<TextView>(R.id.arrivalTerminal2).text = "Terminal " + arrivalTerminal2
-                view.findViewById<TextView>(R.id.totalprice).text = "$" + price
+                    view.findViewById<TextView>(R.id.destination).text = cityName
+                    view.findViewById<TextView>(R.id.departureAirportCode).text = departAirport
+                    view.findViewById<TextView>(R.id.arrivalAirportCode).text = arrivalAirport
+                    view.findViewById<TextView>(R.id.departureAirportCode2).text = departAirport2
+                    view.findViewById<TextView>(R.id.arrivalAirportCode2).text = arrivalAirport2
+                    view.findViewById<TextView>(R.id.departuredate).text =
+                        dateFormatter.format(departTime!!)
+                    view.findViewById<TextView>(R.id.returndates).text =
+                        dateFormatter.format(arrivalTime2!!)
+                    view.findViewById<TextView>(R.id.departureTime).text =
+                        timeFormatter.format(departTime)
+                    view.findViewById<TextView>(R.id.arrivalTime).text =
+                        timeFormatter.format(arrivalTime!!)
+                    view.findViewById<TextView>(R.id.departureTime2).text =
+                        timeFormatter.format(departTime2!!)
+                    view.findViewById<TextView>(R.id.arrivalTime2).text =
+                        timeFormatter.format(arrivalTime2)
+                    view.findViewById<TextView>(R.id.departureTerminal).text =
+                        "Terminal " + departTerminal
+                    view.findViewById<TextView>(R.id.arrivalTerminal).text =
+                        "Terminal " + arrivalTerminal
+                    view.findViewById<TextView>(R.id.departureTerminal2).text =
+                        "Terminal " + departTerminal2
+                    view.findViewById<TextView>(R.id.arrivalTerminal2).text =
+                        "Terminal " + arrivalTerminal2
+                    view.findViewById<TextView>(R.id.totalprice).text = "$" + price
+                }
+
             }
-
         }
-
     }
 
     private fun fetchAttractions(cityName: String) {
