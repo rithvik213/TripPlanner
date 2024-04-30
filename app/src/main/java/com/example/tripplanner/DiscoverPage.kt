@@ -114,18 +114,6 @@ class DiscoverPage : Fragment() {
             (view?.findViewById<RecyclerView>(R.id.nearbydestinationsrecycler)?.adapter as? NearbyAttractionsAdapter)?.updateData(attractions)
         }
 
-        val destinationsAdapter = PopularDestinationsAdapter(destinations) { destination ->
-            val bundle = Bundle().apply {
-                putString("destinationTitle", destination.title)
-                putString("destinationImageURL", destination.imageUrl)
-                putString("destinationDescription", destination.description)
-            }
-            findNavController().navigate(R.id.action_discoverPage_to_destinationDetailsFragment, bundle)
-        }
-        destinationsrecyclerView.adapter = destinationsAdapter
-
-        requestLocationPermission()
-        return view
     }
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
