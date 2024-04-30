@@ -48,7 +48,7 @@
             <ImageButton
                 android:layout_width="60dp"
                 android:layout_height="52dp"
-                android:id="@+id/fab_suitcase"
+                android:id="@+id/fab_trips"
                 android:background="@drawable/suitcase"
                 android:layout_marginRight="8dp"/>
 

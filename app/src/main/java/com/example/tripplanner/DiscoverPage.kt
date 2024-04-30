@@ -62,7 +62,10 @@ class DiscoverPage : Fragment() {
         val view = inflater.inflate(R.layout.fragment_discover_page, container, false)
 
         userLocationTextView = view.findViewById(R.id.userlocation)
-
+        val userIcon = view.findViewById<ImageButton>(R.id.usericon)
+        userIcon.setOnClickListener {
+            findNavController().navigate(R.id.action_discoverPage_to_userprofilefragment)
+        }
         arguments?.let {
             val userName = it.getString("userName", "User")
             view.findViewById<TextView>(R.id.userwelcome).text = "Welcome, $userName!"
@@ -86,7 +89,6 @@ class DiscoverPage : Fragment() {
 
 
         val destinations = getDestinations()
-        destinationsrecyclerView.adapter = PopularDestinationsAdapter(destinations)
 
         viewModel.attractions.observe(viewLifecycleOwner) { attractions ->
             if (attractions.isNotEmpty()) {
@@ -96,6 +98,15 @@ class DiscoverPage : Fragment() {
             }
         }
 
+        val destinationsAdapter = PopularDestinationsAdapter(destinations) { destination ->
+            val bundle = Bundle().apply {
+                putString("destinationTitle", destination.title)
+                putString("destinationImageURL", destination.imageUrl)
+                putString("destinationDescription", destination.description)
+            }
+            findNavController().navigate(R.id.action_discoverPage_to_destinationDetailsFragment, bundle)
+        }
+        destinationsrecyclerView.adapter = destinationsAdapter
 
         requestLocationPermission()
         return view
@@ -106,26 +117,21 @@ class DiscoverPage : Fragment() {
 
         // Inflate the custom dialog layout
         val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog, null)
-        val userPromptEditText: EditText = dialogView.findViewById<EditText>(R.id.userpromptname)
+        //val userPromptEditText: EditText = dialogView.findViewById<EditText>(R.id.userpromptname)
 
         // Set the custom view to the dialog builder
         val dialog = AlertDialog.Builder(context)
             .setView(dialogView)
             .create()  // Create the AlertDialog instance
 
-        // Find buttons within the custom layout
-        val okButton = dialogView.findViewById<ImageButton>(R.id.dialogButtonOk)
 
-        // Set click listeners for the buttons
-        okButton.setOnClickListener {
-            performOkAction()
-            dialog.dismiss()  // Dismiss the dialog when OK button is clicked
-        }
+
+
 
 
 
         // Show the dialog
-        //dialog.show()
+        dialog.show()
     }
 
     fun performOkAction() {
@@ -212,41 +218,50 @@ class DiscoverPage : Fragment() {
     private fun getDestinations(): List<Destination> {
         return listOf(
             Destination(
-                title = "New York City",
-                imageUrl = "https://images.unsplash.com/photo-1546436836-07a91091f160?q=80&w=2948&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-            ),
-            Destination(
-                title = "Paris",
-                imageUrl = "https://images.unsplash.com/photo-1522093007474-d86e9bf7ba6f?q=80&w=1600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-            ),
-            Destination(
-                title = "Tokyo",
-                imageUrl = "https://images.unsplash.com/photo-1545569341-9eb8b30979d9?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-            ),
-            Destination(
                 title = "London",
-                imageUrl = "https://images.unsplash.com/photo-1529655683826-aba9b3e77383?q=80&w=2865&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-            ),
-            Destination(
-                title = "Sydney",
-                imageUrl = "https://images.unsplash.com/photo-1523428096881-5bd79d043006?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-            ),
-            Destination(
-                title = "Los Angeles",
-                imageUrl = "https://images.unsplash.com/flagged/photo-1575555201693-7cd442b8023f?q=80&w=3000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                imageUrl = "https://images.unsplash.com/photo-1529655683826-aba9b3e77383?q=80&w=2865&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+                description = "London, a city steeped in history yet fervently modern, invites you to wander through centuries-old streets that echo with tales of innovation and conquest. Explore world-class museums, royal parks, and landmarks like the Tower of London and Buckingham Palace, all set against a backdrop of dynamic cultural diversity."
             ),
             Destination(
                 title = "Rome",
-                imageUrl = "https://images.unsplash.com/photo-1491566102020-21838225c3c8?q=80&w=3000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                imageUrl = "https://images.unsplash.com/photo-1542820229-081e0c12af0b?q=80&w=2946&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+                description = "Rome, the eternal city, offers a timeless journey through history, art, and culture. Wander among the ruins of the Roman Forum, gaze at the magnificence of the Colosseum, and step into the Vatican City to witness the splendor of St. Peter's Basilica. Rome's rich heritage and vibrant street life make every visit a mesmerizing encounter with the past."
+            ),
+            Destination(
+                title = "New York City",
+                imageUrl = "https://images.unsplash.com/photo-1544111795-fe8b9def73f6?q=80&w=2539&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+                description = "Experience the relentless energy and iconic sights of New York City, where dreams are made and pursued on the bustling streets of the world's most famous metropolis. From the dazzling lights of Times Square to the serene paths of Central Park, the city offers a dazzling array of experiences, cultures, and cuisines that captivate visitors from around the globe."
+            ),
+            Destination(
+                title = "Paris",
+                imageUrl = "https://images.unsplash.com/photo-1522093007474-d86e9bf7ba6f?q=80&w=1600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+                description  = "Paris, the city of light and love, beckons with its unparalleled museums, charming street cafes, and exquisite cuisine. Stroll along the Seine, visit the majestic Eiffel Tower, or lose yourself in the art-filled corridors of the Louvre. Paris promises a magical experience infused with romance and beauty at every corner."
+                ),
+            Destination(
+                title = "Tokyo",
+                imageUrl = "https://images.unsplash.com/photo-1528164344705-47542687000d?q=80&w=2984&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+                description = "Dive into the vibrant heart of Tokyo, where ancient traditions blend seamlessly with cutting-edge technology. This bustling capital features neon-lit skyscrapers, historic temples, and bustling markets, offering a unique blend of the old and the new that enchants both the seasoned traveler and the curious explorer."
+                ),
+            Destination(
+                title = "Sydney",
+                imageUrl = "https://images.unsplash.com/photo-1523428096881-5bd79d043006?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+                description = "Sydney, a bustling harbor city, is famed for its stunning coastline and vibrant culture. From the iconic Sydney Opera House to the rugged cliffs of the Blue Mountains, this city combines natural beauty with exuberant city life, offering endless opportunities for adventure and exploration."
+                ),
+            Destination(
+                title = "Los Angeles",
+                imageUrl = "https://images.unsplash.com/photo-1542737579-ba0a385f3b84?q=80&w=3088&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+                description = "Explore Los Angeles, a sun-soaked paradise where dreams of fame and fortune fill the balmy air. Home to Hollywood, expansive beaches, and an eclectic cultural scene, LA invites you to discover its storied boulevards, indulge in diverse cuisines, and experience its dynamic arts and entertainment offerings."
             ),
             Destination(
                 title = "Beijing",
-                imageUrl = "https://images.unsplash.com/photo-1590301729964-23833732ee04?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-            ),
+                imageUrl = "https://images.unsplash.com/photo-1584872589930-e99fe5bf4408?q=80&w=2954&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+                description = "Beijing stands as a majestic blend of ancient majesty and contemporary vigor. Home to imperial wonders such as the Forbidden City and the Temple of Heaven, Beijing also serves as a gateway to the Great Wall of China. This city is a profound tapestry of history interwoven with modernity, offering deep cultural experiences against a backdrop of rapid urban development."
+                ),
             Destination(
                 title = "Mumbai",
-                imageUrl = "https://images.unsplash.com/photo-1570168007204-dfb528c6958f?q=80&w=2835&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-            )
+                imageUrl = "https://images.unsplash.com/photo-1529253355930-ddbe423a2ac7?q=80&w=2665&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+                description = "Step into the energetic pulse of Mumbai, a city of stark contrasts where glamour and tradition coexist. Known as the heart of the Bollywood film industry, Mumbai is also a place of historic markets, iconic architecture, and endless streets filled with the aroma of spicy street food."
+                )
 
         )
     }
