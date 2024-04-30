@@ -83,6 +83,11 @@ dependencies {
 
     implementation("com.google.android.gms:play-services-location:21.2.0")
 
+    implementation("com.google.api-client:google-api-client-android:1.32.1")
+    implementation("com.google.api-client:google-api-client-gson:1.32.1")
+    implementation("com.google.apis:google-api-services-calendar:v3-rev305-1.25.0")
+
+
 
 
 
