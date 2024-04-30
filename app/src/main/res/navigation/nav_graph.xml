@@ -97,6 +97,9 @@
         <action
             android:id="@+id/action_discoverPage_to_destinationDetailsFragment"
             app:destination="@id/destinationspageFragment" />
+        <action
+            android:id="@+id/action_discoverPage_to_userprofilefragment"
+            app:destination="@+id/userProfileFragment"/>
     </fragment>
 
     <fragment
@@ -107,8 +110,11 @@
 
 
     <action android:id="@+id/global_action_to_homeScreen"
-        app:destination="@id/homeScreenFragment" />
+        app:destination="@id/discoverPageFragment" />
 
     <action android:id="@+id/global_action_to_personScreen"
         app:destination="@id/userProfileFragment" />
+
+    <action android:id="@+id/global_action_to_tripScreen"
+        app:destination="@+id/homeScreenFragment"/>
 </navigation>

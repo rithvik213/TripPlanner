@@ -1,5 +1,6 @@
 package com.example.tripplanner
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -21,6 +22,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var bottomAppBar: Toolbar
     private lateinit var fabPerson: AppCompatImageButton
     private lateinit var fabHome: AppCompatImageButton
+    private lateinit var fabTrips: AppCompatImageButton
+    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -28,10 +31,12 @@ class MainActivity : AppCompatActivity() {
         bottomAppBar = findViewById(R.id.bottomAppBar)
         fabPerson = findViewById(R.id.fab_person)
         fabHome = findViewById(R.id.fab_home)
+        fabTrips = findViewById(R.id.fab_trips)
 
         bottomAppBar.visibility = View.GONE
         fabPerson.visibility = View.GONE
         fabHome.visibility = View.GONE
+        fabTrips.visibility = View.GONE
 
         supportActionBar?.setDisplayHomeAsUpEnabled(false)
         supportActionBar?.setDisplayShowHomeEnabled(false)
@@ -47,17 +52,23 @@ class MainActivity : AppCompatActivity() {
             navController.navigate(R.id.global_action_to_personScreen)
         }
 
+        fabTrips.setOnClickListener {
+            navController.navigate(R.id.global_action_to_tripScreen)
+        }
+
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
                 R.id.onboardingFragment -> {
                     bottomAppBar.visibility = View.GONE
                     fabPerson.visibility = View.GONE
                     fabHome.visibility = View.GONE
+                    fabTrips.visibility = View.GONE
                 }
                 else -> {
                     bottomAppBar.visibility = View.VISIBLE
                     fabPerson.visibility = View.VISIBLE
                     fabHome.visibility = View.VISIBLE
+                    fabTrips.visibility = View.VISIBLE
                 }
             }
         }
