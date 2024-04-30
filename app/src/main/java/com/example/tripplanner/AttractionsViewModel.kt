@@ -22,6 +22,14 @@ class AttractionsViewModel : ViewModel() {
     private val _attractionDetails = MutableLiveData<TripAdvisorManager.AttractionDetailsResponse>()
     val attractionDetails: LiveData<TripAdvisorManager.AttractionDetailsResponse> = _attractionDetails
 
+    private var _currentCity = MutableLiveData<String?>()
+    val currentCity: LiveData<String?> = _currentCity
+
+    val userName = MutableLiveData<String>()
+
+    var lastLocation: android.location.Location? = null
+
+
     // Initialize the TripAdvisorManager with context and listeners
     fun initializeManager(context: Context) {
         tripAdvisorManager = TripAdvisorManager()
@@ -37,6 +45,23 @@ class AttractionsViewModel : ViewModel() {
         Log.d("AttractionsViewModel", "ViewModel instance cleared: $this")
     }
 
+    fun updateLocation(context: Context, latitude: Double, longitude: Double) {
+        val newLocation = android.location.Location("").apply {
+            this.latitude = latitude
+            this.longitude = longitude
+        }
+        if (lastLocation == null || newLocation.distanceTo(lastLocation!!) > 500) {
+            lastLocation = newLocation
+            fetchNearbyAttractions(context, latitude, longitude)
+            _currentCity.postValue(null)
+        }
+    }
+
+    fun shouldUpdateCityName(): Boolean {
+        return currentCity.value.isNullOrEmpty()
+    }
+
+
     fun fetchNearbyAttractions(context: Context, latitude: Double, longitude: Double) {
         val key = "$latitude,$longitude"
         val searchQuery = "things to do near me"
@@ -48,28 +73,39 @@ class AttractionsViewModel : ViewModel() {
             _attractions.postValue(it)
         } ?: run {
             Log.d("AttractionsViewModel", "No cache found for key: $key, fetching from API")
-            tripAdvisorManager.fetchSearchTheLocation(context, "Current Location", "attractions", key, searchQuery, object : TripAdvisorManager.AttractionFetchListener {
-                override fun onAttractionsFetched(attractions: List<TripAdvisorManager.AttractionDetail>) {
-                    if (attractions.isNotEmpty()) {
-                        Log.d("AttractionsViewModel", "Attractions fetched successfully: ${attractions.size}")
-                        attractionsCache[key] = attractions
-                        logAttractionsCache()
-                        _attractions.postValue(attractions)
-                    } else {
-                        Log.d("AttractionsViewModel", "No attractions returned from API")
+            tripAdvisorManager.fetchSearchTheLocation(
+                context,
+                "Current Location",
+                "attractions",
+                key,
+                searchQuery,
+                object : TripAdvisorManager.AttractionFetchListener {
+                    override fun onAttractionsFetched(attractions: List<TripAdvisorManager.AttractionDetail>) {
+                        if (attractions.isNotEmpty()) {
+                            Log.d(
+                                "AttractionsViewModel",
+                                "Attractions fetched successfully: ${attractions.size}"
+                            )
+                            attractionsCache[key] = attractions
+                            logAttractionsCache()
+                            _attractions.postValue(attractions)
+                        } else {
+                            Log.d("AttractionsViewModel", "No attractions returned from API")
+                            _attractions.postValue(listOf())
+                        }
+                    }
+
+                    override fun onAttractionFetchFailed(errorMessage: String) {
+                        Log.e("AttractionsViewModel", "Error fetching attractions: $errorMessage")
                         _attractions.postValue(listOf())
                     }
-                }
-
-                override fun onAttractionFetchFailed(errorMessage: String) {
-                    Log.e("AttractionsViewModel", "Error fetching attractions: $errorMessage")
-                    _attractions.postValue(listOf())
-                }
-            })
+                })
         }
     }
 
-
+    fun updateCurrentCity(cityName: String) {
+        _currentCity.value = cityName
+    }
 
 
 
