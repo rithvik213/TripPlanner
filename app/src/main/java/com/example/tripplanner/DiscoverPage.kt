@@ -1,87 +1,104 @@
 package com.example.tripplanner
+
+import android.Manifest
 import android.app.AlertDialog
+import android.content.pm.PackageManager
+import android.location.Geocoder
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import android.widget.ImageButton
-import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import android.Manifest
-import android.content.pm.PackageManager
-import android.location.Geocoder
-import android.util.Log
 import android.widget.TextView
 import androidx.core.app.ActivityCompat
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationResult
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.gms.location.*
 import java.io.IOException
 import java.util.Locale
 
 class DiscoverPage : Fragment() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
-    private var tripAdvisorManager: TripAdvisorManager? = null
     private lateinit var viewModel: AttractionsViewModel
-    private lateinit var attractionsAdapter: NearbyAttractionsAdapter
-    private lateinit var attractionsRecyclerView: RecyclerView
     private lateinit var userLocationTextView: TextView
     private var loadingDialog: AlertDialog? = null
 
-    private var lastKnownLocation: Location? = null
-    private val locationUpdateThreshold = 100 // meters
-
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        initializeLocationComponents()
+    }
+
+    private fun initializeLocationComponents() {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
         viewModel = ViewModelProvider(requireActivity()).get(AttractionsViewModel::class.java)
+        setupLocationCallback()
+    }
 
-        // Initialize the locationCallback here
+    private fun setupLocationCallback() {
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
-                super.onLocationResult(locationResult)
-                if (locationResult.locations.isNotEmpty()) {
-                    val location = locationResult.locations[0]
-                    viewModel.updateLocation(requireContext(), location.latitude, location.longitude)
-
-                    if (viewModel.shouldUpdateCityName()) {
-                        updateLocationName(location.latitude, location.longitude)
-                    }
-
+                locationResult.locations.firstOrNull()?.let { location ->
+                    handleNewLocation(location)
                     fusedLocationClient.removeLocationUpdates(this)
                 }
             }
         }
-
         startLocationUpdates()
     }
 
+    private fun handleNewLocation(location: android.location.Location) {
+        viewModel.updateLocation(requireContext(), location.latitude, location.longitude)
+        if (viewModel.shouldUpdateCityName()) {
+            updateLocationName(location.latitude, location.longitude)
+        }
+    }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_discover_page, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_discover_page, container, false).also { view ->
+            setupUI(view)
+        }
+    }
 
+    private fun setupUI(view: View) {
         userLocationTextView = view.findViewById(R.id.userlocation)
-        val userIcon = view.findViewById<ImageButton>(R.id.usericon)
-        userIcon.setOnClickListener {
+        view.findViewById<ImageButton>(R.id.usericon).setOnClickListener {
             findNavController().navigate(R.id.action_discoverPage_to_userprofilefragment)
         }
+        setupRecyclerViews(view)
+        observeViewModel()
+    }
 
-        // Observe userName from ViewModel
+    private fun setupRecyclerViews(view: View) {
+        val attractionsRecyclerView = view.findViewById<RecyclerView>(R.id.nearbydestinationsrecycler).apply {
+            layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+            adapter = NearbyAttractionsAdapter(listOf()) { position ->
+                val attractionId = (adapter as NearbyAttractionsAdapter).items[position].locationID
+                val bundle = Bundle().apply { putString("locationID", attractionId) }
+                findNavController().navigate(R.id.action_discoverPageFragment_to_AttractionsFragment, bundle)
+            }
+        }
+        val destinationsRecyclerView = view.findViewById<RecyclerView>(R.id.recyclerviewdestinations).apply {
+            layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+            adapter = PopularDestinationsAdapter(getDestinations()) { destination ->
+                val bundle = Bundle().apply {
+                    putString("destinationTitle", destination.title)
+                    putString("destinationImageURL", destination.imageUrl)
+                    putString("destinationDescription", destination.description)
+                }
+                findNavController().navigate(R.id.action_discoverPage_to_destinationDetailsFragment, bundle)
+            }
+        }
+    }
+
+    private fun observeViewModel() {
         viewModel.userName.observe(viewLifecycleOwner) { userName ->
             val welcomeText = if (userName.isNullOrEmpty()) "Welcome, User" else "Welcome, $userName"
-            view.findViewById<TextView>(R.id.userwelcome).text = welcomeText
+            view?.findViewById<TextView>(R.id.userwelcome)?.text = welcomeText
         }
 
         // Set username if not already available
@@ -90,50 +107,13 @@ class DiscoverPage : Fragment() {
                 viewModel.userName.value = userName
             }
         }
-
-        // Observe the currentCity LiveData from the ViewModel
         viewModel.currentCity.observe(viewLifecycleOwner) { cityName ->
-            if (!cityName.isNullOrEmpty()) {
-                userLocationTextView.text = cityName
-            } else {
-                userLocationTextView.text = "Unknown Location"
-            }
+            userLocationTextView.text = cityName ?: "Determining Location..."
         }
-
-        /*
-        arguments?.let {
-            val userName = it.getString("userName", "User")
-            viewModel.userName.value = userName
-            view.findViewById<TextView>(R.id.userwelcome).text = "Welcome, $userName!"
-        }
-         */
-
-        val destinationsrecyclerView: RecyclerView = view.findViewById(R.id.recyclerviewdestinations)
-
-        attractionsRecyclerView = view.findViewById(R.id.nearbydestinationsrecycler)
-        attractionsRecyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-
-        attractionsAdapter = NearbyAttractionsAdapter(listOf()) { position ->
-            val attractionId = attractionsAdapter.items[position].locationID
-            val bundle = Bundle()
-            bundle.putString("locationID", attractionId)
-            findNavController().navigate(R.id.action_discoverPageFragment_to_AttractionsFragment, bundle)
-        }
-
-        attractionsRecyclerView.adapter = attractionsAdapter
-        val destinationslayoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-        destinationsrecyclerView.layoutManager = destinationslayoutManager
-
-
-        val destinations = getDestinations()
-
         viewModel.attractions.observe(viewLifecycleOwner) { attractions ->
-            if (attractions.isNotEmpty()) {
-                attractionsAdapter.updateData(attractions)
-            } else {
-                Log.d("DiscoverPage", "No attractions to display")
-            }
+            (view?.findViewById<RecyclerView>(R.id.nearbydestinationsrecycler)?.adapter as? NearbyAttractionsAdapter)?.updateData(attractions)
         }
+
         val destinationsAdapter = PopularDestinationsAdapter(destinations) { destination ->
             val bundle = Bundle().apply {
                 putString("destinationTitle", destination.title)
@@ -147,9 +127,9 @@ class DiscoverPage : Fragment() {
         requestLocationPermission()
         return view
     }
+    
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
 
         // Inflate the custom dialog layout
         val dialogView = LayoutInflater.from(context).inflate(R.layout.personalize_dialog, null)
@@ -168,24 +148,11 @@ class DiscoverPage : Fragment() {
         //to do
     }
 
-    private fun showLoadingDialog() {
-        val builder = AlertDialog.Builder(requireContext())
-        val inflater = layoutInflater
-        builder.setView(inflater.inflate(R.layout.loading_dialog, null))
-        builder.setCancelable(false)  // Make it non-cancellable, so it doesn't dismiss on back press
-        loadingDialog = builder.create()
-        loadingDialog?.show()
-    }
-
-    private fun hideLoadingDialog() {
-        loadingDialog?.dismiss()
-    }
-
-
-
     private fun updateLocationName(latitude: Double, longitude: Double) {
         if (!Geocoder.isPresent()) {
             Log.w("DiscoverPage", "Geocoder not available")
+            userLocationTextView.text = "Geocoder not available"
+            viewModel.updateCurrentCity("Geocoder not available")
             return
         }
 
@@ -195,30 +162,21 @@ class DiscoverPage : Fragment() {
             if (addresses != null && addresses.isNotEmpty()) {
                 val address = addresses[0]
                 val city = address.locality ?: address.subAdminArea ?: "Unknown Location"
-                userLocationTextView.setText(city)
-                viewModel.updateCurrentCity(city)  // Update ViewModel with the city name
+                Log.d("DiscoverPage", "Geocoding successful, updating city: $city")
+                viewModel.updateCurrentCity(city)
             } else {
-                userLocationTextView.setText("Unknown Location")
+                Log.e("DiscoverPage", "No address found")
                 viewModel.updateCurrentCity("Unknown Location")
             }
         } catch (e: IOException) {
             Log.e("DiscoverPage", "Geocoder failed", e)
-            userLocationTextView.setText("Failed to determine location")
             viewModel.updateCurrentCity("Failed to determine location")
         }
     }
 
 
-
-    private fun updateUI(attractions: List<TripAdvisorManager.AttractionDetail>) {
-        // Directly update the UI component, such as a RecyclerView adapter or similar
-        attractionsAdapter.updateData(attractions)
-    }
-
-
-
     private fun requestLocationPermission() {
-        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
             ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1000)
         } else {
@@ -227,7 +185,7 @@ class DiscoverPage : Fragment() {
     }
 
     private fun startLocationUpdates() {
-        val locationRequest = LocationRequest.create()?.apply {
+        val locationRequest = LocationRequest.create().apply {
             interval = 10000
             fastestInterval = 5000
             priority = LocationRequest.PRIORITY_HIGH_ACCURACY
@@ -235,19 +193,16 @@ class DiscoverPage : Fragment() {
         }
         if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
             ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            if (locationRequest != null) {
-                fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null)
-            }
+            fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null)
         }
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == 1000 && grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            startLocationUpdates() // Start location updates only if permission is granted
+            startLocationUpdates()
         }
     }
-
 
     private fun getDestinations(): List<Destination> {
         return listOf(
@@ -270,27 +225,27 @@ class DiscoverPage : Fragment() {
                 title = "Paris",
                 imageUrl = "https://images.unsplash.com/photo-1541628951107-a9af5346a3e4?q=80&w=3089&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
                 description  = "Paris, the city of light and love, beckons with its unparalleled museums, charming street cafes, and exquisite cuisine. Stroll along the Seine, visit the majestic Eiffel Tower, or lose yourself in the art-filled corridors of the Louvre. Paris promises a magical experience infused with romance and beauty at every corner."
-                ),
+            ),
             Destination(
                 title = "Tokyo",
                 imageUrl = "https://images.unsplash.com/photo-1528164344705-47542687000d?q=80&w=2984&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
                 description = "Dive into the vibrant heart of Tokyo, where ancient traditions blend seamlessly with cutting-edge technology. This bustling capital features neon-lit skyscrapers, historic temples, and bustling markets, offering a unique blend of the old and the new that enchants both the seasoned traveler and the curious explorer."
-                ),
+            ),
             Destination(
                 title = "Sydney",
                 imageUrl = "https://images.unsplash.com/photo-1494233892892-84542a694e72?q=80&w=2242&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
                 description = "Sydney, a bustling harbor city, is famed for its stunning coastline and vibrant culture. From the iconic Sydney Opera House to the rugged cliffs of the Blue Mountains, this city combines natural beauty with exuberant city life, offering endless opportunities for adventure and exploration."
-                ),
+            ),
             Destination(
                 title = "Beijing",
                 imageUrl = "https://images.unsplash.com/photo-1516545595035-b494dd0161e4?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
                 description = "Beijing stands as a majestic blend of ancient majesty and contemporary vigor. Home to imperial wonders such as the Forbidden City and the Temple of Heaven, Beijing also serves as a gateway to the Great Wall of China. This city is a profound tapestry of history interwoven with modernity, offering deep cultural experiences against a backdrop of rapid urban development."
-                ),
+            ),
         )
     }
 
     override fun onPause() {
         super.onPause()
-        fusedLocationClient.removeLocationUpdates(locationCallback) // Ensure location updates are stopped when not needed
+        fusedLocationClient.removeLocationUpdates(locationCallback)
     }
 }
