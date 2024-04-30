@@ -228,13 +228,13 @@ class DiscoverPage : Fragment() {
                 description = "Rome, the eternal city, offers a timeless journey through history, art, and culture. Wander among the ruins of the Roman Forum, gaze at the magnificence of the Colosseum, and step into the Vatican City to witness the splendor of St. Peter's Basilica. Rome's rich heritage and vibrant street life make every visit a mesmerizing encounter with the past."
             ),
             Destination(
-                title = "New York City",
-                imageUrl = "https://images.unsplash.com/photo-1544111795-fe8b9def73f6?q=80&w=2539&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-                description = "Experience the relentless energy and iconic sights of New York City, where dreams are made and pursued on the bustling streets of the world's most famous metropolis. From the dazzling lights of Times Square to the serene paths of Central Park, the city offers a dazzling array of experiences, cultures, and cuisines that captivate visitors from around the globe."
+                title = "Mumbai",
+                imageUrl = "https://images.unsplash.com/photo-1523980077198-60824a7b2148?q=80&w=3087&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+                description = "Step into the energetic pulse of Mumbai, a city of stark contrasts where glamour and tradition coexist. Known as the heart of the Bollywood film industry, Mumbai is also a place of historic markets, iconic architecture, and endless streets filled with the aroma of spicy street food."
             ),
             Destination(
                 title = "Paris",
-                imageUrl = "https://images.unsplash.com/photo-1522093007474-d86e9bf7ba6f?q=80&w=1600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+                imageUrl = "https://images.unsplash.com/photo-1541628951107-a9af5346a3e4?q=80&w=3089&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
                 description  = "Paris, the city of light and love, beckons with its unparalleled museums, charming street cafes, and exquisite cuisine. Stroll along the Seine, visit the majestic Eiffel Tower, or lose yourself in the art-filled corridors of the Louvre. Paris promises a magical experience infused with romance and beauty at every corner."
                 ),
             Destination(
@@ -244,25 +244,14 @@ class DiscoverPage : Fragment() {
                 ),
             Destination(
                 title = "Sydney",
-                imageUrl = "https://images.unsplash.com/photo-1523428096881-5bd79d043006?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+                imageUrl = "https://images.unsplash.com/photo-1494233892892-84542a694e72?q=80&w=2242&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
                 description = "Sydney, a bustling harbor city, is famed for its stunning coastline and vibrant culture. From the iconic Sydney Opera House to the rugged cliffs of the Blue Mountains, this city combines natural beauty with exuberant city life, offering endless opportunities for adventure and exploration."
                 ),
             Destination(
-                title = "Los Angeles",
-                imageUrl = "https://images.unsplash.com/photo-1542737579-ba0a385f3b84?q=80&w=3088&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-                description = "Explore Los Angeles, a sun-soaked paradise where dreams of fame and fortune fill the balmy air. Home to Hollywood, expansive beaches, and an eclectic cultural scene, LA invites you to discover its storied boulevards, indulge in diverse cuisines, and experience its dynamic arts and entertainment offerings."
-            ),
-            Destination(
                 title = "Beijing",
-                imageUrl = "https://images.unsplash.com/photo-1584872589930-e99fe5bf4408?q=80&w=2954&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+                imageUrl = "https://images.unsplash.com/photo-1516545595035-b494dd0161e4?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
                 description = "Beijing stands as a majestic blend of ancient majesty and contemporary vigor. Home to imperial wonders such as the Forbidden City and the Temple of Heaven, Beijing also serves as a gateway to the Great Wall of China. This city is a profound tapestry of history interwoven with modernity, offering deep cultural experiences against a backdrop of rapid urban development."
                 ),
-            Destination(
-                title = "Mumbai",
-                imageUrl = "https://images.unsplash.com/photo-1529253355930-ddbe423a2ac7?q=80&w=2665&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-                description = "Step into the energetic pulse of Mumbai, a city of stark contrasts where glamour and tradition coexist. Known as the heart of the Bollywood film industry, Mumbai is also a place of historic markets, iconic architecture, and endless streets filled with the aroma of spicy street food."
-                )
-
         )
     }
 

@@ -59,9 +59,11 @@
         android:name="com.example.tripplanner.TripSearch"
         android:label="Search Trip"
         tools:layout="@layout/fragment_trip_search" />
+
         <action
             android:id="@+id/action_tripSearchFragment_to_resultsFragment"
             app:destination="@id/resultsFragment" />
+
     <fragment
         android:id="@+id/resultsFragment"
         android:name="com.example.tripplanner.Results"
@@ -80,7 +82,15 @@
             app:destination="@id/homeScreenFragment" />
 
 
+    <fragment
+        android:id="@+id/destinationfragment"
+        android:name="com.example.tripplanner.DestinationsPage"
+        android:label="fragment_destinations_page"
+        tools:layout="@layout/fragment_destinations_page"/>
 
+    <action
+        android:id="@+id/action_destinationcity_to_tripsearchfragment"
+        app:destination="@id/tripSearchFragment"/>
 
 
     <fragment
