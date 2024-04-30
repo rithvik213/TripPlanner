@@ -79,6 +79,10 @@
             android:id="@+id/action_resultsFragment_to_homeScreenFragment"
             app:destination="@id/homeScreenFragment" />
 
+
+
+
+
     <fragment
         android:id="@+id/userProfileFragment"
         android:name="com.example.tripplanner.UserProfile"
@@ -94,6 +98,14 @@
         <action
             android:id="@+id/action_discoverPageFragment_to_AttractionsFragment"
             app:destination="@id/attractionsFragment"/>
+  
+        <action
+            android:id="@+id/action_discoverPage_to_destinationDetailsFragment"
+            app:destination="@id/destinationspageFragment" />
+  
+        <action
+            android:id="@+id/action_discoverPage_to_userprofilefragment"
+            app:destination="@+id/userProfileFragment"/>
 
     <fragment
         android:id="@+id/attractionsFragment"
@@ -102,10 +114,19 @@
         tools:layout="@layout/fragment_attractions" />
 
 
+    <fragment
+        android:id="@+id/destinationspageFragment"
+        android:name="com.example.tripplanner.DestinationsPage"
+        android:label="fragment_destinations_page"
+        tools:layout="@layout/fragment_discover_page"/>
+
 
     <action android:id="@+id/global_action_to_homeScreen"
-        app:destination="@id/homeScreenFragment" />
+        app:destination="@id/discoverPageFragment" />
 
     <action android:id="@+id/global_action_to_personScreen"
         app:destination="@id/userProfileFragment" />
+
+    <action android:id="@+id/global_action_to_tripScreen"
+        app:destination="@+id/homeScreenFragment"/>
 </navigation>

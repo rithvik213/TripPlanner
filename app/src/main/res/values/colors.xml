@@ -6,4 +6,5 @@
     <color name="darknavy">#14252F</color>
     <color name="appBackgroundColor">#14252F</color>
     <color name= "bottomappbar">#1E313C</color>
+    <color name="gray">#D2D2D2</color>
 </resources>

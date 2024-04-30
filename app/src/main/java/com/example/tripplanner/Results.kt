@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
+import com.aallam.openai.api.chat.ImagePart
 import com.example.flightapitest.fetchFlightOffers
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import kotlinx.coroutines.CoroutineScope
@@ -110,6 +111,7 @@ class Results : Fragment() {
                     cityName = cityName,
                     itineraryDetails = formattedItinerary,
                     departureAirport = departAirport,
+                    //imageURL = null,
                     arrivalAirport = arrivalAirport,
                     departureDate = dateFormatter.format(departTime),
                     returnDate = dateFormatter.format(arrivalTime2),
@@ -399,6 +401,7 @@ class Results : Fragment() {
         cityName: String,
         itineraryDetails: String,
         departureAirport: String,
+        //imageURL: String,
         arrivalAirport: String,
         departureDate: String,
         returnDate: String,
