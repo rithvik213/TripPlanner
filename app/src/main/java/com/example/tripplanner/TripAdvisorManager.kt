@@ -64,6 +64,16 @@ class TripAdvisorManager {
         })
     }
 
+    fun fetchCityImage(cityName: String, callback: (String) -> Unit) {
+        fetchLocationId(cityName) { locationId ->
+            if (locationId.isNotEmpty()) {
+                fetchImage(locationId, callback)
+            } else {
+                callback("")
+            }
+        }
+    }
+
 
 
     private fun fetchLocationId(cityName: String, callback: (String) -> Unit) {
