@@ -241,48 +241,39 @@ class Results : Fragment() {
     }
 
     private fun fetchAttractions(cityName: String) {
-        val tripAdvisorManager = TripAdvisorManager(
-            requireContext(),
-            cityName,
-            object : TripAdvisorManager.AttractionFetchListener {
-                override fun onAttractionsFetched(attractions: List<String>) {
-                    val newExcursions = attractions.map { attraction ->
-                        Excursion(attraction, "All Day", "default_image_url") // Initialize with a default image URL
-                    }
-                    activity?.runOnUiThread {
-                        viewModel.addExcursions(newExcursions)  // Add all fetched excursions initially
-                        isAttractionsFetched = true
-                        tryGenerateItinerary()
-                    }
+        val tripAdvisorManager = TripAdvisorManager()
+
+        // Define the Attraction Fetch Listener
+        val attractionListener = object : TripAdvisorManager.AttractionFetchListener {
+            override fun onAttractionsFetched(attractions: List<TripAdvisorManager.AttractionDetail>) {
+                val newExcursions = attractions.map { attractionDetail ->
+                    Excursion(
+                        name = attractionDetail.name,
+                        time = "All Day",
+                        imageUrl = attractionDetail.imageUrl ?: "default_image_url"  // Ensure image URL is handled
+                    )
                 }
 
-                override fun onAttractionFetchFailed(errorMessage: String) {
-                    Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
+                activity?.runOnUiThread {
+                    viewModel.addExcursions(newExcursions)  // Add all fetched excursions initially
                     isAttractionsFetched = true
                     tryGenerateItinerary()
                 }
-            },
-            object : TripAdvisorManager.ImageFetchListener {
-                override fun onImageFetched(attraction: String, imageUrl: String) {
-                    activity?.runOnUiThread {
-                        val updatedExcursions = viewModel.excursions.value?.map { excursion ->
-                            if (excursion.name == attraction && imageUrl.isNotEmpty()) {
-                                excursion.copy(imageUrl = imageUrl) // Assume Excursion is a data class
-                            } else {
-                                excursion
-                            }
-                        }
-                        viewModel.excursions.value = updatedExcursions?.toMutableList()
-                    }
-                }
-
-                override fun onImageFetchFailed(attraction: String, errorMessage: String) {
-                    Toast.makeText(context, "Image fetch failed for $attraction: $errorMessage", Toast.LENGTH_LONG).show()
-                }
             }
-        )
-        tripAdvisorManager.fetchData()
+
+            override fun onAttractionFetchFailed(errorMessage: String) {
+                Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
+                isAttractionsFetched = true
+                tryGenerateItinerary()
+            }
+        }
+
+        // Call fetchData from TripAdvisorManager to fetch and handle all the data
+        tripAdvisorManager.fetchData(requireContext(),
+            "things to do near $cityName", null, attractionListener)
     }
+
+
 
 
 
