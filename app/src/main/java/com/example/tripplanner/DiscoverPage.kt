@@ -32,8 +32,11 @@ class DiscoverPage : Fragment() {
     private lateinit var viewModel: AttractionsViewModel
     private lateinit var attractionsAdapter: NearbyAttractionsAdapter
     private lateinit var attractionsRecyclerView: RecyclerView
-    private lateinit var userLocationTextView: EditText
+    private lateinit var userLocationTextView: TextView
     private var loadingDialog: AlertDialog? = null
+
+    private var lastKnownLocation: Location? = null
+    private val locationUpdateThreshold = 100 // meters
 
 
 
@@ -42,18 +45,26 @@ class DiscoverPage : Fragment() {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
         viewModel = ViewModelProvider(requireActivity()).get(AttractionsViewModel::class.java)
 
+        // Initialize the locationCallback here
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
                 super.onLocationResult(locationResult)
                 if (locationResult.locations.isNotEmpty()) {
                     val location = locationResult.locations[0]
-                    updateLocationName(location.latitude, location.longitude)
-                    viewModel.fetchNearbyAttractions(requireContext(), location.latitude, location.longitude)
+                    viewModel.updateLocation(requireContext(), location.latitude, location.longitude)
+
+                    if (viewModel.shouldUpdateCityName()) {
+                        updateLocationName(location.latitude, location.longitude)
+                    }
+
                     fusedLocationClient.removeLocationUpdates(this)
                 }
             }
         }
+
+        startLocationUpdates()
     }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -66,10 +77,36 @@ class DiscoverPage : Fragment() {
         userIcon.setOnClickListener {
             findNavController().navigate(R.id.action_discoverPage_to_userprofilefragment)
         }
+
+        // Observe userName from ViewModel
+        viewModel.userName.observe(viewLifecycleOwner) { userName ->
+            val welcomeText = if (userName.isNullOrEmpty()) "Welcome, User" else "Welcome, $userName"
+            view.findViewById<TextView>(R.id.userwelcome).text = welcomeText
+        }
+
+        // Set username if not already available
+        if (viewModel.userName.value == null) {
+            arguments?.getString("userName", "User")?.let { userName ->
+                viewModel.userName.value = userName
+            }
+        }
+
+        // Observe the currentCity LiveData from the ViewModel
+        viewModel.currentCity.observe(viewLifecycleOwner) { cityName ->
+            if (!cityName.isNullOrEmpty()) {
+                userLocationTextView.text = cityName
+            } else {
+                userLocationTextView.text = "Unknown Location"
+            }
+        }
+
+        /*
         arguments?.let {
             val userName = it.getString("userName", "User")
+            viewModel.userName.value = userName
             view.findViewById<TextView>(R.id.userwelcome).text = "Welcome, $userName!"
         }
+         */
 
         val destinationsrecyclerView: RecyclerView = view.findViewById(R.id.recyclerviewdestinations)
 
@@ -97,7 +134,6 @@ class DiscoverPage : Fragment() {
                 Log.d("DiscoverPage", "No attractions to display")
             }
         }
-
         val destinationsAdapter = PopularDestinationsAdapter(destinations) { destination ->
             val bundle = Bundle().apply {
                 putString("destinationTitle", destination.title)
@@ -166,14 +202,18 @@ class DiscoverPage : Fragment() {
                 val address = addresses[0]
                 val city = address.locality ?: address.subAdminArea ?: "Unknown Location"
                 userLocationTextView.setText(city)
+                viewModel.updateCurrentCity(city)  // Update ViewModel with the city name
             } else {
                 userLocationTextView.setText("Unknown Location")
+                viewModel.updateCurrentCity("Unknown Location")
             }
         } catch (e: IOException) {
             Log.e("DiscoverPage", "Geocoder failed", e)
             userLocationTextView.setText("Failed to determine location")
+            viewModel.updateCurrentCity("Failed to determine location")
         }
     }
+
 
 
     private fun updateUI(attractions: List<TripAdvisorManager.AttractionDetail>) {

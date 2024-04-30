@@ -111,7 +111,7 @@ class Results : Fragment() {
                     cityName = cityName,
                     itineraryDetails = formattedItinerary,
                     departureAirport = departAirport,
-                    //imageURL = null,
+                    imageURL = imageUrl,
                     arrivalAirport = arrivalAirport,
                     departureDate = dateFormatter.format(departTime),
                     returnDate = dateFormatter.format(arrivalTime2),
@@ -163,6 +163,12 @@ class Results : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val app = requireActivity().application as MyApp
         database = app.database
+
+        val tripAdvisorManager = TripAdvisorManager()
+        tripAdvisorManager.fetchCityImage(cityName) { fetchedImageUrl ->
+            imageUrl = fetchedImageUrl
+        }
+
         fetchAttractions(cityName)
 
         fetchEvents(cityName)
@@ -248,7 +254,10 @@ class Results : Fragment() {
         // Define the Attraction Fetch Listener
         val attractionListener = object : TripAdvisorManager.AttractionFetchListener {
             override fun onAttractionsFetched(attractions: List<TripAdvisorManager.AttractionDetail>) {
+                Log.d("ResultsFragment", "Number of attractions fetched: ${attractions.size}")
                 val newExcursions = attractions.map { attractionDetail ->
+                    // Log each attraction detail
+                    Log.d("ResultsFragment", "Attraction Fetched: ${attractionDetail.name}, Image URL: ${attractionDetail.imageUrl ?: "No Image URL"}")
                     Excursion(
                         name = attractionDetail.name,
                         time = "All Day",
@@ -260,13 +269,16 @@ class Results : Fragment() {
                     viewModel.addExcursions(newExcursions)  // Add all fetched excursions initially
                     isAttractionsFetched = true
                     tryGenerateItinerary()
+                    //generateItinerary()
                 }
             }
 
             override fun onAttractionFetchFailed(errorMessage: String) {
+                Log.e("ResultsFragment", "Failed to fetch attractions: $errorMessage")
                 Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
                 isAttractionsFetched = true
                 tryGenerateItinerary()
+                //generateItinerary()
             }
         }
 
@@ -308,12 +320,17 @@ class Results : Fragment() {
 
     private fun generateItinerary() {
         if (excursions.isNotEmpty()) {
+            Log.d("ResultsFragment", "Starting itinerary generation with ${excursions.size} excursions")
             showLoading(true)
             CoroutineScope(Dispatchers.IO).launch {
                 try {
                     val prompt = buildItineraryPrompt()
+                    Log.d("ResultsFragment", "Itinerary Prompt: $prompt")
                     val itinerary = chatGPTService.generateResponse(prompt)
+                    Log.d("ResultsFragment", "Generated Itinerary Text: $itinerary")
                     val parsedItineraries = parseItinerary(itinerary)
+                    Log.d("ResultsFragment", "Parsed Itineraries: ${parsedItineraries.size} days")
+
                     CoroutineScope(Dispatchers.Main).launch {
                         (viewPager.adapter as ItineraryPagerAdapter).apply {
                             daysItinerary.clear()
@@ -331,8 +348,11 @@ class Results : Fragment() {
                     }
                 }
             }
+        } else {
+            Log.d("ResultsFragment", "No excursions available to generate itinerary")
         }
     }
+
 
     private fun showLoading(show: Boolean) {
         progressBar.visibility = if (show) View.VISIBLE else View.GONE
@@ -341,9 +361,11 @@ class Results : Fragment() {
     private fun buildItineraryPrompt(): String {
         val itineraryBuilder = StringBuilder()
         val selectedAttractions = viewModelPrefs.selectedAttractions.value?.joinToString(separator = ", ") { it }
+        Log.d("BuildItinerary", "City: $cityName, Departure: $departDate, Return: $returnDate, Attractions: $selectedAttractions")
         itineraryBuilder.append("Generate a detailed day-by-day itinerary for a trip to $cityName from $departDate to $returnDate with the following attractions only including attractions from this list if they match the dates of the trip while prioritizing attractions that include $selectedAttractions:\n")
 
         for (excursion in excursions) {
+            Log.d("BuildItinerary", "Processing Excursion: ${excursion.name} at ${excursion.time}")
             itineraryBuilder.append("- ${excursion.name}")
 
 
@@ -361,6 +383,8 @@ class Results : Fragment() {
                 " - 7:00pm - Jim Gaffigan at the Wilbur Theatre\n" +
                 " - 9:30pm - Dinner at a nearby restaurant\n" +
                 " - 11:00pm - Return to hotel for the night"
+
+        Log.d("BuildItinerary", "Final Itinerary: $itineraryBuilder")
         return itineraryBuilder.toString() +
                 "You should output a formatted itinerary like this as a sample. $sampleItinerary"
     }
@@ -401,7 +425,7 @@ class Results : Fragment() {
         cityName: String,
         itineraryDetails: String,
         departureAirport: String,
-        //imageURL: String,
+        imageURL: String,
         arrivalAirport: String,
         departureDate: String,
         returnDate: String,
