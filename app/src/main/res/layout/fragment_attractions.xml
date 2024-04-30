@@ -33,10 +33,20 @@
         android:textColor="@color/white" />
 
     <TextView
+        android:id="@+id/attractionaddress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/white"
-        android:text="Duration"
+        android:text="Address"
+        android:fontFamily="@font/poppins"
+        android:layout_marginLeft="10dp"/>
+
+    <TextView
+        android:id="@+id/attractionwebsite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        android:text="Website"
         android:fontFamily="@font/poppins"
         android:layout_marginLeft="10dp"/>
 

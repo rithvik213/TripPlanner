@@ -15,6 +15,7 @@ import android.location.Geocoder
 import android.util.Log
 import android.widget.TextView
 import androidx.core.app.ActivityCompat
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -28,6 +29,7 @@ class DiscoverPage : Fragment() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
     private var tripAdvisorManager: TripAdvisorManager? = null
+    private lateinit var viewModel: AttractionsViewModel
     private lateinit var attractionsAdapter: NearbyAttractionsAdapter
     private lateinit var attractionsRecyclerView: RecyclerView
     private lateinit var userLocationTextView: EditText
@@ -38,17 +40,16 @@ class DiscoverPage : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+        viewModel = ViewModelProvider(requireActivity()).get(AttractionsViewModel::class.java)
 
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
-                super.onLocationResult(locationResult) // Call the superclass method
+                super.onLocationResult(locationResult)
                 if (locationResult.locations.isNotEmpty()) {
-                    val location = locationResult.locations[0] // Assuming first is the most accurate/newest
-                    val latitude = location.latitude
-                    val longitude = location.longitude
+                    val location = locationResult.locations[0]
                     updateLocationName(location.latitude, location.longitude)
-                    fetchNearbyAttractions(latitude, longitude)
-                    fusedLocationClient.removeLocationUpdates(this) // Stop updates after receiving first location
+                    viewModel.fetchNearbyAttractions(requireContext(), location.latitude, location.longitude)
+                    fusedLocationClient.removeLocationUpdates(this)
                 }
             }
         }
@@ -70,19 +71,33 @@ class DiscoverPage : Fragment() {
             view.findViewById<TextView>(R.id.userwelcome).text = "Welcome, $userName!"
         }
 
-        tripAdvisorManager = TripAdvisorManager(requireContext(), cityName = "Current Location")
-
         val destinationsrecyclerView: RecyclerView = view.findViewById(R.id.recyclerviewdestinations)
 
         attractionsRecyclerView = view.findViewById(R.id.nearbydestinationsrecycler)
         attractionsRecyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-        attractionsAdapter = NearbyAttractionsAdapter(listOf())
+
+        attractionsAdapter = NearbyAttractionsAdapter(listOf()) { position ->
+            val attractionId = attractionsAdapter.items[position].locationID
+            val bundle = Bundle()
+            bundle.putString("locationID", attractionId)
+            findNavController().navigate(R.id.action_discoverPageFragment_to_AttractionsFragment, bundle)
+        }
+
         attractionsRecyclerView.adapter = attractionsAdapter
         val destinationslayoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         destinationsrecyclerView.layoutManager = destinationslayoutManager
 
 
         val destinations = getDestinations()
+
+        viewModel.attractions.observe(viewLifecycleOwner) { attractions ->
+            if (attractions.isNotEmpty()) {
+                attractionsAdapter.updateData(attractions)
+            } else {
+                Log.d("DiscoverPage", "No attractions to display")
+            }
+        }
+
         val destinationsAdapter = PopularDestinationsAdapter(destinations) { destination ->
             val bundle = Bundle().apply {
                 putString("destinationTitle", destination.title)
@@ -161,68 +176,11 @@ class DiscoverPage : Fragment() {
     }
 
 
-    private fun fetchNearbyAttractions(latitude: Double, longitude: Double) {
-        val latLong = "$latitude,$longitude"
-        val attractionImageMap = mutableMapOf<String, String>()
-        var imageFetchCount = 0
-
-        tripAdvisorManager = TripAdvisorManager(requireContext(), cityName = "Current Location",
-            object : TripAdvisorManager.AttractionFetchListener {
-                override fun onAttractionsFetched(attractions: List<String>) {
-                    if (attractions.isEmpty()) {
-                        updateUI(listOf())
-                    } else {
-                        imageFetchCount = attractions.size
-                        attractions.forEach { attraction ->
-                            tripAdvisorManager?.fetchImage(attraction)
-                            attractionImageMap[attraction] = "default_image_url"
-                        }
-                    }
-                }
-
-                override fun onAttractionFetchFailed(errorMessage: String) {
-                    Log.d("DiscoveryPage", "Error fetching attractions: $errorMessage")
-                    updateUI(listOf())
-                }
-            },
-            object : TripAdvisorManager.ImageFetchListener {
-                override fun onImageFetched(attraction: String, imageUrl: String) {
-                    if (imageUrl.isNotEmpty()) {
-                        attractionImageMap[attraction] = imageUrl
-                    } else {
-                        Log.d("DiscoveryPage", "No image available for $attraction")
-                    }
-                    imageFetchCount--
-                    if (imageFetchCount <= 0) {
-                        updateUIWithAttractions(attractionImageMap)
-                    }
-                }
-
-                override fun onImageFetchFailed(attraction: String, errorMessage: String) {
-                    Log.e("DiscoveryPage", "Failed to fetch image for $attraction: $errorMessage")
-                    imageFetchCount--
-                    if (imageFetchCount <= 0) {
-                        updateUIWithAttractions(attractionImageMap)
-                    }
-                }
-            }
-
-        )
-        tripAdvisorManager!!.fetchSearchTheLocation(category = "attractions", latLong = latLong, searchQuery = "things to do near me")
-    }
-
-    private fun updateUIWithAttractions(attractionImageMap: Map<String, String>) {
-        val attractionObjects = attractionImageMap.map { (name, imageUrl) ->
-            Attraction(name, imageUrl)
-        }
-        updateUI(attractionObjects)
-    }
-
-    private fun updateUI(attractions: List<Attraction>) {
+    private fun updateUI(attractions: List<TripAdvisorManager.AttractionDetail>) {
+        // Directly update the UI component, such as a RecyclerView adapter or similar
         attractionsAdapter.updateData(attractions)
-        Log.d("DiscoveryPage", "UI updated with all fetched attractions and images.")
-        attractionsAdapter.notifyDataSetChanged()
     }
+
 
 
     private fun requestLocationPermission() {
