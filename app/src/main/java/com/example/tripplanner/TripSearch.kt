@@ -26,6 +26,13 @@ class TripSearch : Fragment() {
     private var returnFormatted = "2025-01-01"
 
 
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val city = arguments?.getString("destinationCity", "Default City")
+        val destinationAutoComplete = view.findViewById<EditText>(R.id.destinationAutoComplete)
+        destinationAutoComplete.setText(city)
+    }
     @SuppressLint("MissingInflatedId")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -38,6 +45,7 @@ class TripSearch : Fragment() {
         val editText = view.findViewById<EditText>(R.id.destinationAutoComplete)
         val departdate: EditText = view.findViewById(R.id.departdate)
         val returndate: EditText = view.findViewById(R.id.returndate)
+
 
         buttonSearch.setOnClickListener {
             val destination = editText.text.toString()

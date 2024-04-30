@@ -51,8 +51,8 @@
 
     <ImageView
         android:id="@+id/imageView5"
-        android:layout_width="45dp"
-        android:layout_height="20dp"
+        android:layout_width="34dp"
+        android:layout_height="15dp"
         android:background="@drawable/page1"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -62,8 +62,8 @@
         app:layout_constraintVertical_bias="0.886" />
 
     <ImageButton
-        android:layout_width="238dp"
-        android:layout_height="48dp"
+        android:layout_width="240dp"
+        android:layout_height="45dp"
         android:id="@+id/googlesigninbutton"
         android:background="@drawable/googlesignin"
         app:layout_constraintBottom_toBottomOf="parent"
