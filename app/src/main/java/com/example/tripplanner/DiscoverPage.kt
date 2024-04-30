@@ -61,7 +61,10 @@ class DiscoverPage : Fragment() {
         val view = inflater.inflate(R.layout.fragment_discover_page, container, false)
 
         userLocationTextView = view.findViewById(R.id.userlocation)
-
+        val userIcon = view.findViewById<ImageButton>(R.id.usericon)
+        userIcon.setOnClickListener {
+            findNavController().navigate(R.id.action_discoverPage_to_userprofilefragment)
+        }
         arguments?.let {
             val userName = it.getString("userName", "User")
             view.findViewById<TextView>(R.id.userwelcome).text = "Welcome, $userName!"
