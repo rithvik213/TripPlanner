@@ -1,4 +1,4 @@
-package com.example.tripplanner
+package com.example.tripplanner.database
 
 import android.app.Application
 import androidx.room.Room
