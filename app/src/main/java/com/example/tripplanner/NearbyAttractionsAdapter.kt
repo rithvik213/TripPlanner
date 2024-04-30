@@ -8,11 +8,22 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 
-class NearbyAttractionsAdapter(private var items: List<Attraction>) : RecyclerView.Adapter<NearbyAttractionsAdapter.ViewHolder>() {
+class NearbyAttractionsAdapter(var items: List<TripAdvisorManager.AttractionDetail>, private val onAttractionClick: (Int) -> Unit) :
+    RecyclerView.Adapter<NearbyAttractionsAdapter.ViewHolder>() {
 
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val imageView: ImageView = view.findViewById(R.id.nearbyattractionimageView)
+    class ViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
         val titleView: TextView = view.findViewById(R.id.nearbyattractionTitle)
+        val imageView: ImageView = view.findViewById(R.id.nearbyattractionimageView)
+
+        fun bind(attractionDetail: TripAdvisorManager.AttractionDetail, clickListener: (Int) -> Unit) {
+            titleView.text = attractionDetail.name
+            if (attractionDetail.imageUrl != null) {
+                Glide.with(view.context)
+                    .load(attractionDetail.imageUrl)
+                    .into(imageView)
+            }
+            view.setOnClickListener { clickListener(adapterPosition) }
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -23,19 +34,22 @@ class NearbyAttractionsAdapter(private var items: List<Attraction>) : RecyclerVi
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = items[position]
-        holder.titleView.text = item.title
-        if (item.imageUrl != null) {
-            Glide.with(holder.itemView.context)
-                .load(item.imageUrl)
-                .into(holder.imageView)
-        }
+        holder.bind(item, onAttractionClick)
     }
-
 
     override fun getItemCount() = items.size
 
-    fun updateData(newItems: List<Attraction>) {
+
+    fun updateData(newItems: List<TripAdvisorManager.AttractionDetail>) {
         items = newItems
         notifyDataSetChanged()
     }
+
+    interface OnAttractionClickListener {
+        fun onAttractionClick(attraction: Attraction)
+    }
 }
+
+
+
+
