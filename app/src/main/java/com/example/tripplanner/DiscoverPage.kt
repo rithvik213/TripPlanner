@@ -152,19 +152,13 @@ class DiscoverPage : Fragment() {
 
 
         // Inflate the custom dialog layout
-        val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog, null)
+        val dialogView = LayoutInflater.from(context).inflate(R.layout.personalize_dialog, null)
         //val userPromptEditText: EditText = dialogView.findViewById<EditText>(R.id.userpromptname)
 
         // Set the custom view to the dialog builder
         val dialog = AlertDialog.Builder(context)
             .setView(dialogView)
             .create()  // Create the AlertDialog instance
-
-
-
-
-
-
 
         // Show the dialog
         dialog.show()
