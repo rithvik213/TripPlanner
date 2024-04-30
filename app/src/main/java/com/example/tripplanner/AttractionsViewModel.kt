@@ -105,7 +105,7 @@ class AttractionsViewModel : ViewModel() {
     }
 
     fun updateCurrentCity(cityName: String) {
-        _currentCity.value = cityName
+        _currentCity.postValue(cityName)
     }
 
 
