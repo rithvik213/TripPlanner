@@ -89,7 +89,17 @@
         android:id="@+id/discoverPageFragment"
         android:name="com.example.tripplanner.DiscoverPage"
         android:label="fragment_discover_page"
-        tools:layout="@layout/fragment_discover_page"/>
+        tools:layout="@layout/fragment_discover_page" />
+
+        <action
+            android:id="@+id/action_discoverPageFragment_to_AttractionsFragment"
+            app:destination="@id/attractionsFragment"/>
+
+    <fragment
+        android:id="@+id/attractionsFragment"
+        android:name="com.example.tripplanner.AttractionsFragment"
+        android:label="fragment_attractions_page"
+        tools:layout="@layout/fragment_attractions" />
 
 
 
