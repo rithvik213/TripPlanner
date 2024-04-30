@@ -1,6 +1,5 @@
-package com.example.tripplanner
+package com.example.tripplanner.apis.openai
 
-import com.google.gson.Gson
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory

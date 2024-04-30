@@ -1,15 +1,11 @@
-package com.example.tripplanner
-
+package com.example.tripplanner.apis.tripadvisor
 
 import android.content.Context
 import android.util.Log
-//import com.squareup.picasso.Picasso
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
-import retrofit2.http.Path
-import retrofit2.http.Query
 import retrofit2.http.Url
 
 class TripAdvisorManager {
@@ -106,7 +102,10 @@ class TripAdvisorManager {
             }
 
             override fun onFailure(call: Call<PhotoResponse>, t: Throwable) {
-                Log.e("TripAdvisorManager", "Failed to fetch image for location ID $locationId: ${t.message}")
+                Log.e(
+                    "TripAdvisorManager",
+                    "Failed to fetch image for location ID $locationId: ${t.message}"
+                )
                 callback("")
             }
         })
@@ -170,9 +169,15 @@ class TripAdvisorManager {
                             synchronized(this) {
                                 attractions[locationData.location_id]?.imageUrl = imageUrl
                                 pendingImageFetches--
-                                Log.d("TripAdvisorManager", "Fetched image for ${locationData.name}: $imageUrl")
+                                Log.d(
+                                    "TripAdvisorManager",
+                                    "Fetched image for ${locationData.name}: $imageUrl"
+                                )
                                 if (pendingImageFetches == 0) {
-                                    Log.d("TripAdvisorManager", "All images fetched, updating listener.")
+                                    Log.d(
+                                        "TripAdvisorManager",
+                                        "All images fetched, updating listener."
+                                    )
                                     listener?.onAttractionsFetched(attractions.values.toList())
                                 }
                             }
@@ -206,14 +211,20 @@ class TripAdvisorManager {
                 if (response.isSuccessful) {
                     val details = response.body()
                     if (details != null) {
-                        Log.d("TripAdvisorManager", "Details fetched successfully: ${details.description}")
+                        Log.d(
+                            "TripAdvisorManager",
+                            "Details fetched successfully: ${details.description}"
+                        )
                         listener.onDetailsFetched(details)
                     } else {
                         Log.d("TripAdvisorManager", "No details found in the response.")
                         listener.onDetailsFetchFailed("No details available")
                     }
                 } else {
-                    Log.e("TripAdvisorManager", "Failed to fetch details: ${response.errorBody()?.string()}")
+                    Log.e(
+                        "TripAdvisorManager",
+                        "Failed to fetch details: ${response.errorBody()?.string()}"
+                    )
                     listener.onDetailsFetchFailed("Failed to fetch details: ${response.errorBody()?.string()}")
                 }
             }
@@ -229,7 +240,7 @@ class TripAdvisorManager {
 
     fun String.urlEncode(): String = java.net.URLEncoder.encode(this, "UTF-8")
 
-  
+
   /*
     private fun updateAttractionsUI(attractions: List<String>) {
         val adapter = AttractionsAdapter(attractions)
@@ -354,5 +365,4 @@ class TripAdvisorManager {
 
     data class Original(val url: String)
 }
-
 typealias ImageFetchCallback = (imageUrl: String) -> Unit
