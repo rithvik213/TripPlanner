@@ -31,6 +31,8 @@
             android:textSize="15dp"
             android:paddingLeft="5dp"
             android:paddingRight="5dp"
+            android:ellipsize="end"
+            android:maxLines="1"
             android:fontFamily="@font/poppins"
             android:text="Title"
             android:textAppearance="@style/TextAppearance.AppCompat.Title" />

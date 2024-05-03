@@ -5,16 +5,20 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.example.tripplanner.apis.tripadvisor.TripAdvisorManager
+
 
 class AttractionsFragment : Fragment() {
     private lateinit var viewModel: AttractionsViewModel
     private var locationId: String? = null
+    private lateinit var backButton: ImageButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,9 +27,11 @@ class AttractionsFragment : Fragment() {
         arguments?.let {
             locationId = it.getString("locationID")
         }
+
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+
         return inflater.inflate(R.layout.fragment_attractions, container, false)
     }
 
@@ -58,7 +64,7 @@ class AttractionsFragment : Fragment() {
 
     private fun updateUI(detail: TripAdvisorManager.AttractionDetailsResponse) {
         view?.findViewById<TextView>(R.id.attractiontitle)?.text = detail.name
-        view?.findViewById<TextView>(R.id.attractiondescription)?.text = detail.description
+        view?.findViewById<TextView>(R.id.attractiondescription)?.text = detail.description ?: "No description available. Please see website for details!"
         view?.findViewById<TextView>(R.id.attractionaddress)?.text = detail.address_obj.address_string
         view?.findViewById<TextView>(R.id.attractionwebsite)?.text = detail.website
 
