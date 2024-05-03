@@ -99,11 +99,11 @@ public class EventFetcher {
     }*/
 
     public class EventResult {
-        String title;
-        Date date;
+        public String title;
+        public Date date;
 
         public class Date {
-            String when;
+            public String when;
         }
     }
 /*
