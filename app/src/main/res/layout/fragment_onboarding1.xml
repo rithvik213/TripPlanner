@@ -30,7 +30,7 @@
         android:layout_width="258dp"
         android:id="@+id/getstarted"
         android:layout_height="50dp"
-        android:layout_marginBottom="100dp"
+        android:layout_marginBottom="130dp"
         android:background="@drawable/getstarted"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
