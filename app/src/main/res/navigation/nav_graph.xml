@@ -130,6 +130,11 @@
         android:label="fragment_destinations_page"
         tools:layout="@layout/fragment_discover_page"/>
 
+    <action android:id="@+id/destinationInfoPage_to_DiscoverPage"
+        app:destination="@+id/discoverPageFragment"/>
+
+    <action android:id="@+id/attractoininfopage_to_discoverpage"
+        app:destination="@+id/discoverPageFragment"/>
 
     <action android:id="@+id/global_action_to_homeScreen"
         app:destination="@id/discoverPageFragment" />
