@@ -144,7 +144,6 @@ class DiscoverPage : Fragment() {
             view?.findViewById<TextView>(R.id.userwelcome)?.text = welcomeText
         }
 
-        // Set username if not already available
         if (viewModel.userName.value == null) {
             arguments?.getString("userName", "User")?.let { userName ->
                 viewModel.userName.value = userName
