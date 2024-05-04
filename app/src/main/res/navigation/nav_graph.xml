@@ -19,7 +19,8 @@
 
         <action
             android:id="@+id/action_onboardingFragment_to_discoverPageFragment"
-            app:destination="@+id/discoverPageFragment" />
+            app:destination="@+id/discoverPageFragment"
+            app:launchSingleTop="true"/>
     </fragment>
 
     <fragment
@@ -69,9 +70,6 @@
         android:name="com.example.tripplanner.Results"
         android:label="fragment_results"
         tools:layout="@layout/fragment_results" >
-        <argument
-            android:name="cityName"
-            app:argType="string" />
     </fragment>
 
         <action
@@ -123,25 +121,28 @@
         android:label="fragment_attractions_page"
         tools:layout="@layout/fragment_attractions" />
 
-
     <fragment
         android:id="@+id/destinationspageFragment"
         android:name="com.example.tripplanner.DestinationsPage"
         android:label="fragment_destinations_page"
         tools:layout="@layout/fragment_discover_page"/>
 
-    <action android:id="@+id/destinationInfoPage_to_DiscoverPage"
-        app:destination="@+id/discoverPageFragment"/>
 
-    <action android:id="@+id/attractoininfopage_to_discoverpage"
-        app:destination="@+id/discoverPageFragment"/>
-
-    <action android:id="@+id/global_action_to_homeScreen"
-        app:destination="@id/discoverPageFragment" />
+    <action android:id="@+id/global_action_to_discoverPage"
+        app:destination="@id/discoverPageFragment"
+        app:popUpTo="@id/discoverPageFragment"
+        app:popUpToInclusive="false"
+        app:launchSingleTop="true"/>
 
     <action android:id="@+id/global_action_to_personScreen"
-        app:destination="@id/userProfileFragment" />
+        app:destination="@id/userProfileFragment"
+        app:popUpTo="@id/nav_graph"
+        app:popUpToInclusive="false"
+        app:launchSingleTop="true"/>
 
     <action android:id="@+id/global_action_to_tripScreen"
-        app:destination="@+id/homeScreenFragment"/>
+        app:destination="@+id/homeScreenFragment"
+        app:popUpTo="@id/nav_graph"
+        app:popUpToInclusive="false"
+        app:launchSingleTop="true"/>
 </navigation>
