@@ -135,14 +135,8 @@
         app:launchSingleTop="true"/>
 
     <action android:id="@+id/global_action_to_personScreen"
-        app:destination="@id/userProfileFragment"
-        app:popUpTo="@id/nav_graph"
-        app:popUpToInclusive="false"
-        app:launchSingleTop="true"/>
+        app:destination="@id/userProfileFragment" />
 
     <action android:id="@+id/global_action_to_tripScreen"
-        app:destination="@+id/homeScreenFragment"
-        app:popUpTo="@id/nav_graph"
-        app:popUpToInclusive="false"
-        app:launchSingleTop="true"/>
+        app:destination="@+id/homeScreenFragment" />
 </navigation>
