@@ -5,8 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_weight="9"
+    android:orientation="vertical"
     android:background="@color/appBackgroundColor"
     tools:context=".HomeScreenFragment">
+
 
     <TextView
         android:id="@+id/textView5"
@@ -15,6 +17,7 @@
         android:fontFamily="@font/poppins"
         android:gravity="center"
         android:text="@string/my_trips"
+        android:layout_gravity="center"
         android:textColor="@color/white"
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -56,8 +59,8 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewTrips"
-        android:layout_width="281dp"
-        android:layout_height="500dp"
+        android:layout_width="340dp"
+        android:layout_height="506dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
