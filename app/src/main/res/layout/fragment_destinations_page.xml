@@ -7,8 +7,6 @@
     android:background="@color/appBackgroundColor"
     tools:context=".DestinationsPage">
 
-
-
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
@@ -40,31 +38,27 @@
         android:id="@+id/destinationname"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingTop="5dp"
+        android:paddingTop="20dp"
         android:layout_gravity="center"
-        android:paddingBottom="5dp"
+        android:paddingBottom="10dp"
         android:fontFamily="@font/poppins"
         android:text="Title"
         android:textColor="@color/white"
         android:textSize="30dp" />
 
     <ScrollView
-        android:layout_width="340dp"
-        android:layout_height="230dp"
-        android:layout_gravity="center"
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:paddingBottom="20dp"
         android:fillViewport="true">
 
         <TextView
             android:id="@+id/destinationdescription"
-            android:layout_width="340dp"
-            android:layout_height="230dp"
-            android:layout_gravity="center"
-            android:paddingTop="50dp"
-            android:paddingLeft="15dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="15dp"
             android:scrollbars="vertical"
-            android:paddingRight="15dp"
             android:fontFamily="@font/poppinslight"
             android:text="description"
             android:textAlignment="center"
@@ -72,33 +66,12 @@
             android:textSize="16sp" />
     </ScrollView>
 
-
     <ImageButton
         android:id="@+id/plantripbutton"
         android:layout_width="220dp"
-        android:paddingTop="5dp"
         android:layout_height="40dp"
         android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="40dp"
         android:background="@drawable/plantripbutton" />
-
-
-
 </LinearLayout>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
