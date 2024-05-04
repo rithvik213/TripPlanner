@@ -1,6 +1,8 @@
 package com.example.tripplanner
 
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.MutableLiveData
@@ -30,8 +32,10 @@ class AttractionsViewModel : ViewModel() {
 
     var lastLocation: android.location.Location? = null
 
+    val isLoading = MutableLiveData<Boolean>()
 
-    // Initialize the TripAdvisorManager with context and listeners
+
+
     fun initializeManager(context: Context) {
         tripAdvisorManager = TripAdvisorManager()
     }
@@ -53,6 +57,7 @@ class AttractionsViewModel : ViewModel() {
         }
         if (lastLocation == null || newLocation.distanceTo(lastLocation!!) > 500) {
             lastLocation = newLocation
+            isLoading.value = true
             fetchNearbyAttractions(context, latitude, longitude)
             _currentCity.postValue(null)
         }
@@ -61,6 +66,7 @@ class AttractionsViewModel : ViewModel() {
     fun shouldUpdateCityName(): Boolean {
         return currentCity.value.isNullOrEmpty()
     }
+
 
 
     fun fetchNearbyAttractions(context: Context, latitude: Double, longitude: Double) {
@@ -72,6 +78,7 @@ class AttractionsViewModel : ViewModel() {
         attractionsCache[key]?.let {
             Log.d("AttractionsViewModel", "Using cached data for key: $key")
             _attractions.postValue(it)
+            isLoading.value = false
         } ?: run {
             Log.d("AttractionsViewModel", "No cache found for key: $key, fetching from API")
             tripAdvisorManager.fetchSearchTheLocation(
@@ -94,27 +101,35 @@ class AttractionsViewModel : ViewModel() {
                             Log.d("AttractionsViewModel", "No attractions returned from API")
                             _attractions.postValue(listOf())
                         }
+                        isLoading.value = false
                     }
 
                     override fun onAttractionFetchFailed(errorMessage: String) {
                         Log.e("AttractionsViewModel", "Error fetching attractions: $errorMessage")
                         _attractions.postValue(listOf())
+                        isLoading.value = false
                     }
                 })
         }
     }
 
     fun updateCurrentCity(cityName: String) {
+        Log.d("AttractionsViewModel", "Updating current city to: $cityName")
         _currentCity.postValue(cityName)
+        isLoading.value = false
+
     }
 
 
 
     // Fetch and cache attraction details
     fun fetchAttractionDetails(context: Context, locationId: String) {
+        isLoading.value = true
+
         // Check if details are already cached
         attractionDetailsCache[locationId]?.let { cachedDetails ->
             _attractionDetails.postValue(cachedDetails) // Post value to LiveData if cached
+            isLoading.value = false
             return
         }
 
@@ -125,10 +140,12 @@ class AttractionsViewModel : ViewModel() {
                 attractionDetailsCache[locationId] = detail
                 // Post fetched details to LiveData
                 _attractionDetails.postValue(detail)
+                isLoading.value = false
             }
 
             override fun onDetailsFetchFailed(errorMessage: String) {
                 Log.e("AttractionsViewModel", "Error fetching attraction details: $errorMessage")
+                isLoading.value = false
                 // Handle error appropriately, potentially notifying the UI
             }
         }

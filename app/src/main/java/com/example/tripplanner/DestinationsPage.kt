@@ -54,7 +54,7 @@ class DestinationsPage : Fragment() {
 
         backButton = view.findViewById<ImageButton>(R.id.backbutton)
         backButton.setOnClickListener {
-            findNavController().navigate(R.id.destinationInfoPage_to_DiscoverPage)
+            findNavController().popBackStack(R.id.discoverPageFragment, false)
         }
         return view
     }
