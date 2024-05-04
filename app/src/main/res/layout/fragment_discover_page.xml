@@ -79,10 +79,11 @@
         app:layout_constraintVertical_bias="0.215">
 
 
-        <ImageView
-            android:id="@+id/imageView2"
+        <ImageButton
+            android:id="@+id/updateUserLocation"
             android:layout_width="360dp"
             android:layout_height="49dp"
+            android:clickable="true"
             android:paddingLeft="25dp"
             android:paddingRight="25dp"
             android:layout_gravity="center"
@@ -92,7 +93,8 @@
             app:layout_constraintHorizontal_bias="0.49"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.196" />
+            app:layout_constraintVertical_bias="0.196"
+            android:focusable="true" />
 
         <TextView
             android:id="@+id/userlocation"

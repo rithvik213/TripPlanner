@@ -45,7 +45,7 @@ class MainActivity : AppCompatActivity() {
         navController = navHostFragment.navController
 
         fabHome.setOnClickListener {
-            navController.navigate(R.id.global_action_to_homeScreen)
+            navController.navigate(R.id.global_action_to_discoverPage)
         }
 
         fabPerson.setOnClickListener {
