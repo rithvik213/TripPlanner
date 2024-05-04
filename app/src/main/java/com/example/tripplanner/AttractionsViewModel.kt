@@ -7,6 +7,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import com.example.tripplanner.apis.tripadvisor.TripAdvisorManager
 
 class AttractionsViewModel : ViewModel() {
@@ -15,13 +16,12 @@ class AttractionsViewModel : ViewModel() {
     private val _attractions = MutableLiveData<List<TripAdvisorManager.AttractionDetail>>()
     val attractions: LiveData<List<TripAdvisorManager.AttractionDetail>> = _attractions
 
-    // Cache to store fetched attractions based on latitude and longitude keys
+    //Cache to store fetched attractions based on latitude and longitude keys
     private val attractionsCache = mutableMapOf<String, List<TripAdvisorManager.AttractionDetail>>()
 
-    // Assuming attractionDetailsCache is defined somewhere in your ViewModel
     private val attractionDetailsCache = mutableMapOf<String, TripAdvisorManager.AttractionDetailsResponse>()
 
-    // LiveData for UI updates if needed
+    //LiveData for UI updates if needed
     private val _attractionDetails = MutableLiveData<TripAdvisorManager.AttractionDetailsResponse>()
     val attractionDetails: LiveData<TripAdvisorManager.AttractionDetailsResponse> = _attractionDetails
 
@@ -32,12 +32,12 @@ class AttractionsViewModel : ViewModel() {
 
     var lastLocation: android.location.Location? = null
 
-    val isLoading = MutableLiveData<Boolean>()
+    var isLoadingGeo = MutableLiveData<Boolean>(false)
+    private var isLoadingAttractions = MutableLiveData<Boolean>(false)
 
-
-
-    fun initializeManager(context: Context) {
-        tripAdvisorManager = TripAdvisorManager()
+    val isLoading: LiveData<Boolean> = MediatorLiveData<Boolean>().apply {
+        addSource(isLoadingGeo) { value = isLoadingGeo.value!! || isLoadingAttractions.value!! }
+        addSource(isLoadingAttractions) { value = isLoadingGeo.value!! || isLoadingAttractions.value!! }
     }
 
 
@@ -57,17 +57,11 @@ class AttractionsViewModel : ViewModel() {
         }
         if (lastLocation == null || newLocation.distanceTo(lastLocation!!) > 500) {
             lastLocation = newLocation
-            isLoading.value = true
+            isLoadingAttractions.value = true
             fetchNearbyAttractions(context, latitude, longitude)
             _currentCity.postValue(null)
         }
     }
-
-    fun shouldUpdateCityName(): Boolean {
-        return currentCity.value.isNullOrEmpty()
-    }
-
-
 
     fun fetchNearbyAttractions(context: Context, latitude: Double, longitude: Double) {
         val key = "$latitude,$longitude"
@@ -75,10 +69,11 @@ class AttractionsViewModel : ViewModel() {
 
         Log.d("AttractionsViewModel", "Fetching attractions for key: $key")
 
+        // Check cache first
         attractionsCache[key]?.let {
             Log.d("AttractionsViewModel", "Using cached data for key: $key")
-            _attractions.postValue(it)
-            isLoading.value = false
+            _attractions.postValue(it.filter { it.imageUrl?.isNotEmpty() == true}) // Post only attractions with images
+            isLoadingAttractions.value = false
         } ?: run {
             Log.d("AttractionsViewModel", "No cache found for key: $key, fetching from API")
             tripAdvisorManager.fetchSearchTheLocation(
@@ -90,33 +85,32 @@ class AttractionsViewModel : ViewModel() {
                 object : TripAdvisorManager.AttractionFetchListener {
                     override fun onAttractionsFetched(attractions: List<TripAdvisorManager.AttractionDetail>) {
                         if (attractions.isNotEmpty()) {
-                            Log.d(
-                                "AttractionsViewModel",
-                                "Attractions fetched successfully: ${attractions.size}"
-                            )
-                            attractionsCache[key] = attractions
+                            Log.d("AttractionsViewModel", "Attractions fetched successfully: ${attractions.size}")
+                            val attractionsWithImages = attractions.filter { it.imageUrl?.isNotEmpty() == true }
+                            attractionsCache[key] = attractionsWithImages // Cache the filtered list
                             logAttractionsCache()
-                            _attractions.postValue(attractions)
+                            _attractions.postValue(attractionsWithImages)
                         } else {
                             Log.d("AttractionsViewModel", "No attractions returned from API")
                             _attractions.postValue(listOf())
                         }
-                        isLoading.value = false
+                        isLoadingAttractions.value = false
                     }
 
                     override fun onAttractionFetchFailed(errorMessage: String) {
                         Log.e("AttractionsViewModel", "Error fetching attractions: $errorMessage")
                         _attractions.postValue(listOf())
-                        isLoading.value = false
+                        isLoadingAttractions.value = false
                     }
                 })
         }
     }
 
+
     fun updateCurrentCity(cityName: String) {
         Log.d("AttractionsViewModel", "Updating current city to: $cityName")
         _currentCity.postValue(cityName)
-        isLoading.value = false
+        isLoadingGeo.value = false
 
     }
 
@@ -124,12 +118,12 @@ class AttractionsViewModel : ViewModel() {
 
     // Fetch and cache attraction details
     fun fetchAttractionDetails(context: Context, locationId: String) {
-        isLoading.value = true
+
 
         // Check if details are already cached
         attractionDetailsCache[locationId]?.let { cachedDetails ->
             _attractionDetails.postValue(cachedDetails) // Post value to LiveData if cached
-            isLoading.value = false
+            isLoadingAttractions.value = false
             return
         }
 
@@ -140,12 +134,12 @@ class AttractionsViewModel : ViewModel() {
                 attractionDetailsCache[locationId] = detail
                 // Post fetched details to LiveData
                 _attractionDetails.postValue(detail)
-                isLoading.value = false
+                isLoadingAttractions.value = false
             }
 
             override fun onDetailsFetchFailed(errorMessage: String) {
                 Log.e("AttractionsViewModel", "Error fetching attraction details: $errorMessage")
-                isLoading.value = false
+                isLoadingAttractions.value = false
                 // Handle error appropriately, potentially notifying the UI
             }
         }
