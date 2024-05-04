@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import java.text.SimpleDateFormat
+import java.util.Locale
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
@@ -16,6 +18,7 @@ import com.google.gson.reflect.TypeToken
 class TripPage : Fragment() {
     private lateinit var imageView: ImageView
     private lateinit var departDateTextView: TextView
+    private lateinit var location: TextView
     private lateinit var returnDateTextView: TextView
     private lateinit var departureAirportTextView: TextView
     private lateinit var departureAirport2TextView: TextView
@@ -44,6 +47,7 @@ class TripPage : Fragment() {
         departTime2TextView = view.findViewById(R.id.departTime2)
         arrivalTimeTextView = view.findViewById(R.id.arrivalTime)
         arrivalTime2TextView = view.findViewById(R.id.arrivalTime2)
+        location = view.findViewById(R.id.location)
 
         val tripId = arguments?.getInt("tripId") ?: -1
         setupViewModel(tripId)
@@ -56,8 +60,21 @@ class TripPage : Fragment() {
         if (tripId != -1) {
             viewModel.getItineraryById(tripId).observe(viewLifecycleOwner) { itinerary ->
                 Glide.with(this).load(itinerary.imageUrl).into(imageView)
-                departDateTextView.text = itinerary.departureDate
-                returnDateTextView.text = itinerary.returnDate
+
+
+                val inputFormat = SimpleDateFormat("EEEE, MMMM d, yyyy", Locale.US)
+                val outputFormat = SimpleDateFormat("MMMM d, yyyy", Locale.US)
+
+                // Convert and set departure date
+                val parsedDepartDate = inputFormat.parse(itinerary.departureDate)
+                if (parsedDepartDate != null) {
+                    departDateTextView.text = outputFormat.format(parsedDepartDate)
+                }
+                val parsedReturnDate = inputFormat.parse(itinerary.returnDate)
+                if (parsedReturnDate != null) {
+                    returnDateTextView.text = outputFormat.format(parsedReturnDate)
+                }
+
                 departureAirportTextView.text = itinerary.departureAirport
                 departureAirport2TextView.text = itinerary.departureAirport2
                 arrivalAirportTextView.text = itinerary.arrivalAirport
@@ -66,6 +83,7 @@ class TripPage : Fragment() {
                 departTime2TextView.text = itinerary.departureTime2
                 arrivalTimeTextView.text = itinerary.arrivalTime
                 arrivalTime2TextView.text = itinerary.arrivalTime2
+                location.text = itinerary.cityName
 
                 //val daysItinerary = parseItineraryDetails(itinerary.itineraryDetails)
                 //val itineraryPagerAdapter = ItineraryPagerAdapter(daysItinerary, this)
