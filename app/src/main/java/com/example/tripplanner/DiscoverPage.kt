@@ -224,19 +224,17 @@ class DiscoverPage : Fragment() {
     }
 
     private fun startLocationUpdates() {
-        viewModel.isLoading.value = true
-        val locationRequest = LocationRequest.Builder(10000)  // interval in milliseconds
+        val locationRequest = LocationRequest.Builder(10000)
             .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-            .setMinUpdateIntervalMillis(5000)  // fastest interval
-            .setMaxUpdates(1)  // If you need just one update per button click
+            .setMinUpdateIntervalMillis(5000)
+            .setMaxUpdates(1)
             .build()
 
-        // Stop existing updates to ensure we start fresh
         fusedLocationClient.removeLocationUpdates(locationCallback)
 
-        // Check for permissions again, though this should ideally be checked before calling this method
         if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
             ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            viewModel.isLoadingGeo.value = true
             fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null)
         }
     }
