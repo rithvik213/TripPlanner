@@ -64,156 +64,150 @@
         android:textColor="@color/white"
         android:fontFamily="@font/poppinsbold"/>
 
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_horizontal">
-
-
-
-
-
-
-    </LinearLayout>
-
-
-
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_horizontal">
-
-
-
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="16dp">
-
-        <TextView
-            android:id="@+id/departDate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/poppins"
-            android:text="@string/depart"
-            android:textColor="@color/white"
-            android:gravity="center" />
-
-        <TextView
-            android:id="@+id/departureAirport"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/poppins"
-            android:text="ORG"
-            android:layout_below="@+id/departDate"
-            android:textColor="@color/white"
-            android:layout_alignParentStart="true"/>
-
-        <TextView
-            android:id="@+id/arrivalAirport"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/poppins"
-            android:text="DST"
-            android:textColor="@color/white"
-            android:layout_below="@+id/departDate"
-            android:layout_toEndOf="@id/departureAirport"
-            android:layout_alignBaseline="@id/departureAirport"
-            android:layout_marginStart="20dp"/>
-
-        <TextView
-            android:id="@+id/departTime"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/poppinslight"
-            android:text="00:00"
-            android:textColor="@color/white"
-            android:layout_below="@id/departureAirport"
-            android:layout_alignStart="@id/departureAirport"/>
-
-        <TextView
-            android:id="@+id/arrivalTime"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/poppinslight"
-            android:text="00:00"
-            android:textColor="@color/white"
-            android:layout_below="@id/arrivalAirport"
-            android:layout_alignStart="@id/arrivalAirport"/>
-
-    </RelativeLayout>
+<FrameLayout
+    android:layout_width="wrap_content"
+    android:layout_gravity="center_horizontal"
+    android:layout_height="wrap_content">
 
     <ImageView
-        android:layout_width="13dp"
-        android:layout_height="20dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_gravity="center_vertical"
-        android:background="@drawable/arrow_forward_ios"/>
+        android:layout_width="320dp"
+        android:layout_height="120dp"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/ticketbackground"/>
 
-    <RelativeLayout
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp">
+        android:orientation="horizontal"
+        android:gravity="center_horizontal">
 
-        <TextView
-            android:id="@+id/returnDate"
+
+
+        <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:fontFamily="@font/poppins"
-            android:text="@string/returning"
-            android:textColor="@color/white"
-            android:gravity="center" />
-        <TextView
-            android:id="@+id/departureAirport2"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/departDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins"
+                android:text="@string/depart"
+                android:textColor="@color/black"
+                android:gravity="center" />
+
+            <TextView
+                android:id="@+id/departureAirport"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins"
+                android:text="ORG"
+                android:layout_below="@+id/departDate"
+                android:textColor="@color/black"
+                android:layout_alignParentStart="true"/>
+
+
+            <TextView
+                android:id="@+id/arrivalAirport"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins"
+                android:text="DST"
+                android:textColor="@color/black"
+                android:layout_below="@+id/departDate"
+                android:layout_toEndOf="@id/departureAirport"
+                android:layout_alignBaseline="@id/departureAirport"
+                android:layout_marginStart="45dp"/>
+            <TextView
+                android:id="@+id/arrivalTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppinslight"
+                android:text="00:00"
+                android:textColor="@color/black"
+                android:layout_below="@id/arrivalAirport"
+                android:layout_alignStart="@id/arrivalAirport"/>
+
+            <TextView
+                android:id="@+id/departTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppinslight"
+                android:text="00:00"
+                android:textColor="@color/black"
+                android:layout_below="@id/departureAirport"
+                android:layout_alignStart="@id/departureAirport"/>
+
+
+
+        </RelativeLayout>
+
+
+        <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/returnDate"
-            android:fontFamily="@font/poppins"
-            android:text="DST"
-            android:textColor="@color/white"
-            android:layout_alignParentStart="true"
-            android:layout_marginEnd="16dp"/>
+            android:layout_marginLeft="20dp"
+            android:padding="16dp">
 
-        <TextView
-            android:id="@+id/arrivalAirport2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/poppins"
-            android:text="ORG"
-            android:layout_below="@+id/returnDate"
-            android:textColor="@color/white"
-            android:layout_toRightOf="@id/departureAirport2"/>
+            <TextView
+                android:id="@+id/returnDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="@font/poppins"
+                android:text="@string/returning"
+                android:textColor="@color/black"
+                android:gravity="center" />
+            <TextView
+                android:id="@+id/departureAirport2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/returnDate"
+                android:fontFamily="@font/poppins"
+                android:text="DST"
+                android:textColor="@color/black"
+                android:layout_alignParentStart="true"
+                android:layout_marginEnd="16dp"/>
 
-        <TextView
-            android:id="@+id/departTime2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/poppinslight"
-            android:text="00:00"
-            android:textColor="@color/white"
-            android:layout_below="@id/departureAirport2"
-            android:layout_alignStart="@id/departureAirport2"/>
+            <TextView
+                android:id="@+id/arrivalAirport2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins"
+                android:text="ORG"
+                android:layout_below="@+id/returnDate"
+                android:textColor="@color/black"
+                android:layout_marginStart="30dp"
+                android:layout_toRightOf="@id/departureAirport2"/>
 
-        <TextView
-            android:id="@+id/arrivalTime2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/poppinslight"
-            android:text="00:00"
-            android:textColor="@color/white"
-            android:layout_below="@id/arrivalAirport2"
-            android:layout_alignStart="@id/arrivalAirport2"/>
+            <TextView
+                android:id="@+id/departTime2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppinslight"
+                android:text="00:00"
+                android:textColor="@color/black"
+                android:layout_below="@id/departureAirport2"
+                android:layout_alignStart="@id/departureAirport2"/>
 
-    </RelativeLayout>
+            <TextView
+                android:id="@+id/arrivalTime2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppinslight"
+                android:text="00:00"
+                android:textColor="@color/black"
+                android:layout_below="@id/arrivalAirport2"
+                android:layout_alignStart="@id/arrivalAirport2"/>
+
+        </RelativeLayout>
 
     </LinearLayout>
+</FrameLayout>
+
+
+
 
 
 
