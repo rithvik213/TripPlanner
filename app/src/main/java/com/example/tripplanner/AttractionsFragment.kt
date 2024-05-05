@@ -19,6 +19,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.example.tripplanner.apis.tripadvisor.TripAdvisorManager
+import com.example.tripplanner.viewmodels.AttractionsViewModel
 
 
 class AttractionsFragment : Fragment() {
@@ -59,28 +60,16 @@ class AttractionsFragment : Fragment() {
             toggleDescription(descriptionTextView, seeMoreButton)
         }
 
-        val websiteButton = view.findViewById<ImageButton>(R.id.getWebsite)
-        websiteButton.setOnClickListener {
-            viewModel.attractionDetails.value?.website?.let { url ->
-                if (URLUtil.isValidUrl(url)) {
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-                    startActivity(intent)
-                } else {
-                    Toast.makeText(context, "Invalid URL", Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
-
-        val directionsButton = view.findViewById<ImageButton>(R.id.getDirections)
-        directionsButton.setOnClickListener {
-            viewModel.attractionDetails.value?.address_obj?.address_string?.let { address ->
-                val uri = Uri.parse("http://maps.google.co.in/maps?q=${Uri.encode(address)}")
-                val intent = Intent(Intent.ACTION_VIEW, uri)
+        val websiteTextView = view.findViewById<TextView>(R.id.attractionwebsite)
+        websiteTextView.setOnClickListener {
+            val url = websiteTextView.text.toString()
+            if (URLUtil.isValidUrl(url)) {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
                 startActivity(intent)
+            } else {
+                Toast.makeText(context, "Invalid URL", Toast.LENGTH_SHORT).show()
             }
         }
-
-
     }
 
     private fun fetchAttractionDetails(locationId: String) {
@@ -122,6 +111,8 @@ class AttractionsFragment : Fragment() {
     private fun updateUI(detail: TripAdvisorManager.AttractionDetailsResponse) {
         view?.findViewById<TextView>(R.id.attractiontitle)?.text = detail.name
         view?.findViewById<TextView>(R.id.attractiondescription)?.text = detail.description ?: "No description available. Please see website for details!"
+        view?.findViewById<TextView>(R.id.attractionaddress)?.text = detail.address_obj.address_string
+        view?.findViewById<TextView>(R.id.attractionwebsite)?.text = detail.website
 
         // Use the image URL from the cached or newly fetched data
         val imageUrl = locationId?.let { viewModel.getAttractionImage(it) }
