@@ -1,6 +1,7 @@
 package com.example.tripplanner
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -25,9 +26,12 @@ import com.example.tripplanner.database.MyApp
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.text.ParseException
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
@@ -83,6 +87,12 @@ class Results : Fragment() {
     private val dateFormatter = SimpleDateFormat("EEEE, MMMM d, yyyy", Locale.US)
     private val timeFormatter = SimpleDateFormat("HH:mm", Locale.US)
 
+    private lateinit var leftArrowButton: ImageButton
+    private lateinit var rightArrowButton: ImageButton
+    private lateinit var dayLabelTextView: TextView
+
+    private var loadingDialog: AlertDialog? = null
+
 
     @SuppressLint("ResourceType")
     override fun onCreateView(
@@ -101,6 +111,33 @@ class Results : Fragment() {
         adapter = ExcursionAdapter(excursions)
         viewPager = view.findViewById(R.id.itineraryViewPager)
         viewPager.adapter = ItineraryPagerAdapter(daysItinerary, this)
+        dayLabelTextView = view.findViewById(R.id.dayLabel)
+
+        leftArrowButton = view.findViewById(R.id.leftArrow)
+        rightArrowButton = view.findViewById(R.id.rightArrow)
+
+        leftArrowButton.setOnClickListener {
+            val currentItem = viewPager.currentItem
+            if (currentItem > 0) {
+                viewPager.currentItem = currentItem - 1
+            }
+        }
+
+        rightArrowButton.setOnClickListener {
+            val currentItem = viewPager.currentItem
+            if (currentItem < adapter.itemCount - 1) {
+                viewPager.currentItem = currentItem + 1
+            }
+        }
+
+        viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                updateNavigationButtons()
+                updateDayLabel(position)
+            }
+        })
+
 
         val backButton = view.findViewById<ImageButton>(R.id.resultsbackbutton)
         val saveButton = view.findViewById<Button>(R.id.saveButton)
@@ -140,7 +177,6 @@ class Results : Fragment() {
 
         }
 
-
         viewModel = ViewModelProvider(requireActivity()).get(ExcursionsViewModel::class.java)
         viewModel.excursions.observe(viewLifecycleOwner) { updateRecyclerView() }
 
@@ -153,6 +189,67 @@ class Results : Fragment() {
         }
 
         chatGPTService = ChatGPTService("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")
+
+        leftArrowButton.isEnabled = false
+        rightArrowButton.isEnabled = false
+    }
+
+
+    private fun updateDayLabel(currentPage: Int) {
+        if (daysItinerary.isNotEmpty() && currentPage >= 0 && currentPage < daysItinerary.size) {
+            val fullDateString = daysItinerary[currentPage].date.trim()
+
+            val datePart = fullDateString.replace(Regex("Day \\d+:\\s*"), "")
+
+            try {
+                val parsedDate = parseDate(datePart)
+                val formattedDate = SimpleDateFormat("EEEE, MMMM d, yyyy", Locale.US).format(parsedDate)
+                dayLabelTextView.text = formattedDate
+            } catch (e: ParseException) {
+                Log.e("Results", "Error processing date: Unparseable date: '$datePart'")
+                dayLabelTextView.text = "Invalid date format"
+            }
+        } else {
+            dayLabelTextView.text = "Day information unavailable"
+        }
+    }
+
+    private fun parseDate(dateStr: String): Date {
+        val dateFormat = SimpleDateFormat("MMMM d, yyyy", Locale.US)
+        return try {
+            dateFormat.parse(dateStr)
+        } catch (e: ParseException) {
+            val yearAddedDateStr = "$dateStr, ${Calendar.getInstance().get(Calendar.YEAR)}"
+            dateFormat.parse(yearAddedDateStr) ?: throw ParseException("Unparseable date: $dateStr", 0)
+        }
+    }
+
+
+    private fun updateNavigationButtons() {
+        leftArrowButton.isEnabled = viewPager.currentItem > 0
+        rightArrowButton.isEnabled = viewPager.currentItem < daysItinerary.size - 1
+    }
+
+    private fun showLoadingDialog(message: String) {
+        if (loadingDialog == null) {
+            val dialogView = LayoutInflater.from(context).inflate(R.layout.results_loading_dialog, null)
+            loadingDialog = AlertDialog.Builder(requireContext())
+                .setView(dialogView)
+                .setCancelable(false)
+                .create()
+        }
+
+        val textView = loadingDialog?.findViewById<TextView>(R.id.userpromptname)
+        textView?.text = message
+
+        Log.d("LoadingDialog", "Updating dialog message to: $message")
+
+        loadingDialog?.show()
+    }
+
+
+    private fun dismissLoadingDialog() {
+        loadingDialog?.dismiss()
     }
 
     private fun initializeGoogleUser() {
@@ -175,12 +272,12 @@ class Results : Fragment() {
             imageUrl = fetchedImageUrl
         }
 
+        fetchFlights(view)
+
         fetchAttractions(cityName)
 
         fetchEvents(cityName)
 
-        fetchFlights(view)
-        //fetchEvents(cityName)
 
     }
 
@@ -197,7 +294,9 @@ class Results : Fragment() {
 
 
     private fun fetchFlights(view: View){
+        showLoadingDialog("Please wait as we look for flights...")
         if (cityIataCodes[origin] == null || cityIataCodes[cityName] == null){
+            dismissLoadingDialog()
             val errorMessage = "No flights found for the given parameters."
             ErrorDialogFragment.newInstance(errorMessage).show(childFragmentManager, "error_dialog")
         } else {
@@ -219,6 +318,7 @@ class Results : Fragment() {
                 Log.i("budget", budget.toString())
 
                 if (flightInfo == null) {
+                    dismissLoadingDialog()
                     Toast.makeText(
                         context,
                         "No flights found with given parameters",
@@ -228,6 +328,7 @@ class Results : Fragment() {
                     ErrorDialogFragment.newInstance(errorMessage)
                         .show(childFragmentManager, "error_dialog")
                 } else {
+                    showLoadingDialog("Flight found! Please wait as we prepare the details...")
                     departAirport =
                         flightInfo.flightOffers[0].itineraries[0].segments[0].departure.iataCode
                     arrivalAirport =
@@ -285,6 +386,8 @@ class Results : Fragment() {
                     view.findViewById<TextView>(R.id.arrivalTerminal2).text =
                         "Terminal " + arrivalTerminal2
                     view.findViewById<TextView>(R.id.totalprice).text = "$" + price
+                    delay(2000)
+                    showLoadingDialog("Please wait as we generate your itinerary...")
                 }
 
             }
@@ -347,7 +450,7 @@ class Results : Fragment() {
                     activity?.runOnUiThread {
                         excursions.addAll(eventsExcursions)
                         //updateRecyclerView()
-                        //viewModel.addExcursions(eventsExcursions)
+                        viewModel.addExcursions(eventsExcursions)
                         //generateItinerary()
                         isEventsFetched = true
                         tryGenerateItinerary()
@@ -366,7 +469,6 @@ class Results : Fragment() {
     private fun generateItinerary() {
         if (excursions.isNotEmpty()) {
             Log.d("ResultsFragment", "Starting itinerary generation with ${excursions.size} excursions")
-            showLoading(true)
             CoroutineScope(Dispatchers.IO).launch {
                 try {
                     val prompt = buildItineraryPrompt()
@@ -382,14 +484,15 @@ class Results : Fragment() {
                             daysItinerary.addAll(parsedItineraries)
                             notifyDataSetChanged()
                         }
+                        updateDayLabel(viewPager.currentItem)
+                        updateNavigationButtons()
                         Log.d("ResultsFragment", "Itinerary updated in ViewPager")
-                        showLoading(false)
+                        dismissLoadingDialog()
                     }
                 } catch (e: Exception) {
                     Log.e("ResultsFragment", "Failed to generate itinerary", e)
                     CoroutineScope(Dispatchers.Main).launch {
                         Toast.makeText(context, "Failed to generate itinerary: ${e.localizedMessage}", Toast.LENGTH_LONG).show()
-                        showLoading(false)
                     }
                 }
             }
@@ -399,15 +502,11 @@ class Results : Fragment() {
     }
 
 
-    private fun showLoading(show: Boolean) {
-        progressBar.visibility = if (show) View.VISIBLE else View.GONE
-    }
-
     private fun buildItineraryPrompt(): String {
         val itineraryBuilder = StringBuilder()
         val selectedAttractions = viewModelPrefs.selectedAttractions.value?.joinToString(separator = ", ") { it }
         Log.d("BuildItinerary", "City: $cityName, Departure: $departDate, Return: $returnDate, Attractions: $selectedAttractions")
-        itineraryBuilder.append("Generate a detailed day-by-day itinerary for a trip to $cityName from $departDate to $returnDate with the following attractions only including attractions from this list if they match the dates of the trip while prioritizing attractions that include $selectedAttractions:\n")
+        itineraryBuilder.append("Generate a detailed day-by-day itinerary for a trip to $cityName from $departDate to $returnDate with the following attractions only including attractions from this list if they match the dates of the trip while prioritizing attractions that include the following types $selectedAttractions:\n")
 
         for (excursion in excursions) {
             Log.d("BuildItinerary", "Processing Excursion: ${excursion.name} at ${excursion.time}")
@@ -420,7 +519,6 @@ class Results : Fragment() {
         }
 
         val sampleItinerary = "Day 1: Morning Breakfast on Sun Apr 21, 11am-12pm, Jim Gaffigan show at the Sun Theater on Sun Apr 21, 4pm-9pm. Each event in the itinerary must include its name, location if possible and the length 7:00pm-8:00pm like that. Events must happen sequentially and not overlap. Here is a sample for one day detailed itinerary. I need it like this for all days." +
-                " - Breakfast at hotel\n" +
                 " - 10:00am - Visit the Isabella Stewart Gardner Museum\n" +
                 " - 12:00pm - Lunch at a local cafe\n" +
                 " - 2:00pm - Walk around the Boston Public Garden\n" +
@@ -462,7 +560,8 @@ class Results : Fragment() {
 
     private fun formatItineraryForSaving(daysItinerary: List<DayItinerary>): String {
         return daysItinerary.joinToString(separator = "\n") { day ->
-            "Date: ${day.date}\nExcursions: ${day.excursions.joinToString(separator = ", ") { it.name }}"
+            day.excursions.joinToString(separator = "") {"(" + day.date + "|" + it.time + "|" + it.name + ")"}
+            //"Date: ${day.date}\nExcursions: ${day.excursions.joinToString(separator = ", ") {it.time + " " + it.name }}"
         }
     }
 

@@ -15,7 +15,7 @@
             android:layout_height="wrap_content"
             android:textAlignment="center"
             android:layout_gravity="center_horizontal"
-            android:text="@string/please_wait_as_we_personalize_your_experience"
+            android:text="@string/please_wait_as_we_look_for_flights"
             android:fontFamily="@font/poppins"
             android:textColor="@color/white"/>
 
