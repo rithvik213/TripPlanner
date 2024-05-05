@@ -1,7 +1,6 @@
 package com.example.tripplanner
 
 import android.annotation.SuppressLint
-import android.app.AlertDialog
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -290,38 +289,38 @@ class Results : Fragment() {
 
 
     private fun fetchFlights(view: View){
-        val bundle = requireArguments()
-        val cityName = bundle.getString("cityName")
-        val departAirport = bundle.getString("departure.iataCode")
-        val arrivalAirport = bundle.getString("arrival.iataCode")
-        val departAirport2 = bundle.getString("departure2.iataCode")
-        val arrivalAirport2 = bundle.getString("arrival2.iataCode")
-        val departTime = dateFormat.parse(bundle.getString("departure.dateTime")!!)!!
-        val arrivalTime = dateFormat.parse(bundle.getString("arrival.dateTime")!!)!!
-        val departTime2 = dateFormat.parse(bundle.getString("departure2.dateTime")!!)!!
-        val arrivalTime2 = dateFormat.parse(bundle.getString("arrival2.dateTime")!!)!!
-        val departTerminal = bundle.getString("departure.terminal")
-        val arrivalTerminal = bundle.getString("arrival.terminal")
-        val departTerminal2 = bundle.getString("departure2.terminal")
-        val arrivalTerminal2 = bundle.getString("arrival2.terminal")
-        val price = bundle.getString("price.total")
+        val bundle = arguments
+        val cityName = bundle?.getString("cityName")
+        val departAirport = bundle?.getString("departure.iataCode")
+        val arrivalAirport = bundle?.getString("arrival.iataCode")
+        val departAirport2 = bundle?.getString("departure2.iataCode")
+        val arrivalAirport2 = bundle?.getString("arrival2.iataCode")
+        val departTime = bundle?.getString("departure.dateTime")
+        val arrivalTime = bundle?.getString("arrival.dateTime")
+        val departTime2 = bundle?.getString("departure2.dateTime")
+        val arrivalTime2 = bundle?.getString("arrival2.dateTime")
+        val departTerminal = bundle?.getString("departure.terminal")
+        val arrivalTerminal = bundle?.getString("arrival.terminal")
+        val departTerminal2 = bundle?.getString("departure2.terminal")
+        val arrivalTerminal2 = bundle?.getString("arrival2.terminal")
+        val price = bundle?.getString("price.total")
 
         view.findViewById<TextView>(R.id.destination).text = cityName
         view.findViewById<TextView>(R.id.departureAirportCode).text = departAirport
         view.findViewById<TextView>(R.id.arrivalAirportCode).text = arrivalAirport
         view.findViewById<TextView>(R.id.departureAirportCode2).text = departAirport2
         view.findViewById<TextView>(R.id.arrivalAirportCode2).text = arrivalAirport2
-        view.findViewById<TextView>(R.id.departuredate).text = dateFormatter.format(departTime)
-        view.findViewById<TextView>(R.id.returndates).text = dateFormatter.format(arrivalTime2)
-        view.findViewById<TextView>(R.id.departureTime).text = timeFormatter.format(departTime)
-        view.findViewById<TextView>(R.id.arrivalTime).text = timeFormatter.format(arrivalTime)
-        view.findViewById<TextView>(R.id.departureTime2).text = timeFormatter.format(departTime2)
-        view.findViewById<TextView>(R.id.arrivalTime2).text = timeFormatter.format(arrivalTime2)
-        view.findViewById<TextView>(R.id.departureTerminal).text = "Terminal " + departTerminal
-        view.findViewById<TextView>(R.id.arrivalTerminal).text = "Terminal " + arrivalTerminal
-        view.findViewById<TextView>(R.id.departureTerminal2).text = "Terminal " + departTerminal2
-        view.findViewById<TextView>(R.id.arrivalTerminal2).text = "Terminal " + arrivalTerminal2
-        view.findViewById<TextView>(R.id.totalprice).text = "$"+price
+        view.findViewById<TextView>(R.id.departuredate).text = departTime
+        view.findViewById<TextView>(R.id.returndates).text = arrivalTime2
+        view.findViewById<TextView>(R.id.departureTime).text = departTime
+        view.findViewById<TextView>(R.id.arrivalTime).text = arrivalTime
+        view.findViewById<TextView>(R.id.departureTime2).text = departTime2
+        view.findViewById<TextView>(R.id.arrivalTime2).text = arrivalTime2
+        view.findViewById<TextView>(R.id.departureTerminal).text = "Terminal $departTerminal"
+        view.findViewById<TextView>(R.id.arrivalTerminal).text = "Terminal $arrivalTerminal"
+        view.findViewById<TextView>(R.id.departureTerminal2).text = "Terminal $departTerminal2"
+        view.findViewById<TextView>(R.id.arrivalTerminal2).text = "Terminal $arrivalTerminal2"
+        view.findViewById<TextView>(R.id.totalprice).text = "$$price"
 
     }
 
@@ -338,6 +337,7 @@ class Results : Fragment() {
                     Excursion(
                         name = attractionDetail.name,
                         time = "All Day",
+                        //TODO: NEED DEFAULT URL
                         imageUrl = attractionDetail.imageUrl ?: "default_image_url"  // Ensure image URL is handled
                     )
                 }
