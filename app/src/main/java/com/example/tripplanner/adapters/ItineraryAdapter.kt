@@ -1,4 +1,4 @@
-package com.example.tripplanner
+package com.example.tripplanner.adapters
 
 import android.view.LayoutInflater
 import android.view.View
@@ -7,6 +7,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.tripplanner.data.Itinerary
+import com.example.tripplanner.R
 
 class ItineraryAdapter(private var itineraries: List<Itinerary>, private val onItineraryClicked: (Int) -> Unit) :
     RecyclerView.Adapter<ItineraryAdapter.ItineraryViewHolder>() {

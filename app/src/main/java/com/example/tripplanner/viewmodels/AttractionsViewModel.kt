@@ -1,8 +1,6 @@
-package com.example.tripplanner
+package com.example.tripplanner.viewmodels
 
 import android.content.Context
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.MutableLiveData
