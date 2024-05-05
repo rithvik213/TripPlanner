@@ -13,6 +13,7 @@ import android.widget.ImageButton
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -21,6 +22,7 @@ class OnboardingFragment1 : Fragment(), GoogleSignInHelper.SignInResultListener 
 
     private lateinit var googleSignInHelper: GoogleSignInHelper
     private lateinit var rootView: ViewGroup
+    private lateinit var userViewModel: UserViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,7 +35,7 @@ class OnboardingFragment1 : Fragment(), GoogleSignInHelper.SignInResultListener 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         googleSignInHelper = GoogleSignInHelper(this, this)
-
+        userViewModel = ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
         setupInitialLayout(view)
     }
 
@@ -73,6 +75,7 @@ class OnboardingFragment1 : Fragment(), GoogleSignInHelper.SignInResultListener 
         } else {
             switchToLayout(R.layout.start_exploring)
         }
+        userViewModel.setGoogleAccount(account)
     }
 
     override fun onSignInFailure(errorMessage: String) {
