@@ -351,7 +351,7 @@ class Results : Fragment() {
                     activity?.runOnUiThread {
                         excursions.addAll(eventsExcursions)
                         //updateRecyclerView()
-                        //viewModel.addExcursions(eventsExcursions)
+                        viewModel.addExcursions(eventsExcursions)
                         //generateItinerary()
                         isEventsFetched = true
                         tryGenerateItinerary()
@@ -411,7 +411,7 @@ class Results : Fragment() {
         val itineraryBuilder = StringBuilder()
         val selectedAttractions = viewModelPrefs.selectedAttractions.value?.joinToString(separator = ", ") { it }
         Log.d("BuildItinerary", "City: $cityName, Departure: $departDate, Return: $returnDate, Attractions: $selectedAttractions")
-        itineraryBuilder.append("Generate a detailed day-by-day itinerary for a trip to $cityName from $departDate to $returnDate with the following attractions only including attractions from this list if they match the dates of the trip while prioritizing attractions that include $selectedAttractions:\n")
+        itineraryBuilder.append("Generate a detailed day-by-day itinerary for a trip to $cityName from $departDate to $returnDate with the following attractions only including attractions from this list if they match the dates of the trip while prioritizing attractions that include the following types $selectedAttractions:\n")
 
         for (excursion in excursions) {
             Log.d("BuildItinerary", "Processing Excursion: ${excursion.name} at ${excursion.time}")
@@ -424,7 +424,6 @@ class Results : Fragment() {
         }
 
         val sampleItinerary = "Day 1: Morning Breakfast on Sun Apr 21, 11am-12pm, Jim Gaffigan show at the Sun Theater on Sun Apr 21, 4pm-9pm. Each event in the itinerary must include its name, location if possible and the length 7:00pm-8:00pm like that. Events must happen sequentially and not overlap. Here is a sample for one day detailed itinerary. I need it like this for all days." +
-                " - Breakfast at hotel\n" +
                 " - 10:00am - Visit the Isabella Stewart Gardner Museum\n" +
                 " - 12:00pm - Lunch at a local cafe\n" +
                 " - 2:00pm - Walk around the Boston Public Garden\n" +
