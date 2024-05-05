@@ -11,6 +11,8 @@ import android.widget.EditText
 import android.widget.SeekBar
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import com.example.tripplanner.apis.amadeus.data.FlightSearchResponse
+import com.example.tripplanner.apis.RetrofitClient
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

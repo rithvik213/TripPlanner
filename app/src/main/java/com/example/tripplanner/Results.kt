@@ -16,8 +16,12 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
-import com.aallam.openai.api.chat.ImagePart
-import com.example.flightapitest.fetchFlightOffers
+import com.example.tripplanner.apis.openai.ChatGPTService
+import com.example.tripplanner.apis.amadeus.fetchFlightOffers
+import com.example.tripplanner.apis.tripadvisor.EventFetcher
+import com.example.tripplanner.apis.tripadvisor.TripAdvisorManager
+import com.example.tripplanner.database.AppDatabase
+import com.example.tripplanner.database.MyApp
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -331,29 +335,35 @@ class Results : Fragment() {
 
 
     private fun fetchEvents(cityName: String) {
-        val eventFetcher = EventFetcher(cityName, requireContext(), departDate, returnDate, object : EventFetcher.EventFetchListener {
-            override fun onEventsFetched(events: List<EventFetcher.EventResult>) {
-                val eventsExcursions = events.map { event ->
-                    Excursion(event.title, event.date.`when`)
-                }
-                //Toast.makeText(context, "TEST", Toast.LENGTH_LONG).show()
+        val eventFetcher = EventFetcher(
+            cityName,
+            requireContext(),
+            departDate,
+            returnDate,
+            object :
+                EventFetcher.EventFetchListener {
+                override fun onEventsFetched(events: List<EventFetcher.EventResult>) {
+                    val eventsExcursions = events.map { event ->
+                        Excursion(event.title, event.date.`when`)
+                    }
+                    //Toast.makeText(context, "TEST", Toast.LENGTH_LONG).show()
 
-                activity?.runOnUiThread {
-                    excursions.addAll(eventsExcursions)
-                    //updateRecyclerView()
-                    //viewModel.addExcursions(eventsExcursions)
-                    //generateItinerary()
+                    activity?.runOnUiThread {
+                        excursions.addAll(eventsExcursions)
+                        //updateRecyclerView()
+                        //viewModel.addExcursions(eventsExcursions)
+                        //generateItinerary()
+                        isEventsFetched = true
+                        tryGenerateItinerary()
+                    }
+                }
+
+                override fun onEventFetchFailed(errorMessage: String) {
+                    Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
                     isEventsFetched = true
                     tryGenerateItinerary()
                 }
-            }
-
-            override fun onEventFetchFailed(errorMessage: String) {
-                Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
-                isEventsFetched = true
-                tryGenerateItinerary()
-            }
-        })
+            })
         eventFetcher.fetchEvents()
     }
 

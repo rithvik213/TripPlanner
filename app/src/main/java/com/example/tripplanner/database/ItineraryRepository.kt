@@ -1,6 +1,7 @@
-package com.example.tripplanner
+package com.example.tripplanner.database
 
 import androidx.lifecycle.LiveData
+import com.example.tripplanner.Itinerary
 
 class ItineraryRepository(private val itineraryDao: ItineraryDao) {
     val allItineraries: LiveData<List<Itinerary>> = itineraryDao.getAllItinerariesLiveData()

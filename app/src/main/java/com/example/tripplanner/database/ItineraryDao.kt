@@ -1,9 +1,10 @@
-package com.example.tripplanner
+package com.example.tripplanner.database
 
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import com.example.tripplanner.Itinerary
 
 @Dao
 interface ItineraryDao {

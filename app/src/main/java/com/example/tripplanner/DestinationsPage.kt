@@ -17,6 +17,7 @@ import com.bumptech.glide.Glide
 
 class DestinationsPage : Fragment() {
     private lateinit var planTripButton: ImageButton
+    private lateinit var backButton: ImageButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,6 +50,11 @@ class DestinationsPage : Fragment() {
                 putString("destinationCity", destinationTitle) // Use the correct variable for city name
             }
             findNavController().navigate(R.id.action_destinationcity_to_tripsearchfragment, bundle)
+        }
+
+        backButton = view.findViewById<ImageButton>(R.id.backbutton)
+        backButton.setOnClickListener {
+            findNavController().popBackStack(R.id.discoverPageFragment, false)
         }
         return view
     }
