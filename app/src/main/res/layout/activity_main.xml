@@ -27,7 +27,7 @@
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/bottomAppBar"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="95dp"
         android:layout_gravity="bottom"
         android:background="@drawable/basebar"
@@ -45,15 +45,15 @@
                 android:id="@+id/fab_trips"
                 android:layout_width="52dp"
                 android:layout_height="57dp"
-                android:layout_marginTop="9dp"
+                android:layout_marginTop="11dp"
                 android:layout_marginRight="50dp"
                 android:background="@drawable/suitcase" />
 
             <ImageButton
                 android:id="@+id/fab_home"
-                android:layout_width="73dp"
+                android:layout_width="70dp"
                 android:layout_height="67dp"
-                android:layout_marginRight="10dp"
+                android:layout_marginRight="11dp"
                 android:layout_gravity="center"
                 android:layout_marginBottom="10dp"
                 android:background="@drawable/house" />
