@@ -64,13 +64,21 @@
         <action
             android:id="@+id/action_tripSearchFragment_to_resultsFragment"
             app:destination="@id/resultsFragment" />
+        <action
+            android:id="@+id/action_tripSearchFragment_to_flightResultsFragment"
+            app:destination="@id/flightResultsFragment" />
+
+    <fragment
+        android:id="@+id/flightResultsFragment"
+        android:name="com.example.tripplanner.FlightResults"
+        android:label="fragment_flight_results"
+        tools:layout="@layout/fragment_flight_results" />
 
     <fragment
         android:id="@+id/resultsFragment"
         android:name="com.example.tripplanner.Results"
         android:label="fragment_results"
-        tools:layout="@layout/fragment_results" >
-    </fragment>
+        tools:layout="@layout/fragment_results" />
 
         <action
             android:id="@+id/action_resultsFragment_to_tripSearchFragment"
