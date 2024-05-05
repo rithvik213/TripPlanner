@@ -330,10 +330,6 @@ class Results : Fragment() {
             "things to do near $cityName", null, attractionListener)
     }
 
-
-
-
-
     private fun fetchEvents(cityName: String) {
         val eventFetcher = EventFetcher(
             cityName,
