@@ -1,45 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
     android:id="@+id/discovertogether"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/appBackgroundColor">
+    android:background="@color/appBackgroundColor"
+    android:orientation="vertical"
+    >
 
-    <ImageView
-        android:id="@+id/imageView4"
-        android:layout_width="260dp"
-        android:layout_height="266dp"
-        android:background="@drawable/share"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.496"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.346" />
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:paddingBottom="10dp">
 
-    <TextView
-        android:id="@+id/textView6"
-        android:layout_width="280dp"
-        android:layout_height="48dp"
-        android:fontFamily="@font/poppinsbold"
-        android:text="Discover Together"
-        android:textColor="@color/white"
-        android:textSize="30dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.496"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.543" />
+        <ImageView
+            android:id="@+id/imageView4"
+            android:layout_width="260dp"
+            android:layout_height="266dp"
+            android:layout_gravity="center"
+            android:background="@drawable/share"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.496"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.346" />
+
+        <TextView
+            android:id="@+id/textView6"
+            android:layout_width="280dp"
+            android:layout_height="48dp"
+            android:layout_gravity="bottom"
+            android:fontFamily="@font/poppinsbold"
+            android:text="Discover Together"
+            android:textColor="@color/white"
+            android:textSize="30dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.496"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.543" />
+    </FrameLayout>
+
 
     <TextView
         android:id="@+id/textView8"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:fontFamily="@font/poppins"
-        android:text="plan and share group trips effortlessly"
+        android:paddingBottom="40dp"
+        android:text="Plan and share group trips effortlessly"
         android:textColor="@color/white"
         android:textSize="15dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -49,22 +62,13 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.604" />
 
-    <ImageView
-        android:id="@+id/imageView5"
-        android:layout_width="34dp"
-        android:layout_height="15dp"
-        android:background="@drawable/page1"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.886" />
 
     <ImageButton
+        android:id="@+id/googlesigninbutton"
         android:layout_width="240dp"
         android:layout_height="45dp"
-        android:id="@+id/googlesigninbutton"
+        android:layout_gravity="center"
+        android:layout_marginBottom="20dp"
         android:background="@drawable/googlesignin"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -73,5 +77,19 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.746" />
 
+    <ImageView
+        android:id="@+id/imageView5"
+        android:layout_width="34dp"
+        android:layout_height="15dp"
+        android:layout_gravity="bottom|center"
+        android:layout_marginTop="60dp"
+        android:background="@drawable/page1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.886" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+</LinearLayout>

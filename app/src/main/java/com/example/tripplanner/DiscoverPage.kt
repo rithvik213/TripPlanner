@@ -15,6 +15,13 @@ import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.example.tripplanner.apis.amadeus.data.Location
+import com.example.tripplanner.apis.tripadvisor.TripAdvisorManager
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationResult
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.location.*
@@ -31,6 +38,8 @@ class DiscoverPage : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initializeLocationComponents()
+        Log.d("DiscoverPage", "Requesting location update onCreate")
+        checkPermissionsAndStartLocationUpdates()
     }
 
     private fun initializeLocationComponents() {
@@ -39,23 +48,35 @@ class DiscoverPage : Fragment() {
         setupLocationCallback()
     }
 
+    private fun checkPermissionsAndStartLocationUpdates() {
+        if (checkPermissions()) {
+            startLocationUpdates()
+        } else {
+            requestLocationPermission()
+        }
+    }
+
     private fun setupLocationCallback() {
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
+                if (locationResult.locations.isEmpty()) {
+                    Log.d("DiscoverPage", "No location data received.")
+                    return
+                }
+                Log.d("DiscoverPage", "Location result received.")
                 locationResult.locations.firstOrNull()?.let { location ->
+                    Log.d("DiscoverPage", "Handling new location: Lat ${location.latitude}, Lon ${location.longitude}")
                     handleNewLocation(location)
-                    fusedLocationClient.removeLocationUpdates(this)
                 }
             }
         }
-        startLocationUpdates()
     }
+
+
 
     private fun handleNewLocation(location: android.location.Location) {
         viewModel.updateLocation(requireContext(), location.latitude, location.longitude)
-        if (viewModel.shouldUpdateCityName()) {
-            updateLocationName(location.latitude, location.longitude)
-        }
+        updateLocationName(location.latitude, location.longitude)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -69,6 +90,20 @@ class DiscoverPage : Fragment() {
         view.findViewById<ImageButton>(R.id.usericon).setOnClickListener {
             findNavController().navigate(R.id.action_discoverPage_to_userprofilefragment)
         }
+
+        val updateUserLocationButton = view.findViewById<ImageButton>(R.id.updateUserLocation)
+        updateUserLocationButton.setOnClickListener {
+            Log.d("DiscoverPage", "ImageButton clicked")
+            if (checkPermissions()) {
+                Log.d("DiscoverPage", "Permissions are granted, restarting location updates.")
+                fusedLocationClient.removeLocationUpdates(locationCallback)  // Ensure old updates are removed
+                startLocationUpdates()  // Start fresh location updates
+            } else {
+                Log.d("DiscoverPage", "Permissions not granted, requesting permissions.")
+                requestLocationPermission()
+            }
+        }
+
         setupRecyclerViews(view)
         observeViewModel()
     }
@@ -96,20 +131,30 @@ class DiscoverPage : Fragment() {
     }
 
     private fun observeViewModel() {
+        viewModel.isLoading.observe(viewLifecycleOwner) { loading ->
+            if (loading) {
+                showLoadingDialog()
+            } else {
+                dismissLoadingDialog()
+            }
+        }
+
         viewModel.userName.observe(viewLifecycleOwner) { userName ->
             val welcomeText = if (userName.isNullOrEmpty()) "Welcome, User" else "Welcome, $userName"
             view?.findViewById<TextView>(R.id.userwelcome)?.text = welcomeText
         }
 
-        // Set username if not already available
         if (viewModel.userName.value == null) {
             arguments?.getString("userName", "User")?.let { userName ->
                 viewModel.userName.value = userName
             }
         }
         viewModel.currentCity.observe(viewLifecycleOwner) { cityName ->
-            userLocationTextView.text = cityName ?: "Determining Location..."
+            val locationText = cityName ?: "Determining Location..."
+            Log.d("DiscoverPage", "Current city updated in UI: $locationText")
+            userLocationTextView.text = locationText
         }
+
         viewModel.attractions.observe(viewLifecycleOwner) { attractions ->
             (view?.findViewById<RecyclerView>(R.id.nearbydestinationsrecycler)?.adapter as? NearbyAttractionsAdapter)?.updateData(attractions)
         }
@@ -119,17 +164,6 @@ class DiscoverPage : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Inflate the custom dialog layout
-        val dialogView = LayoutInflater.from(context).inflate(R.layout.personalize_dialog, null)
-        //val userPromptEditText: EditText = dialogView.findViewById<EditText>(R.id.userpromptname)
-
-        // Set the custom view to the dialog builder
-        val dialog = AlertDialog.Builder(context)
-            .setView(dialogView)
-            .create()  // Create the AlertDialog instance
-
-        // Show the dialog
-        dialog.show()
     }
 
     fun performOkAction() {
@@ -150,10 +184,10 @@ class DiscoverPage : Fragment() {
             if (addresses != null && addresses.isNotEmpty()) {
                 val address = addresses[0]
                 val city = address.locality ?: address.subAdminArea ?: "Unknown Location"
-                Log.d("DiscoverPage", "Geocoding successful, updating city: $city")
+                Log.d("DiscoverPage", "Geocoding successful, city found: $city")
                 viewModel.updateCurrentCity(city)
             } else {
-                Log.e("DiscoverPage", "No address found")
+                Log.e("DiscoverPage", "No address found, updating city as Unknown")
                 viewModel.updateCurrentCity("Unknown Location")
             }
         } catch (e: IOException) {
@@ -161,6 +195,22 @@ class DiscoverPage : Fragment() {
             viewModel.updateCurrentCity("Failed to determine location")
         }
     }
+
+    private fun showLoadingDialog() {
+        if (loadingDialog == null) {
+            loadingDialog = AlertDialog.Builder(context)
+                .setView(LayoutInflater.from(context).inflate(R.layout.personalize_dialog, null))
+                .setCancelable(false)
+                .create()
+        }
+        loadingDialog?.show()
+    }
+
+    private fun dismissLoadingDialog() {
+        loadingDialog?.dismiss()
+    }
+
+
 
 
     private fun requestLocationPermission() {
@@ -173,16 +223,24 @@ class DiscoverPage : Fragment() {
     }
 
     private fun startLocationUpdates() {
-        val locationRequest = LocationRequest.create().apply {
-            interval = 10000
-            fastestInterval = 5000
-            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-            numUpdates = 1
-        }
+        val locationRequest = LocationRequest.Builder(10000)
+            .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+            .setMinUpdateIntervalMillis(5000)
+            .setMaxUpdates(1)
+            .build()
+
+        fusedLocationClient.removeLocationUpdates(locationCallback)
+
         if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
             ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            viewModel.isLoadingGeo.value = true
             fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null)
         }
+    }
+
+    private fun checkPermissions(): Boolean {
+        return ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {

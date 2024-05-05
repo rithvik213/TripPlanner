@@ -1,5 +1,7 @@
-package com.example.tripplanner
+package com.example.tripplanner.apis
 
+import com.example.tripplanner.AutocompleteResponse
+import com.example.tripplanner.apis.amadeus.data.FlightSearchResponse
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Headers

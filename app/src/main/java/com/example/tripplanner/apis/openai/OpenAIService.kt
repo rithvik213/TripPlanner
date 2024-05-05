@@ -1,4 +1,4 @@
-package com.example.tripplanner
+package com.example.tripplanner.apis.openai
 
 import retrofit2.http.Body
 import retrofit2.http.Headers

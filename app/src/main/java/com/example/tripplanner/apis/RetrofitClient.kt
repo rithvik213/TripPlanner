@@ -1,4 +1,4 @@
-package com.example.tripplanner
+package com.example.tripplanner.apis
 
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
