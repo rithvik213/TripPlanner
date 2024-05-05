@@ -1,17 +1,21 @@
 package com.example.tripplanner
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import java.text.SimpleDateFormat
 import java.util.Locale
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
+import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
@@ -31,6 +35,9 @@ class TripPage : Fragment() {
     private lateinit var viewModel: ItineraryViewModel
     //private lateinit var itineraryViewPager: ViewPager2
     //private lateinit var excursionAdapter: ExcursionAdapter
+    private lateinit var parsedItineraryViewModel: ParsedItineraryViewModel
+    private lateinit var calendarButton: ImageButton
+    private lateinit var itineraryToParse: String
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -48,11 +55,35 @@ class TripPage : Fragment() {
         arrivalTimeTextView = view.findViewById(R.id.arrivalTime)
         arrivalTime2TextView = view.findViewById(R.id.arrivalTime2)
         location = view.findViewById(R.id.location)
+        calendarButton = view.findViewById(R.id.calendar)
+        parsedItineraryViewModel = ViewModelProvider(this).get(ParsedItineraryViewModel::class.java)
 
         val tripId = arguments?.getInt("tripId") ?: -1
         setupViewModel(tripId)
 
         return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        calendarButton.setOnClickListener {
+            val googleAccount = GoogleSignIn.getLastSignedInAccount(requireContext())
+            if (googleAccount == null) {
+                Log.e("GoogleCalendar", "No Google account signed in")
+            }
+            if (googleAccount != null) {
+                Log.d("GoogleCalendar", "Adding events for account: ${googleAccount.displayName}")
+                parsedItineraryViewModel.itinerary.observe(viewLifecycleOwner) { itinerary ->
+                    val eventsMap = parsedItineraryViewModel.parseItinerary(itineraryToParse)
+                    Log.d("GoogleCalendar", "${itineraryToParse}")
+                    parsedItineraryViewModel.addEventsToGoogleCalendar(requireContext(), googleAccount, eventsMap)
+                    Toast.makeText(context, "Events added to Google Calendar", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                Toast.makeText(context, "User not signed in", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     private fun setupViewModel(tripId: Int) {
@@ -84,13 +115,14 @@ class TripPage : Fragment() {
                 arrivalTimeTextView.text = itinerary.arrivalTime
                 arrivalTime2TextView.text = itinerary.arrivalTime2
                 location.text = itinerary.cityName
+                itineraryToParse = itinerary.itineraryDetails
 
                 //val daysItinerary = parseItineraryDetails(itinerary.itineraryDetails)
                 //val itineraryPagerAdapter = ItineraryPagerAdapter(daysItinerary, this)
                 //itineraryViewPager.adapter = itineraryPagerAdapter
 
                 //excursionAdapter.updateExcursions(itinerary.excursions)
-
+                parsedItineraryViewModel.setItinerary(itinerary.itineraryDetails)
 
             }
         } else {

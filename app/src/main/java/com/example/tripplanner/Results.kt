@@ -466,7 +466,8 @@ class Results : Fragment() {
 
     private fun formatItineraryForSaving(daysItinerary: List<DayItinerary>): String {
         return daysItinerary.joinToString(separator = "\n") { day ->
-            "Date: ${day.date}\nExcursions: ${day.excursions.joinToString(separator = ", ") {it.time + " " + it.name }}"
+            day.excursions.joinToString(separator = "") {"(" + day.date + "|" + it.time + "|" + it.name + ")"}
+            //"Date: ${day.date}\nExcursions: ${day.excursions.joinToString(separator = ", ") {it.time + " " + it.name }}"
         }
     }
 
