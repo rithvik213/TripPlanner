@@ -15,6 +15,8 @@ import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.example.tripplanner.apis.amadeus.data.Location
+import com.example.tripplanner.apis.tripadvisor.TripAdvisorManager
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.LocationRequest
@@ -22,10 +24,7 @@ import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationResult
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.tripplanner.adapters.NearbyAttractionsAdapter
-import com.example.tripplanner.adapters.PopularDestinationsAdapter
-import com.example.tripplanner.data.Destination
-import com.example.tripplanner.viewmodels.AttractionsViewModel
+import com.google.android.gms.location.*
 import java.io.IOException
 import java.util.Locale
 
