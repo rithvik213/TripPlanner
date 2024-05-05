@@ -321,6 +321,49 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.979" />
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/dayNavigator"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/textView7"
+        app:layout_constraintBottom_toTopOf="@id/itineraryViewPager">
+
+        <ImageButton
+            android:id="@+id/leftArrow"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:background="@drawable/pager_arrow_back"
+            android:layout_marginStart="25dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+        <TextView
+            android:id="@+id/dayLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Day 1"
+            android:fontFamily="@font/poppins"
+            android:textColor="@color/white"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/leftArrow"
+            app:layout_constraintEnd_toStartOf="@id/rightArrow" />
+
+        <ImageButton
+            android:id="@+id/rightArrow"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:background="@drawable/pager_arrow_forward"
+            android:layout_marginEnd="25dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/itineraryViewPager"
         android:layout_width="384dp"
