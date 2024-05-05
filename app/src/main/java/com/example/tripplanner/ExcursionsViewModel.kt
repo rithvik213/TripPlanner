@@ -1,8 +1,7 @@
-package com.example.tripplanner.viewmodels
+package com.example.tripplanner
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.MutableLiveData
-import com.example.tripplanner.data.Excursion
 
 class ExcursionsViewModel : ViewModel() {
     val excursions = MutableLiveData<MutableList<Excursion>>()

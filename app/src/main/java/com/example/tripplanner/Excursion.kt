@@ -1,4 +1,4 @@
-package com.example.tripplanner.data
+package com.example.tripplanner
 
 
 data class Excursion(

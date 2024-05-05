@@ -1,4 +1,4 @@
-package com.example.tripplanner.data
+package com.example.tripplanner
 
 data class Attraction(
     val id: String, //This is the TripAdvisor locationID
