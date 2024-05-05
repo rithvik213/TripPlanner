@@ -13922,5 +13922,97 @@
     {
         "name": "Teniente R. Marsh Airport, Antarctica, TNM",
         "latLong": "-81.5, 0"
+    },
+    {
+        "name": "Beijing, China, BJS",
+        "latLong": "39.9042, 116.4074"
+    },
+    {
+        "name": "Belo Horizonte, Brazil, BHZ",
+        "latLong": "-19.9167, -43.9345"
+    },
+    {
+        "name": "Bucharest, Romania, BUH",
+        "latLong": "44.4268, 26.1025"
+    },
+    {
+        "name": "Buenos Aires, Argentina, BUE",
+        "latLong": "-34.6037, -58.3816"
+    },
+    {
+        "name": "Chicago, United States, CHI",
+        "latLong": "41.8781, -87.6298"
+    },
+    {
+        "name": "Jakarta, Indonesia, JKT",
+        "latLong": "-6.2088, 106.8456"
+    },
+    {
+        "name": "London, United Kingdom, LON",
+        "latLong": "51.5074, -0.1278"
+    },
+    {
+        "name": "Milan, Italy, MIL",
+        "latLong": "45.4642, 9.1900"
+    },
+    {
+        "name": "Montreal, Canada, YMQ",
+        "latLong": "45.5017, -73.5673"
+    },
+    {
+        "name": "Moscow, Russia, MOW",
+        "latLong": "55.7558, 37.6176"
+    },
+    {
+        "name": "New York City, United States, NYC",
+        "latLong": "40.7128, -74.0060"
+    },
+    {
+        "name": "Osaka, Japan, OSA",
+        "latLong": "34.6937, 135.5023"
+    },
+    {
+        "name": "Paris, France, PAR",
+        "latLong": "48.8566, 2.3522"
+    },
+    {
+        "name": "Rio de Janeiro, Brazil, RIO",
+        "latLong": "-22.9068, -43.1729"
+    },
+    {
+        "name": "Rome, Italy, ROM",
+        "latLong": "41.9028, 12.4964"
+    },
+    {
+        "name": "São Paulo, Brazil, SAO",
+        "latLong": "-23.5505, -46.6333"
+    },
+    {
+        "name": "Sapporo, Japan, SPK",
+        "latLong": "43.0621, 141.3544"
+    },
+    {
+        "name": "Seoul, South Korea, SEL",
+        "latLong": "37.5665, 126.9780"
+    },
+    {
+        "name": "Stockholm, Sweden, STO",
+        "latLong": "59.3293, 18.0686"
+    },
+    {
+        "name": "Tenerife, Spain, TCI",
+        "latLong": "28.2916, -16.6291"
+    },
+    {
+        "name": "Tokyo, Japan, TYO",
+        "latLong": "35.6895, 139.6917"
+    },
+    {
+        "name": "Toronto, Canada, YTO",
+        "latLong": "43.6511, -79.3470"
+    },
+    {
+        "name": "Washington, D.C., United States, WAS",
+        "latLong": "38.9072, -77.0369"
     }
 ]
