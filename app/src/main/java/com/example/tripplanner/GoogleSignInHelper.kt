@@ -21,7 +21,7 @@ class GoogleSignInHelper(
     private val googleSignInClient: GoogleSignInClient by lazy {
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestEmail()
-            .requestScopes(Scope(CalendarScopes.CALENDAR_READONLY))
+            .requestScopes(Scope(CalendarScopes.CALENDAR))
             .build()
 
         GoogleSignIn.getClient(fragment.requireActivity(), gso)
