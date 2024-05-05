@@ -41,6 +41,7 @@
         android:layout_weight="1"/>
 
     <ImageButton
+        android:id="@+id/calendar"
         android:layout_width="40dp"
         android:layout_height="38dp"
         android:background="@drawable/export"
