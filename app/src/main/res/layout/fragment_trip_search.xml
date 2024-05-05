@@ -19,7 +19,7 @@
         android:textColor="#FFFFFF"
         android:padding="10sp"
         android:textSize="24sp"
-         />
+        />
 
     <LinearLayout
         android:id="@+id/linearLayout"
@@ -27,7 +27,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_gravity="center_horizontal"
-        >
+        android:baselineAligned="false">
 
 
         <FrameLayout
@@ -37,49 +37,24 @@
             android:layout_weight="1">
 
             <Button
-                android:id="@+id/button4"
+                android:id="@+id/departButton"
                 android:layout_width="143dp"
                 android:layout_height="46dp"
-                android:layout_weight="1"
                 android:backgroundTint="@color/navy"
                 android:fontFamily="@font/poppins"
-                android:inputType="date"
+                android:text="@string/depart"
                 android:textAlignment="textStart"
                 android:textColor="#FFFFFF"
-                android:textColorHint="#AAAAAA"
-                 />
+                android:textColorHint="#AAAAAA"/>
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <EditText
-                    android:id="@+id/departdate"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:gravity="center_vertical"
-                    android:layout_weight="1"
-                    android:enabled="false"
-                    android:focusable="false"
-                    android:fontFamily="@font/poppins"
-                    android:text="@string/depart"
-                    android:textColor="@color/white"
-                    android:textSize="15sp"
-                     />
-
-                <ImageButton
-                    android:id="@+id/departcalendar"
-                    android:layout_width="15dp"
-                    android:layout_height="15dp"
-                    android:layout_gravity="center"
-                    android:background="@drawable/calendar_month"
-                    android:backgroundTint="@null"
-                    android:contentDescription="departing calendar"
-                    android:padding="8dp"
-                     />
-            </LinearLayout>
+            <ImageView
+                android:id="@+id/departcalendar"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_gravity="center"
+                android:background="@drawable/calendar_month"
+                android:translationX="36dp"
+                android:translationY="-1dp" />
 
         </FrameLayout>
 
@@ -87,130 +62,60 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_weight="1"
-            >
+            android:layout_weight="1">
 
             <Button
-                android:id="@+id/button3"
+                android:id="@+id/returnButton"
                 android:layout_width="143dp"
                 android:layout_height="46dp"
-                android:layout_weight="1"
                 android:backgroundTint="@color/navy"
                 android:fontFamily="@font/poppins"
-                android:inputType="date"
                 android:textAlignment="textStart"
                 android:textColor="#FFFFFF"
                 android:textColorHint="#AAAAAA"
+                android:text="@string/returning"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.031"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.113" />
+                app:layout_constraintTop_toTopOf="parent" />
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <EditText
-                    android:id="@+id/returndate"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:enabled="false"
-                    android:fontFamily="@font/poppins"
-                    android:text="@string/returning"
-                    android:textColor="@color/white"
-                    android:textSize="15sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.732"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.113" />
-
-                <ImageButton
-                    android:id="@+id/returncalendar"
-                    android:layout_width="15dp"
-                    android:layout_height="15dp"
-                    android:layout_gravity="center"
-                    android:background="@drawable/calendar_month"
-                    android:backgroundTint="@null"
-                    android:contentDescription="departing calendar"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.888"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.26" />
-            </LinearLayout>
+            <ImageView
+                android:id="@+id/returncalendar"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_gravity="center"
+                android:background="@drawable/calendar_month"
+                android:translationX="36dp"
+                android:translationY="-1dp"/>
 
         </FrameLayout>
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/linearLayout2"
-        android:layout_width="wrap_content"
-        android:layout_gravity="center_horizontal"
+        android:layout_width="372dp"
         android:layout_height="wrap_content"
-        android:padding="10dp"
+        android:layout_gravity="center_horizontal"
         android:orientation="horizontal"
+        android:padding="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+
         <EditText
-            android:id="@+id/originAutoComplete"
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:layout_weight="1"
-            android:backgroundTint="#1A1A1A"
-            android:fontFamily="@font/poppins"
-            android:hint="@string/origin"
-            android:text=""
-            android:textColor="#FFFFFF"
-            android:textColorHint="#AAAAAA"
-            android:textSize="14dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.047"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.206" />
-
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:background="@drawable/location_on"
-            android:backgroundTint="@null"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.371"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.218" />
-
-        <View
+            android:id="@+id/destinationEditText"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1" />
-
-        <EditText
-            android:id="@+id/destinationAutoComplete"
-            android:layout_width="wrap_content"
             android:layout_height="48dp"
             android:layout_weight="1"
             android:backgroundTint="#1A1A1A"
             android:fontFamily="@font/poppins"
-            android:hint="@string/destination"
+            android:hint="@string/city"
             android:text=""
             android:textColor="#FFFFFF"
             android:textColorHint="#AAAAAA"
-            android:textSize="14dp"
+            android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.656"
@@ -236,12 +141,29 @@
     </LinearLayout>
 
 
+    <AutoCompleteTextView
+        android:id="@+id/airportOrigin"
+        android:layout_width="339dp"
+        android:layout_height="48dp"
+        android:backgroundTint="#1A1A1A"
+        android:fontFamily="@font/poppins"
+        android:hint="@string/origin"
+        android:text=""
+        android:textColor="#FFFFFF"
+        android:textColorHint="#AAAAAA"
+        android:textSize="12sp" />
 
-
-
-
-
-
+    <AutoCompleteTextView
+        android:id="@+id/airportDest"
+        android:layout_width="340dp"
+        android:layout_height="48dp"
+        android:backgroundTint="#1A1A1A"
+        android:fontFamily="@font/poppins"
+        android:hint="@string/destination"
+        android:text=""
+        android:textColor="#FFFFFF"
+        android:textColorHint="#AAAAAA"
+        android:textSize="12sp"/>
 
 
     <LinearLayout
@@ -249,8 +171,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:padding="20dp"
         android:orientation="horizontal"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -273,11 +196,11 @@
             android:id="@+id/budget"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="25sp"
             android:background="@android:color/transparent"
             android:fontFamily="@font/poppinsbold"
-            android:text="0"
-            android:layout_gravity="center_vertical"
-            android:layout_marginLeft="25sp"
+            android:text="@string/budgetSeekbar"
             android:textColor="@color/white"
             android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -291,9 +214,9 @@
             android:id="@+id/budgetseekbar"
             android:layout_width="228dp"
             android:layout_height="26dp"
-            android:max="2500"
             android:layout_gravity="center_vertical"
-            android:layout_marginLeft="30sp"
+            android:layout_marginStart="30sp"
+            android:max="2500"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
@@ -303,21 +226,17 @@
     </LinearLayout>
 
 
-
-
-
-
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
-        android:layout_gravity="center_horizontal"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
         android:fontFamily="@font/poppins"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
         android:text="@string/itinerary"
         android:textColor="@color/white"
-        android:textSize="18dp"
-        android:paddingTop="40dp"
-        android:paddingBottom="10dp"
+        android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -330,7 +249,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:paddingBottom="25dp"
+        android:paddingBottom="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -367,7 +286,6 @@
     </RadioGroup>
 
 
-
     <Button
         android:id="@+id/searchButton"
         android:layout_width="match_parent"
@@ -383,11 +301,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.942" />
-
-
-
-
-
 
 
 </LinearLayout>
