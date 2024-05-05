@@ -1,4 +1,4 @@
-package com.example.tripplanner.adapters
+package com.example.tripplanner
 
 import android.view.LayoutInflater
 import android.view.View
@@ -7,8 +7,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.tripplanner.data.Attraction
-import com.example.tripplanner.R
 import com.example.tripplanner.apis.tripadvisor.TripAdvisorManager
 
 class NearbyAttractionsAdapter(var items: List<TripAdvisorManager.AttractionDetail>, private val onAttractionClick: (Int) -> Unit) :

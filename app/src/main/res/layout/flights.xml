@@ -1,48 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:backgroundTint="@color/navy"
-    android:background="@color/black"
-    android:layout_margin="8dp"
-    app:cardCornerRadius="8dp"
-    android:id="@+id/flightcards">
+    android:orientation="horizontal"
+    android:padding="16dp"
+    android:id="@+id/flightcards"
+    android:background="@drawable/dashed_line"
+    android:gravity="center_vertical">
 
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+        android:orientation="vertical" >
 
             <TextView
-                android:id="@+id/departingFlightDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/poppinsbold"
                 android:text="Monday January 1, 2020"
-                android:textColor="@color/white"
-                android:textSize="15sp" />
-
-            <TextView
-                android:id="@+id/flightPrice"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="120dp"
-                android:fontFamily="@font/poppinsbold"
-                android:text="$5000.00"
-                android:textColor="@color/white"
-                android:textSize="15sp" />
-        </LinearLayout>
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                android:fontFamily="@font/poppinsbold"/>
 
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="249dp"
             android:layout_height="109dp"
             android:gravity="center"
             android:orientation="horizontal">
@@ -57,30 +39,19 @@
 
 
                 <TextView
-                    android:id="@+id/departingOutbound"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/poppinsbold"
                     android:text="BOS"
-                    android:textColor="@color/white"
+                    android:textColor="@color/black"
                     android:textSize="24sp" />
 
                 <TextView
-                    android:id="@+id/departingOutboundTime"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/poppins"
                     android:text="00:00"
-                    android:textColor="@color/white"
-                    android:textSize="20sp" />
-
-                <TextView
-                    android:id="@+id/departingOutboundTer"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/poppins"
-                    android:text="Terminal"
-                    android:textColor="@color/white"
+                    android:textColor="@color/black"
                     android:textSize="20sp" />
 
 
@@ -93,7 +64,7 @@
                 android:paddingStart="10dp"
                 android:paddingEnd="10dp"
                 android:text=">"
-                android:textColor="@color/white"
+                android:textColor="@color/black"
                 android:textSize="24sp" />
 
             <LinearLayout
@@ -104,144 +75,125 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/departingInbound"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/poppinsbold"
                     android:text="HND"
-                    android:textColor="@color/white"
+                    android:textColor="@color/black"
                     android:textSize="24sp" />
 
                 <TextView
-                    android:id="@+id/departingInboundTime"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/poppins"
                     android:text="00:00"
-                    android:textColor="@color/white"
-                    android:textSize="20sp" />
-
-                <TextView
-                    android:id="@+id/departingInboundTer"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/poppins"
-                    android:text="Terminal"
-                    android:textColor="@color/white"
+                    android:textColor="@color/black"
                     android:textSize="20sp" />
 
             </LinearLayout>
 
             <ImageView
-                android:id="@+id/departingLogo"
                 android:layout_width="75dp"
-                android:layout_height="50dp"/>
+                android:layout_height="50dp"
+                android:background="@drawable/aa" />
         </LinearLayout>
-
-        <TextView
-            android:id="@+id/returningFlightDate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/poppinsbold"
-            android:text="Sunday January 7, 2020"
-            android:textColor="@color/white"
-            android:textSize="15sp" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="109dp"
-            android:gravity="center"
-            android:orientation="horizontal">
-
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center_horizontal"
-                android:orientation="vertical">
-
-
-                <TextView
-                    android:id="@+id/returningOutbound"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/poppinsbold"
-                    android:text="HND"
-                    android:textColor="@color/white"
-                    android:textSize="24sp" />
-
-                <TextView
-                    android:id="@+id/returningOutboundTime"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/poppins"
-                    android:text="00:00"
-                    android:textColor="@color/white"
-                    android:textSize="20sp" />
-
-                <TextView
-                    android:id="@+id/returningOutboundTer"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/poppins"
-                    android:text="Terminal"
-                    android:textColor="@color/white"
-                    android:textSize="20sp" />
-
-
-            </LinearLayout>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/poppins"
-                android:paddingStart="10dp"
-                android:paddingEnd="10dp"
-                android:text=">"
-                android:textColor="@color/white"
-                android:textSize="24sp" />
-
+                android:text="Sunday January 7, 2020"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                android:fontFamily="@font/poppinsbold"/>
             <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center_horizontal"
-                android:orientation="vertical">
+                android:layout_width="249dp"
+                android:layout_height="109dp"
+                android:gravity="center"
+                android:orientation="horizontal"
+                >
+
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal">
+
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="HND"
+                        android:textSize="24sp"
+                        android:textColor="@color/black"
+                        android:fontFamily="@font/poppinsbold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="00:00"
+                        android:textSize="20sp"
+                        android:textColor="@color/black"
+                        android:fontFamily="@font/poppins" />
+
+
+                </LinearLayout>
 
                 <TextView
-                    android:id="@+id/returningInbound"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/poppinsbold"
-                    android:text="BOS"
-                    android:textColor="@color/white"
-                    android:textSize="24sp" />
+                    android:text=">"
+                    android:textSize="24sp"
+                    android:textColor="@color/black"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    android:fontFamily="@font/poppins" />
 
-                <TextView
-                    android:id="@+id/returningInboundTime"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/poppins"
-                    android:text="00:00"
-                    android:textColor="@color/white"
-                    android:textSize="20sp" />
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal">
 
-                <TextView
-                    android:id="@+id/returningInboundTer"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/poppins"
-                    android:text="Terminal"
-                    android:textColor="@color/white"
-                    android:textSize="20sp" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="BOS"
+                        android:textSize="24sp"
+                        android:textColor="@color/black"
+                        android:fontFamily="@font/poppinsbold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="00:00"
+                        android:textSize="20sp"
+                        android:textColor="@color/black"
+                        android:fontFamily="@font/poppins" />
+                </LinearLayout>
+                <ImageView
+                    android:layout_width="75dp"
+                    android:layout_height="50dp"
+                    android:background="@drawable/aa"/>
             </LinearLayout>
-
-            <ImageView
-                android:id="@+id/returningLogo"
-                android:layout_width="75dp"
-                android:layout_height="50dp" />
-        </LinearLayout>
     </LinearLayout>
 
-</androidx.cardview.widget.CardView>
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="$5000.00"
+            android:textColor="@color/black"
+            android:textSize="24sp"
+            android:fontFamily="@font/poppinsbold"/>
+
+    </LinearLayout>
+</LinearLayout>
