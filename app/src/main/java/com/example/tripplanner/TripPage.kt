@@ -33,8 +33,8 @@ class TripPage : Fragment() {
     private lateinit var arrivalTimeTextView: TextView
     private lateinit var arrivalTime2TextView: TextView
     private lateinit var viewModel: ItineraryViewModel
-    //private lateinit var itineraryViewPager: ViewPager2
-    //private lateinit var excursionAdapter: ExcursionAdapter
+    private lateinit var itineraryViewPager: ViewPager2
+    private lateinit var excursionAdapter: ExcursionAdapter
     private lateinit var parsedItineraryViewModel: ParsedItineraryViewModel
     private lateinit var calendarButton: ImageButton
     private lateinit var itineraryToParse: String
@@ -57,6 +57,7 @@ class TripPage : Fragment() {
         location = view.findViewById(R.id.location)
         calendarButton = view.findViewById(R.id.calendar)
         parsedItineraryViewModel = ViewModelProvider(this).get(ParsedItineraryViewModel::class.java)
+        itineraryViewPager = view.findViewById(R.id.itineraryViewPager)
 
         val tripId = arguments?.getInt("tripId") ?: -1
         setupViewModel(tripId)
@@ -117,9 +118,10 @@ class TripPage : Fragment() {
                 location.text = itinerary.cityName
                 itineraryToParse = itinerary.itineraryDetails
 
-                //val daysItinerary = parseItineraryDetails(itinerary.itineraryDetails)
-                //val itineraryPagerAdapter = ItineraryPagerAdapter(daysItinerary, this)
-                //itineraryViewPager.adapter = itineraryPagerAdapter
+                val daysItinerary = parseItineraryToDayItinerary(itinerary.itineraryDetails)
+
+                val itineraryPagerAdapter = ItineraryPagerAdapter(daysItinerary, this)
+                itineraryViewPager.adapter = itineraryPagerAdapter
 
                 //excursionAdapter.updateExcursions(itinerary.excursions)
                 parsedItineraryViewModel.setItinerary(itinerary.itineraryDetails)
@@ -137,5 +139,29 @@ class TripPage : Fragment() {
         } catch (e: Exception) {
             listOf<DayItinerary>()
         }
+    }
+
+    private fun parseItineraryToDayItinerary(itinerary: String): List<DayItinerary> {
+        val parsed = mutableMapOf<String, MutableList<Excursion>>()
+        val regex = """\(Day \d+: ([^|]+)\|([^|]+)\|?([^)]*)\)""".toRegex()
+
+        for (match in regex.findAll(itinerary)) {
+            val date = match.groupValues[1].trim()
+            val name = match.groupValues[2].trim()
+            val time = match.groupValues[3].trim()
+
+            val excursion = Excursion(name, time)
+
+            if (parsed[date] == null) {
+                parsed[date] = mutableListOf(excursion)
+            } else {
+                parsed[date]!!.add(excursion)
+            }
+        }
+
+
+        Log.d("Parsing", "Parsed Itinerary: $parsed")
+
+        return parsed.map { (date, excursions) -> DayItinerary(date, excursions) }
     }
 }
