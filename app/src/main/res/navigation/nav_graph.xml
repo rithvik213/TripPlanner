@@ -74,6 +74,13 @@
         android:label="fragment_flight_results"
         tools:layout="@layout/fragment_flight_results" />
 
+        <action
+            android:id="@+id/action_flightResultsFragment_to_resultsFragment"
+            app:destination="@id/resultsFragment" />
+        <action
+            android:id="@+id/action_flightResultsFragment_to_tripSearchFragment"
+            app:destination="@id/tripSearchFragment" />
+
     <fragment
         android:id="@+id/resultsFragment"
         android:name="com.example.tripplanner.Results"

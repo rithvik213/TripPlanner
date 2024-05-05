@@ -59,8 +59,8 @@ class TripSearch : Fragment() {
                 Toast.makeText(context, "Please fill out all fields.", Toast.LENGTH_SHORT).show()
             } else {
                 //Specifies the portion of the string that corresponds to IATA codes
-                val destinationIATA = destAirport.text.subSequence(destLen-4, destLen-1).toString()
-                val originIATA = originAirport.text.subSequence(destLen-4, originLen-1).toString()
+                val destinationIATA = destAirport.text.subSequence(destLen-3, destLen).toString()
+                val originIATA = originAirport.text.subSequence(originLen-3, originLen).toString()
                 val destination = destEditText.text.toString()
 
                 val bundle = Bundle()
@@ -71,7 +71,7 @@ class TripSearch : Fragment() {
                 bundle.putString("destination", destinationIATA)
                 bundle.putString("budget", budget)
                 bundle.putString("latLong", latLong)
-                findNavController().navigate(R.id.action_tripSearchFragment_to_resultsFragment, bundle)
+                findNavController().navigate(R.id.action_tripSearchFragment_to_flightResultsFragment, bundle)
             }
         }
 
