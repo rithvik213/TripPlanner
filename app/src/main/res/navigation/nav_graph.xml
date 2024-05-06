@@ -65,6 +65,11 @@
             android:id="@+id/action_tripSearchFragment_to_resultsFragment"
             app:destination="@id/resultsFragment" />
 
+        <action
+            android:id="@+id/action_tripSearchFragment_to_flightResultsFragment"
+            app:destination="@id/flightResultsFragment" />
+
+
     <fragment
         android:id="@+id/resultsFragment"
         android:name="com.example.tripplanner.Results"
@@ -126,6 +131,19 @@
         android:name="com.example.tripplanner.DestinationsPage"
         android:label="fragment_destinations_page"
         tools:layout="@layout/fragment_discover_page"/>
+
+    <fragment
+        android:id="@+id/flightResultsFragment"
+        android:name="com.example.tripplanner.FlightResults"
+        android:label="fragment_flight_results"
+        tools:layout="@layout/fragment_flight_results" />
+
+    <action
+        android:id="@+id/action_flightResultsFragment_to_resultsFragment"
+        app:destination="@id/resultsFragment" />
+    <action
+        android:id="@+id/action_flightResultsFragment_to_tripSearchFragment"
+        app:destination="@id/tripSearchFragment" />
 
 
     <action android:id="@+id/global_action_to_discoverPage"
