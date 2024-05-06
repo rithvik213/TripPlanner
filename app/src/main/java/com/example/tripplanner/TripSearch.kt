@@ -1,6 +1,5 @@
 package com.example.tripplanner
 
-import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.os.Bundle
 import android.util.Log
@@ -13,14 +12,13 @@ import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.EditText
 import android.widget.SeekBar
-import android.widget.ImageButton
 import android.widget.RadioButton
 import android.widget.RadioGroup
-import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import java.util.Calendar
 import androidx.navigation.fragment.findNavController
+import com.example.tripplanner.viewmodels.SharedViewModel
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.io.BufferedReader
