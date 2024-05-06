@@ -101,7 +101,7 @@ class FlightAdapter(private var flightInfoList: List<FlightOffer>) : RecyclerVie
             if (isSelected) {
                 itemView.setBackgroundColor(Color.TRANSPARENT)
             } else {
-                itemView.setBackgroundColor(Color.BLACK)
+                itemView.setBackgroundColor(Color.GRAY)
             }
         }
 
