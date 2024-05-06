@@ -1,4 +1,4 @@
-package com.example.tripplanner
+package com.example.tripplanner.viewmodels
 
 import androidx.lifecycle.ViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
