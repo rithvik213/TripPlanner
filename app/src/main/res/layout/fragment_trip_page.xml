@@ -49,10 +49,6 @@
 </LinearLayout>
     </FrameLayout>
 
-
-
-
-
 <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -206,17 +202,6 @@
     </LinearLayout>
 </FrameLayout>
 
-
-
-
-
-
-
-
-
-
-
-
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -232,47 +217,51 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.823" />
 
-    <RelativeLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/dayNavigator"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/textView7"
+        app:layout_constraintBottom_toTopOf="@id/itineraryViewPager">
 
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/itineraryViewPager"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"/>
-
-        <!-- Left Navigation Arrow -->
         <ImageButton
             android:id="@+id/leftArrow"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_centerVertical="true"
-            android:layout_alignParentStart="true"
-            android:background="@drawable/backarrow"
-            />  <!-- Replace with your left arrow drawable -->
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:background="@drawable/pager_arrow_back"
+            android:layout_marginStart="25dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
 
-        <!-- Right Navigation Arrow -->
-        <ImageButton
-            android:id="@+id/rightArrow"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_centerVertical="true"
-            android:layout_alignParentEnd="true"
-            android:background="@drawable/arrow_forward_ios"
-            />  <!-- Replace with your right arrow drawable -->
-
-        <!-- Text Indicator -->
         <TextView
-            android:id="@+id/pageIndicator"
+            android:id="@+id/dayLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
+            android:text="Day 1"
+            android:fontFamily="@font/poppins"
             android:textColor="@color/white"
-            android:text="daye" />
-    </RelativeLayout>
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/leftArrow"
+            app:layout_constraintEnd_toStartOf="@id/rightArrow" />
 
+        <ImageButton
+            android:id="@+id/rightArrow"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:background="@drawable/pager_arrow_forward"
+            android:layout_marginEnd="25dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
 
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/itineraryViewPager"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"/>
 
 
 
