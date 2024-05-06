@@ -14,7 +14,6 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 
 import com.bumptech.glide.Glide
 
-
 class DestinationsPage : Fragment() {
     private lateinit var planTripButton: ImageButton
     private lateinit var backButton: ImageButton

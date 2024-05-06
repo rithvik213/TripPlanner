@@ -222,7 +222,6 @@ class TripSearch : Fragment() {
 
                 viewModel.selectedAttractions.value = currentSelections
             }
-        }
     }
 
 
@@ -242,9 +241,31 @@ class TripSearch : Fragment() {
             } else {
                 returnFormatted = formattedISODate
                 viewModel.setReturnDate(selectedYear, selectedMonth, selectedDay)
+                val departDate = Calendar.getInstance()
+                val returnDate = Calendar.getInstance()
+                departDate.set(departFormatted.substring(0, 4).toInt(), departFormatted.substring(5, 7).toInt() - 1, departFormatted.substring(8, 10).toInt())
+                returnDate.set(selectedYear, selectedMonth, selectedDay)
+                if ((returnDate.timeInMillis - departDate.timeInMillis) / (24 * 60 * 60 * 1000) > 5) {
+                    Toast.makeText(context, "Return date must be within 5 days from departure date.", Toast.LENGTH_LONG).show()
+                    dateButton.text = "Select Date"
+                    returnFormatted = ""
+                }
             }
         }, year, month, day)
 
+        if (dateButton.id == R.id.departButton) {
+            datePickerDialog.datePicker.minDate = calendar.timeInMillis
+        } else {
+            val minReturnCalendar = Calendar.getInstance()
+            minReturnCalendar.set(departFormatted.substring(0, 4).toInt(), departFormatted.substring(5, 7).toInt() - 1, departFormatted.substring(8, 10).toInt())
+            minReturnCalendar.add(Calendar.DAY_OF_MONTH, 1)
+            datePickerDialog.datePicker.minDate = minReturnCalendar.timeInMillis
+
+            val maxReturnCalendar = Calendar.getInstance()
+            maxReturnCalendar.set(departFormatted.substring(0, 4).toInt(), departFormatted.substring(5, 7).toInt() - 1, departFormatted.substring(8, 10).toInt())
+            maxReturnCalendar.add(Calendar.DAY_OF_MONTH, 5)
+            datePickerDialog.datePicker.maxDate = maxReturnCalendar.timeInMillis
+        }
 
         datePickerDialog.show()
     }

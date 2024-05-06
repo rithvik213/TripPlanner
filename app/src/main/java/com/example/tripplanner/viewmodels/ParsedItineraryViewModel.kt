@@ -21,6 +21,8 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
+// A ViewModel to keep track of the itinerary for our trip_page specifically in order to parse
+// our database value for the itinerary details
 class ParsedItineraryViewModel : ViewModel() {
 
     private val _itinerary = MutableLiveData<String>()

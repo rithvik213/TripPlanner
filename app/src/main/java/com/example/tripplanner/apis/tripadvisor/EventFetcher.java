@@ -1,6 +1,5 @@
 package com.example.tripplanner.apis.tripadvisor;
 
-
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.Call;
@@ -20,31 +19,28 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+// Defines the class for using TripAdvisor
 public class EventFetcher {
 
+    // Callback for once events are fetched
     public interface EventFetchListener {
         void onEventsFetched(List<EventResult> events);
         void onEventFetchFailed(String errorMessage);
     }
-    //private RecyclerView recyclerView;
+    // Variables necessary to store for simultaneous calls to different endpoints
     private String cityName;
     private Context context;
-
     private EventFetchListener listener;
-
     private String returnDate;
-
     private String departDate;
-
     public EventFetcher(String cityName, Context context, String returnDate, String departDate, EventFetchListener listener) {
-        //this.recyclerView = recyclerView;
         this.cityName = cityName;
         this.context = context;
         this.listener = listener;
         this.returnDate = returnDate;
         this.departDate = departDate;
     }
-
+    // Retrofit Instance
     public void fetchEvents() {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://serpapi.com/")
@@ -53,6 +49,7 @@ public class EventFetcher {
 
         SerpApiService service = retrofit.create(SerpApiService.class);
 
+        // Parameters for the API body and specifying the search parameters
         Map<String, String> parameters = new HashMap<>();
         parameters.put("engine", "google_events");
         parameters.put("q", "Events in " + cityName + " " + departDate + " to " + returnDate);
@@ -62,11 +59,11 @@ public class EventFetcher {
 
         Call<JsonObject> call = service.getEvents(parameters);
         call.enqueue(new Callback<JsonObject>() {
+            // callback for response to API
             @Override
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     List<EventResult> events = new Gson().fromJson(response.body().getAsJsonArray("events_results"), new TypeToken<List<EventResult>>(){}.getType());
-                    //updateUI(events);
                     listener.onEventsFetched(events);
                 } else {
                     // Error handling
@@ -90,14 +87,7 @@ public class EventFetcher {
         });
     }
 
-/*
-    private void updateUI(List<EventResult> events) {
-
-        EventAdapter adapter = new EventAdapter(events);
-        recyclerView.setLayoutManager(new LinearLayoutManager(context));
-        recyclerView.setAdapter(adapter);
-    }*/
-
+    // Specifies Event Results data class to just get the title and date (which includes exact time) from SerpAPI
     public class EventResult {
         public String title;
         public Date date;
@@ -106,43 +96,7 @@ public class EventFetcher {
             public String when;
         }
     }
-/*
-    public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> {
-        private List<EventResult> events;
 
-        public EventAdapter(List<EventResult> events) {
-            this.events = events;
-        }
-
-        @Override
-        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.event_item, parent, false);
-            return new ViewHolder(view);
-        }
-
-        @Override
-        public void onBindViewHolder(ViewHolder holder, int position) {
-            EventResult event = events.get(position);
-            holder.titleTextView.setText(event.title);
-            holder.whenTextView.setText(event.date.when);
-        }
-
-        @Override
-        public int getItemCount() {
-            return events.size();
-        }
-
-        public class ViewHolder extends RecyclerView.ViewHolder {
-            public TextView titleTextView;
-            public TextView whenTextView;
-
-            public ViewHolder(View itemView) {
-                super(itemView);
-                titleTextView = itemView.findViewById(R.id.title);
-                whenTextView = itemView.findViewById(R.id.when);
-            }
-        }
-    }*/
 }
 
 

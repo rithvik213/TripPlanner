@@ -8,6 +8,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Url
 
+// Specifies the callbacks for TripAdvisor responses and the API interface
 class TripAdvisorManager {
 
     interface AttractionFetchListener {
@@ -27,11 +28,10 @@ class TripAdvisorManager {
         fun onDetailsFetchFailed(errorMessage: String)
     }
 
-
-
     private val apiKey = "TRIP_ADVISOR_KEY"
     private val baseUrl = "https://api.content.tripadvisor.com/api/v1/location/"
 
+    // retrofit instance for location search endpoint
     private val retrofit = Retrofit.Builder()
         .baseUrl(baseUrl)
         .addConverterFactory(GsonConverterFactory.create())
@@ -39,8 +39,7 @@ class TripAdvisorManager {
 
     private val service = retrofit.create(TripAdvisorService::class.java)
 
-    private val locationIdToNameMap = mutableMapOf<String, String>()
-
+    // Fetches the images and the attraction names for a give city
     fun fetchData(context: Context, searchQuery: String, latLong: String?, listener: AttractionFetchListener) {
         fetchAttractions(context, searchQuery, latLong, object : AttractionFetchListener {
             override fun onAttractionsFetched(attractions: List<AttractionDetail>) {
@@ -70,8 +69,7 @@ class TripAdvisorManager {
         }
     }
 
-
-
+    // Gets the first response to the location id endpoint to use for other endpoints in subsequent API calls
     private fun fetchLocationId(cityName: String, callback: (String) -> Unit) {
         val url = "search?searchQuery=$cityName&language=en&key=$apiKey"
         val call = service.searchLocations(url)
@@ -91,7 +89,7 @@ class TripAdvisorManager {
         })
     }
 
-
+    // Gets the largest image for a location ID after the fetchLocationId call
     fun fetchImage(locationId: String, callback: ImageFetchCallback) {
         val url = "$locationId/photos?language=en&key=$apiKey"
         val call = service.getLocationPhotos(url)
@@ -147,7 +145,7 @@ class TripAdvisorManager {
     }
 
 
-
+    // Gets images for our home screen based on our current location
     fun fetchSearchTheLocation(context: Context, cityName: String, category: String, latLong: String, searchQuery: String, listener: AttractionFetchListener) {
         val url = "search?key=$apiKey&searchQuery=${searchQuery.urlEncode()}&category=$category&latLong=$latLong&language=en"
         val call = service.searchLocations(baseUrl + url)
@@ -202,6 +200,7 @@ class TripAdvisorManager {
         })
     }
 
+    // Gets the details for our home page attractions based on our current coordinates
     fun fetchAttractionDetails(context: Context, locationId: String, listener: DetailFetchListener) {
         val url = "$locationId/details?language=en&currency=USD&key=$apiKey"
         val call = service.getAttractionDetails(baseUrl + url)
@@ -241,31 +240,6 @@ class TripAdvisorManager {
     fun String.urlEncode(): String = java.net.URLEncoder.encode(this, "UTF-8")
 
 
-  /*
-    private fun updateAttractionsUI(attractions: List<String>) {
-        val adapter = AttractionsAdapter(attractions)
-        attractionsRecyclerView.adapter = adapter
-    }
-
-    class AttractionsAdapter(private val attractions: List<String>) :
-        RecyclerView.Adapter<AttractionsAdapter.ViewHolder>() {
-
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-            val view = LayoutInflater.from(parent.context).inflate(R.layout.attraction_item, parent, false)
-            return ViewHolder(view)
-        }
-
-        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-            holder.attractionName.text = attractions[position]
-        }
-
-        override fun getItemCount() = attractions.size
-
-        class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-            val attractionName: TextView = view.findViewById(R.id.attractionName)
-        }
-    }
-*/
     interface TripAdvisorService {
         @GET
         fun searchLocations(@Url url: String): Call<LocationSearchResponse>
@@ -278,7 +252,7 @@ class TripAdvisorManager {
 
   }
 
-    //for fetchSearchtheLocation
+    // data classes necessary for our responses
     data class AttractionDetail(
         val locationID: String,
         val name: String,
