@@ -8,6 +8,9 @@ import com.google.android.gms.common.api.Scope
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.api.services.calendar.CalendarScopes
 
+// simple class to use Google Auth to sign into the app
+// sets up responses for proper result handling and saves user account details for future use
+// also gets calender access for future use cases
 class GoogleSignInHelper(
     private val fragment: Fragment,
     private val resultListener: SignInResultListener

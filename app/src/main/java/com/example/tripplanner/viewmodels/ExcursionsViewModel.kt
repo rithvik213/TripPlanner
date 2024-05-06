@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.MutableLiveData
 import com.example.tripplanner.data.Excursion
 
+// Allows us to keep track of excursions for calls to both TripAdvisor and SerpAPI in the same list
 class ExcursionsViewModel : ViewModel() {
     val excursions = MutableLiveData<MutableList<Excursion>>()
 
