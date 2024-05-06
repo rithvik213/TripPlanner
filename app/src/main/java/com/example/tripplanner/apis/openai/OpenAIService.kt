@@ -19,7 +19,6 @@ interface OpenAIService {
     suspend fun createCompletion(@Body request: CompletionRequest): Response<ApiResponse>
 }
 
-
 data class ApiResponse(val choices: List<Choice>)
 data class Choice(val text: String)
 

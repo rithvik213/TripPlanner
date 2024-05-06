@@ -21,7 +21,6 @@ import com.bumptech.glide.Glide
 import com.example.tripplanner.apis.tripadvisor.TripAdvisorManager
 import com.example.tripplanner.viewmodels.AttractionsViewModel
 
-
 class AttractionsFragment : Fragment() {
     private lateinit var viewModel: AttractionsViewModel
     private var locationId: String? = null

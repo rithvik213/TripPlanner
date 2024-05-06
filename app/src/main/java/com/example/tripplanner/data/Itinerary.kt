@@ -4,6 +4,8 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.ColumnInfo
 
+// A data class to specify all the relevant information for a trip/itinerary
+// to be used in our results and trip_page fragments
 @Entity(tableName = "itineraries")
 data class Itinerary(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
