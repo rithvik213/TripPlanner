@@ -14,10 +14,6 @@ import android.widget.EditText
 import android.widget.SeekBar
 import android.widget.RadioButton
 import android.widget.RadioGroup
-
-import android.widget.TextView
-
-
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import java.util.Calendar
@@ -94,21 +90,12 @@ class TripSearch : Fragment() {
         val returncalendar = view.findViewById<Button>(R.id.returnButton)
 
         departcalendar.setOnClickListener {
-
-            showDatePickerDialog(departdate, true) // true for departure
-        }
-
-        returncalendar.setOnClickListener {
-            if (departFormatted.isEmpty()) {
-                Toast.makeText(context, "Please select a departure date first.", Toast.LENGTH_SHORT).show()
-            } else {
-                showDatePickerDialog(returndate, false) // false for return
-            }
-
             showDatePickerDialog(departcalendar)
         }
 
-        
+        returncalendar.setOnClickListener {
+            showDatePickerDialog(returncalendar)
+        }
 
         setupRadioButtonListeners(view)
 
@@ -160,57 +147,24 @@ class TripSearch : Fragment() {
         }
     }
 
-
-    private fun showDatePickerDialog(dateEditText: EditText, isDeparture: Boolean) {
-
+    private fun showDatePickerDialog(dateButton: Button) {
         val calendar = Calendar.getInstance()
         val year = calendar.get(Calendar.YEAR)
         val month = calendar.get(Calendar.MONTH)
         val day = calendar.get(Calendar.DAY_OF_MONTH)
 
         val datePickerDialog = DatePickerDialog(requireContext(), { _, selectedYear, selectedMonth, selectedDay ->
-
-            // Format the date as YYYY-MM-DD
-            val formattedDate = String.format("%04d-%02d-%02d", selectedYear, selectedMonth + 1, selectedDay)
-            dateEditText.setText(formattedDate)
-            if (isDeparture) {
-                departFormatted = formattedDate
-                // Reset return date if it's outside the new allowed range
-                val returnCalendar = Calendar.getInstance().apply {
-                    set(selectedYear, selectedMonth, selectedDay)
-                    add(Calendar.DATE, 5) // Max 5 days after departure
-                }
-                returnFormatted = formattedDate
-            }
-
             val formattedDate = String.format("%02d/%02d/%d", selectedDay, selectedMonth + 1, selectedYear)
             dateButton.text = formattedDate
             if(dateButton.id == R.id.departButton)
                 departFormatted = String.format("%d-%02d-%02d", selectedYear, selectedMonth + 1, selectedDay)
             else
                 returnFormatted = String.format("%d-%02d-%02d", selectedYear, selectedMonth + 1, selectedDay)
-
         }, year, month, day)
 
-        if (!isDeparture && departFormatted.isNotEmpty()) {
-            val departCalendar = Calendar.getInstance().apply {
-                val parts = departFormatted.split("-").map { it.toInt() }
-                set(parts[0], parts[1] - 1, parts[2]) // Adjust for YYYY-MM-DD format
-            }
-            datePickerDialog.datePicker.minDate = departCalendar.timeInMillis
-            departCalendar.add(Calendar.DAY_OF_MONTH, 5) // Limit return date to 5 days after departure
-            datePickerDialog.datePicker.maxDate = departCalendar.timeInMillis
-        }
 
         datePickerDialog.show()
     }
-
-
-
-
-
-
-
 
     private fun jsonFileToAirportMap(): HashMap<String, String> {
         val jsonFile = context?.assets?.open("airports.json")
@@ -229,7 +183,6 @@ class TripSearch : Fragment() {
         }
         return map
     }
-
 }
 data class AirportEntry(val name: String, val latLong: String)
 

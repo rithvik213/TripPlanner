@@ -1,14 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
+    <solid android:color="@color/appBackgroundColor" />
+    <stroke android:width="1dp" android:color="@color/appBackgroundColor" /> <!-- Optional -->
     <corners android:radius="16dp" />
-    <solid android:color="@color/appBackgroundColor"/> <!-- Change #DF000000 to your desired background color -->
-
-    <!-- Important: Ensure there is no <stroke> defined that could be causing the issue -->
-    <!-- Example of transparent padding outside corners, replace with your color settings if needed -->
-    <padding
-        android:left="0dp"
-        android:top="0dp"
-        android:right="0dp"
-        android:bottom="0dp"/>
 </shape>
