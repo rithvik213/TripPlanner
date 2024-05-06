@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:orientation="vertical"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:background="@color/darknavy"
     tools:context=".UserProfile">
 
@@ -16,90 +15,35 @@
         android:layout_gravity="center"
         android:padding="20dp"
         android:text=""
-        android:hint="@string/name"
+        android:hint="Your Travel Dashboard"
         android:textColorHint="@color/white"
         android:textColor="@color/white"
-        android:textSize="24sp"
-         />
+        android:textSize="24sp" />
 
     <TextView
-        android:id="@+id/tripsHeading"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:fontFamily="@font/poppins"
-        android:text="@string/trip"
-        android:textColor="#FFFFFF"
-        android:padding="10sp"
-        android:textSize="24sp"
-        app:layout_constraintTop_toBottomOf="@+id/name"
-        app:layout_constraintStart_toStartOf="parent"
-        />
-
-   <com.google.android.gms.maps.MapView
-    android:id="@+id/map"
-    android:layout_width="match_parent"
-    android:layout_height="250dp"
-    android:padding="20dp"
-    android:layout_marginStart="16dp"
-    android:layout_marginEnd="16dp"
-    />
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/statsContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
+        android:paddingBottom="10dp"
+        android:textAlignment="center"
+        android:fontFamily="@font/poppinslight"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:textColor="@color/white"
+        android:text="Welcome to your travel overview! Here's a look at your upcoming journeys. Use this map to view all your planned trips." />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="500dp"
         android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp">
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/rounded_overlay"> <!-- This will be your custom drawable with rounded corners -->
 
-        <LinearLayout
+        <com.google.android.gms.maps.MapView
+            android:id="@+id/map"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:layout_height="match_parent"
+            android:padding="20dp"/>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Trips Planned for 2024"
-                android:textAppearance="@style/TextAppearance.AppCompat.Large"
-                android:fontFamily="@font/poppins"
-                android:textColor="@color/black" />
-
-            <TextView
-                android:id="@+id/tripsPlannedView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="5"
-                android:textSize="24sp"
-                android:fontFamily="@font/poppins"
-                android:textColor="@color/black"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Distance Traveled (miles)"
-                android:fontFamily="@font/poppins"
-                android:textAppearance="@style/TextAppearance.AppCompat.Large"
-                android:textColor="@color/black" />
-
-            <TextView
-                android:id="@+id/distanceTraveledView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="5"
-                android:textSize="24sp"
-                android:fontFamily="@font/poppins"
-                android:textColor="@color/black"
-                android:textStyle="bold" />
-        </LinearLayout>
-    </androidx.cardview.widget.CardView>
-
-
-
-
-
-
+    </FrameLayout>
 </LinearLayout>
