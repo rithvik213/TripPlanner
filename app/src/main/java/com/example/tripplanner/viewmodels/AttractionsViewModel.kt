@@ -8,6 +8,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import com.example.tripplanner.apis.tripadvisor.TripAdvisorManager
 
+// Allows us to cache TripAdvisor calls for our home page
 class AttractionsViewModel : ViewModel() {
     private var tripAdvisorManager: TripAdvisorManager = TripAdvisorManager()
 
@@ -28,6 +29,7 @@ class AttractionsViewModel : ViewModel() {
 
     val userName = MutableLiveData<String>()
 
+    // Does not make subsequent calls unless we move enough
     var lastLocation: android.location.Location? = null
 
     var isLoadingGeo = MutableLiveData<Boolean>(false)
