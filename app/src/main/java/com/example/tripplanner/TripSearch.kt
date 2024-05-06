@@ -134,13 +134,12 @@ class TripSearch : Fragment() {
         return view
     }
 
-
+    // Allows us to save the user preferences for excursion types to be used later in generating their itinerary
     private fun setupRadioButtonListeners(view: View) {
         val radioGroup = view.findViewById<RadioGroup>(R.id.radioGroup)
         radioGroup.setOnCheckedChangeListener { _, checkedId ->
             val radioButton = view.findViewById<RadioButton>(checkedId)
             val attraction = radioButton.text.toString()
-            // Update the ViewModel
             val currentSelections = viewModel.selectedAttractions.value?.toMutableList() ?: mutableListOf()
             currentSelections.add(attraction)
             viewModel.selectedAttractions.value = currentSelections
