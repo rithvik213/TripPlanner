@@ -204,58 +204,62 @@
         android:textSize="18sp"
         app:layout_constraintVertical_bias="0.464" />
 
-
-    <LinearLayout
-        android:id="@+id/checkGroup"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:orientation="vertical"
-        app:layout_constraintVertical_bias="0.723">
-
-        <CheckBox
-            android:id="@+id/checkBoxThemeParks"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/poppins"
-            android:text="@string/themeparks"
-            android:textColor="@color/white" />
-
-        <CheckBox
-            android:id="@+id/checkBoxRestaurants"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/poppins"
-            android:text="@string/restaurants"
-            android:textColor="@color/white" />
-
-        <CheckBox
-            android:id="@+id/checkBoxMuseums"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/poppins"
-            android:text="@string/museums"
-            android:textColor="@color/white" />
-
-        <CheckBox
-            android:id="@+id/checkBoxBeaches"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/poppins"
-            android:text="@string/beaches"
-            android:textColor="@color/white" />
-    </LinearLayout>
-
-
-    <Button
-        android:id="@+id/searchButton"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:backgroundTint="@color/navy"
-        android:fontFamily="@font/poppinsbold"
-        android:text="@string/search"
-        android:textColor="#FFFFFF"
-        android:textSize="19sp"
-        android:layout_marginTop="30dp" />
+        android:layout_height="wrap_content" >
+
+        <LinearLayout
+            android:id="@+id/checkGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            app:layout_constraintVertical_bias="0.723">
+
+            <CheckBox
+                android:id="@+id/checkBoxThemeParks"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins"
+                android:text="@string/themeparks"
+                android:textColor="@color/white" />
+
+            <CheckBox
+                android:id="@+id/checkBoxRestaurants"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins"
+                android:text="@string/restaurants"
+                android:textColor="@color/white" />
+
+            <CheckBox
+                android:id="@+id/checkBoxMuseums"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins"
+                android:text="@string/museums"
+                android:textColor="@color/white" />
+
+            <CheckBox
+                android:id="@+id/checkBoxBeaches"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins"
+                android:text="@string/beaches"
+                android:textColor="@color/white" />
+
+            <Button
+                android:id="@+id/searchButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/navy"
+                android:fontFamily="@font/poppinsbold"
+                android:text="@string/search"
+                android:textColor="#FFFFFF"
+                android:textSize="19sp"
+                android:layout_marginTop="30dp" />
+        </LinearLayout>
+
+    </ScrollView>
 
 </LinearLayout>
