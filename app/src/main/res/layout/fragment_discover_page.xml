@@ -82,8 +82,10 @@
 
         <ImageButton
             android:id="@+id/updateUserLocation"
-            android:layout_width="325dp"
+            android:layout_width="match_parent"
             android:layout_height="49dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
             android:clickable="true"
             android:layout_gravity="center"
             android:background="@drawable/pin"
