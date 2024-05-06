@@ -1,8 +1,9 @@
-package com.example.tripplanner
+package com.example.tripplanner.viewmodels
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import com.example.tripplanner.data.Itinerary
 import com.example.tripplanner.database.ItineraryRepository
 import com.example.tripplanner.database.MyApp
 
