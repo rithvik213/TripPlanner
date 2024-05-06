@@ -29,5 +29,6 @@ data class Itinerary(
     @ColumnInfo(name = "arrival_terminal") val arrivalTerminal: String,
     @ColumnInfo(name = "departure_terminal2") val departureTerminal2: String?,
     @ColumnInfo(name = "arrival_terminal2") val arrivalTerminal2: String?,
-    @ColumnInfo(name = "total_price") val totalPrice: String
+    @ColumnInfo(name = "total_price") val totalPrice: String,
+    @ColumnInfo(name = "lat_long") val latLong: String
 )
