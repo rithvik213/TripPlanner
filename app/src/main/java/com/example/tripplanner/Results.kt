@@ -35,6 +35,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.apache.commons.lang3.time.DateUtils
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -360,23 +361,65 @@ class Results : Fragment() {
             }
         }
 
-        // Call fetchData from TripAdvisorManager to fetch and handle all the data
+        //Call fetchData from TripAdvisorManager to fetch and handle all the data
         tripAdvisorManager.fetchData(requireContext(),
             "things to do near $cityName", null, attractionListener)
     }
 
-    // fetches events from SerpAPI and turns them into type excursions
+    //fetches events from SerpAPI and turns them into type excursions
     private fun fetchEvents(cityName: String) {
+        Log.d("FetchEvents", "Starting to fetch events.")
+        val possibleDateFormats = arrayOf(
+            "yyyy-MM-dd",        //Standard ISO format
+            "EEE, MMM dd",       //e.g., "Sun, May 26"
+            "MMM dd",            //e.g., "May 26"
+            "EEE, MMM dd, yyyy", //Full date with year
+            "MM/dd/yyyy"         //US standard format
+        )
+
+        val startDate = try {
+            DateUtils.parseDate(departDate, *possibleDateFormats).also {
+                Log.d("FetchEvents", "Parsed start date: $it")
+            }
+        } catch (e: ParseException) {
+            Log.e("FetchEvents", "Failed to parse start date: $departDate", e)
+            return
+        }
+
+        val endDate = try {
+            DateUtils.parseDate(returnDate, *possibleDateFormats).also {
+                Log.d("FetchEvents", "Parsed end date: $it")
+            }
+        } catch (e: ParseException) {
+            Log.e("FetchEvents", "Failed to parse end date: $returnDate", e)
+            return
+        }
+
         val eventFetcher = EventFetcher(
             cityName,
             requireContext(),
             departDate,
             returnDate,
-            object :
-                EventFetcher.EventFetchListener {
+            object : EventFetcher.EventFetchListener {
                 override fun onEventsFetched(events: List<EventFetcher.EventResult>) {
-                    val eventsExcursions = events.map { event ->
-                        Excursion(event.title, event.date.`when` + " is the only date and time you can put this event in the itinerary")
+                    Log.d("FetchEvents", "Processing ${events.size} events.")
+                    val eventsExcursions = events.filter { event ->
+                        val dateString = extractDatePart(event.date.`when`)
+                        Log.d("FetchEvents", "Processing event date: ${event.date.`when`} extracted as: $dateString")
+                        val eventDate = dateString?.let {
+                            try {
+                                DateUtils.parseDate(it, *possibleDateFormats)
+                            } catch (e: ParseException) {
+                                Log.d("FetchEvents", "Skipping event with invalid date format: $it")
+                                null
+                            }
+                        }
+                        (eventDate != null && !eventDate.before(startDate) && !eventDate.after(endDate)).also {
+                            if (it) Log.d("FetchEvents", "Included event: ${event.title} on $dateString")
+                            else Log.d("FetchEvents", "Excluded event: ${event.title} on $dateString")
+                        }
+                    }.map { event ->
+                        Excursion(event.title, event.date.`when`)
                     }
                     activity?.runOnUiThread {
                         excursions.addAll(eventsExcursions)
@@ -385,8 +428,9 @@ class Results : Fragment() {
                         tryGenerateItinerary()
                     }
                 }
-                // as with TripAdvisor still allows itinerary creation even if failed to fetch
+
                 override fun onEventFetchFailed(errorMessage: String) {
+                    Log.e("FetchEvents", "Error fetching events: $errorMessage")
                     Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
                     isEventsFetched = true
                     tryGenerateItinerary()
@@ -395,19 +439,30 @@ class Results : Fragment() {
         eventFetcher.fetchEvents()
     }
 
-    // Itinerary generation based on all the excursions added by SerpAPI and TripAdvisor
+    fun extractDatePart(dateStr: String): String? {
+        val regex = Regex(
+            pattern = """(\w{3}, \w{3} \d{1,2})|(\w{3} \d{1,2})""",
+            options = setOf(RegexOption.IGNORE_CASE)
+        )
+        return regex.find(dateStr)?.value
+    }
+
+
+
+
+    //Itinerary generation based on all the excursions added by SerpAPI and TripAdvisor
     private fun generateItinerary() {
         if (excursions.isNotEmpty()) {
             Log.d("ResultsFragment", "Starting itinerary generation with ${excursions.size} excursions")
             CoroutineScope(Dispatchers.IO).launch {
                 try {
-                    // Generate prompt for ChatGPT
+                    //Generate prompt for ChatGPT
                     val prompt = buildItineraryPrompt()
                     Log.d("ResultsFragment", "Itinerary Prompt: $prompt")
-                    // Get the response from chatGPT
+                    //Get the response from chatGPT
                     val itinerary = chatGPTService.generateResponse(prompt)
                     Log.d("ResultsFragment", "Generated Itinerary Text: $itinerary")
-                    // Turn this back into a list for the recyclerView
+                    //Turn this back into a list for the recyclerView
                     val parsedItineraries = parseItinerary(itinerary)
                     Log.d("ResultsFragment", "Parsed Itineraries: ${parsedItineraries.size} days")
 
@@ -436,7 +491,8 @@ class Results : Fragment() {
 
     private fun buildItineraryPrompt(): String {
         val itineraryBuilder = StringBuilder()
-        // This is the radio button selected on trip_search fragment
+
+        //This is the check box buttons selected on trip_search fragment
         val selectedAttractions = viewModelPrefs.selectedAttractions.value?.joinToString(separator = ", ") { it }
         Log.d("BuildItinerary", "City: $cityName, Departure: $departDate, Return: $returnDate, Attractions: $selectedAttractions")
         itineraryBuilder.append("Generate a detailed day-by-day itinerary for a trip to $cityName from $departDate to $returnDate with the following attractions only including attractions from this list if they match the dates of the trip while prioritizing attractions that include the following types $selectedAttractions:\n")
@@ -450,7 +506,8 @@ class Results : Fragment() {
 
             itineraryBuilder.append("\n")
         }
-        // Must be very specific with chatGPT so we can then get the response necessary for parsing into necessary data class
+
+        //Must be very specific with chatGPT so we can then get the response necessary for parsing into necessary data class
         val sampleItinerary = "Day 1: Morning Breakfast on Sun Apr 21, 11am-12pm, Jim Gaffigan show at the Sun Theater on Sun Apr 21, 4pm-9pm. Each event in the itinerary must include its name, location if possible and the length 7:00pm-8:00pm like that. Events must happen sequentially and not overlap. Here is a sample for one day detailed itinerary. I need it like this for all days." +
                 " - 10:00am - Visit the Isabella Stewart Gardner Museum\n" +
                 " - 12:00pm - Lunch at a local cafe\n" +
@@ -465,7 +522,7 @@ class Results : Fragment() {
                 "You should output a formatted itinerary like this as a sample. $sampleItinerary"
     }
 
-    // Based on the exact format for the itinerary specified to be responded with by the ChatGPT prompt
+    //Based on the exact format for the itinerary specified to be responded with by the ChatGPT prompt
     private fun parseItinerary(itineraryString: String): List<DayItinerary> {
         val days = itineraryString.split(Regex("(?=Day \\d+:)"))
             .filter { it.isNotBlank() }
@@ -492,7 +549,7 @@ class Results : Fragment() {
         }
     }
 
-    // Turning the itinerary into a string to save into the database that can also then be easily parsed again later
+    //Turning the itinerary into a string to save into the database that can also then be easily parsed again later
     private fun formatItineraryForSaving(daysItinerary: List<DayItinerary>): String {
         return daysItinerary.joinToString(separator = "\n") { day ->
             day.excursions.joinToString(separator = "") {"(" + day.date + "|" + it.time + "|" + it.name + ")"}
