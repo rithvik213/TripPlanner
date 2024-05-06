@@ -1,4 +1,4 @@
-package com.example.tripplanner
+package com.example.tripplanner.viewmodels
 
 import android.content.Context
 import android.util.Log
