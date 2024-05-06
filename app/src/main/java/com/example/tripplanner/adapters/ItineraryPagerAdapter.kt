@@ -1,4 +1,4 @@
-package com.example.tripplanner
+package com.example.tripplanner.adapters
 
 import android.view.LayoutInflater
 import android.view.View
@@ -6,6 +6,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.tripplanner.data.DayItinerary
+import com.example.tripplanner.R
 
 class ItineraryPagerAdapter(private val daysItinerary: List<DayItinerary>, private val fragment: Fragment)
     : RecyclerView.Adapter<ItineraryPagerAdapter.ItineraryViewHolder>() {
