@@ -27,7 +27,7 @@ class ChatGPTService(private val apiKey: String) {
     suspend fun generateResponse(prompt: String): String = withContext(Dispatchers.IO) {
         val requestBody = CompletionRequest(
             prompt = prompt,
-            maxTokens = 500,
+            maxTokens = 1000,
             temperature = 0.0
         )
 
