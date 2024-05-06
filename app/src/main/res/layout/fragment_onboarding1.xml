@@ -6,7 +6,7 @@
     android:orientation="vertical"
     android:paddingTop="150dp"
     android:background="@color/appBackgroundColor"
-    tools:context=".OnboardingFragment1">
+    tools:context=".OnboardingFragment">
 
     <FrameLayout
         android:id="@+id/frameLayout"

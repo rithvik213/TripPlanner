@@ -10,6 +10,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.tripplanner.adapters.ItineraryAdapter
+import com.example.tripplanner.viewmodels.ItineraryViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class HomeScreenFragment : Fragment() {
