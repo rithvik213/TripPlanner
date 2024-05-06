@@ -47,6 +47,7 @@ class Results : Fragment() {
     private lateinit var viewModel: ExcursionsViewModel
     private lateinit var cityName: String
     private lateinit var departDate: String
+    private lateinit var latLong: String
     private var budget = 0
     private lateinit var origin: String
     private lateinit var destination: String
@@ -181,6 +182,8 @@ class Results : Fragment() {
             origin = it.getString("origin", "")
             destination = it.getString("destination", "")
             budget = it.getString("budget", "0").removePrefix("$").toInt()
+            latLong = it.getString("latLong", "0, 0")
+            Log.i("latLong", latLong)
         }
 
         chatGPTService = ChatGPTService("OPEN_AI_KEY")
@@ -291,19 +294,19 @@ class Results : Fragment() {
     private fun fetchFlights(view: View){
         val bundle = requireArguments()
         val cityName = bundle.getString("cityName")
-        val departAirport = bundle.getString("departure.iataCode")
-        val arrivalAirport = bundle.getString("arrival.iataCode")
-        val departAirport2 = bundle.getString("departure2.iataCode")
-        val arrivalAirport2 = bundle.getString("arrival2.iataCode")
-        val departTime = dateFormat.parse(bundle.getString("departure.dateTime")!!)!!
-        val arrivalTime = dateFormat.parse(bundle.getString("arrival.dateTime")!!)!!
-        val departTime2 = dateFormat.parse(bundle.getString("departure2.dateTime")!!)!!
-        val arrivalTime2 = dateFormat.parse(bundle.getString("arrival2.dateTime")!!)!!
-        val departTerminal = bundle.getString("departure.terminal") ?: "N/A"
-        val arrivalTerminal = bundle.getString("arrival.terminal") ?: "N/A"
-        val departTerminal2 = bundle.getString("departure2.terminal") ?: "N/A"
-        val arrivalTerminal2 = bundle.getString("arrival2.terminal") ?: "N/A"
-        val price = bundle.getString("price.total")
+        departAirport = bundle.getString("departure.iataCode")!!
+        arrivalAirport = bundle.getString("arrival.iataCode")!!
+        departAirport2 = bundle.getString("departure2.iataCode")!!
+        arrivalAirport2 = bundle.getString("arrival2.iataCode")!!
+        departTime = dateFormat.parse(bundle.getString("departure.dateTime")!!)!!
+        arrivalTime = dateFormat.parse(bundle.getString("arrival.dateTime")!!)!!
+        departTime2 = dateFormat.parse(bundle.getString("departure2.dateTime")!!)!!
+        arrivalTime2 = dateFormat.parse(bundle.getString("arrival2.dateTime")!!)!!
+        departTerminal = bundle.getString("departure.terminal") ?: "N/A"
+        arrivalTerminal = bundle.getString("arrival.terminal") ?: "N/A"
+        departTerminal2 = bundle.getString("departure2.terminal") ?: "N/A"
+        arrivalTerminal2 = bundle.getString("arrival2.terminal") ?: "N/A"
+        price = bundle.getString("price.total")!!
 
         view.findViewById<TextView>(R.id.destination).text = cityName
         view.findViewById<TextView>(R.id.departureAirportCode).text = departAirport
