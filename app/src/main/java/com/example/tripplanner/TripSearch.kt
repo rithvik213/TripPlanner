@@ -73,7 +73,12 @@ class TripSearch : Fragment() {
         }
 
 
-        val checkBoxIds = listOf(R.id.checkBoxThemeParks, R.id.checkBoxRestaurants, R.id.checkBoxMuseums, R.id.checkBoxBeaches)
+        val checkBoxIds = listOf(
+            R.id.checkBoxThemeParks,
+            R.id.checkBoxRestaurants,
+            R.id.checkBoxMuseums,
+            R.id.checkBoxBeaches
+        )
 
         viewModel.selectedAttractions.observe(viewLifecycleOwner) { selectedAttractions ->
             checkBoxIds.forEach { checkBoxId ->
@@ -88,6 +93,7 @@ class TripSearch : Fragment() {
         }
 
     }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -104,7 +110,9 @@ class TripSearch : Fragment() {
             val destLen = destAirport.text.toString().length
             val originLen = originAirport.text.toString().length
             val budget = view.findViewById<TextView>(R.id.budget).text.toString()
-            if (destEditText.text.toString().isEmpty() || departFormatted.isEmpty() || returnFormatted.isEmpty() || budget.isEmpty() || budget == "0" || destLen == 0 || originLen == 0) {
+            if (destEditText.text.toString()
+                    .isEmpty() || departFormatted.isEmpty() || returnFormatted.isEmpty() || budget.isEmpty() || budget == "0" || destLen == 0 || originLen == 0
+            ) {
                 Log.d("ValidationCheck", "destEditText: '${destEditText.text}'")
                 Log.d("ValidationCheck", "departFormatted: '$departFormatted'")
                 Log.d("ValidationCheck", "returnFormatted: '$returnFormatted'")
@@ -113,11 +121,10 @@ class TripSearch : Fragment() {
                 Log.d("ValidationCheck", "originLen: $originLen")
 
                 Toast.makeText(context, "Please fill out all fields.", Toast.LENGTH_SHORT).show()
-            }
-            else {
+            } else {
                 //Specifies the portion of the string that corresponds to IATA codes
-                val destinationIATA = destAirport.text.subSequence(destLen-3, destLen).toString()
-                val originIATA = originAirport.text.subSequence(originLen-3, originLen).toString()
+                val destinationIATA = destAirport.text.subSequence(destLen - 3, destLen).toString()
+                val originIATA = originAirport.text.subSequence(originLen - 3, originLen).toString()
                 val destination = destEditText.text.toString()
 
                 val bundle = Bundle()
@@ -134,7 +141,10 @@ class TripSearch : Fragment() {
                 viewModel.budget.value = budget
                 viewModel.cityName.value = destination
 
-                findNavController().navigate(R.id.action_tripSearchFragment_to_flightResultsFragment, bundle)
+                findNavController().navigate(
+                    R.id.action_tripSearchFragment_to_flightResultsFragment,
+                    bundle
+                )
             }
         }
 
@@ -148,6 +158,7 @@ class TripSearch : Fragment() {
                     budget.setText("$" + progress.toString())
                 }
             }
+
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
@@ -167,7 +178,11 @@ class TripSearch : Fragment() {
 
         val autoCompleteMap = jsonFileToAirportMap()
         val autoCompleteStrings = autoCompleteMap.keys.toList()
-        val adapter = ArrayAdapter(view.context, android.R.layout.simple_dropdown_item_1line, autoCompleteStrings)
+        val adapter = ArrayAdapter(
+            view.context,
+            android.R.layout.simple_dropdown_item_1line,
+            autoCompleteStrings
+        )
         originAirport.setAdapter(adapter)
         destAirport.setAdapter(adapter)
 
@@ -204,13 +219,17 @@ class TripSearch : Fragment() {
     private fun setupCheckBoxListeners(view: View) {
 
         val checkBoxIds = listOf(
-            R.id.checkBoxThemeParks, R.id.checkBoxRestaurants, R.id.checkBoxMuseums, R.id.checkBoxBeaches
+            R.id.checkBoxThemeParks,
+            R.id.checkBoxRestaurants,
+            R.id.checkBoxMuseums,
+            R.id.checkBoxBeaches
         )
 
         checkBoxIds.forEach { checkBoxId ->
             val checkBox = view.findViewById<CheckBox>(checkBoxId)
             checkBox.setOnCheckedChangeListener { buttonView, isChecked ->
-                val currentSelections = viewModel.selectedAttractions.value?.toMutableList() ?: mutableListOf()
+                val currentSelections =
+                    viewModel.selectedAttractions.value?.toMutableList() ?: mutableListOf()
 
                 if (isChecked) {
                     if (!currentSelections.contains(buttonView.text.toString())) {
@@ -222,72 +241,92 @@ class TripSearch : Fragment() {
 
                 viewModel.selectedAttractions.value = currentSelections
             }
+        }
     }
 
 
-    private fun showDatePickerDialog(dateButton: Button) {
-        val calendar = Calendar.getInstance()
-        val year = calendar.get(Calendar.YEAR)
-        val month = calendar.get(Calendar.MONTH)
-        val day = calendar.get(Calendar.DAY_OF_MONTH)
+        private fun showDatePickerDialog(dateButton: Button) {
+            val calendar = Calendar.getInstance()
+            val year = calendar.get(Calendar.YEAR)
+            val month = calendar.get(Calendar.MONTH)
+            val day = calendar.get(Calendar.DAY_OF_MONTH)
 
-        val datePickerDialog = DatePickerDialog(requireContext(), { _, selectedYear, selectedMonth, selectedDay ->
-            val formattedDate = String.format("%02d/%02d/%d", selectedDay, selectedMonth + 1, selectedYear)
-            dateButton.text = formattedDate
-            val formattedISODate = String.format("%d-%02d-%02d", selectedYear, selectedMonth + 1, selectedDay)
+            val datePickerDialog =
+                DatePickerDialog(requireContext(), { _, selectedYear, selectedMonth, selectedDay ->
+                    val formattedDate =
+                        String.format("%02d/%02d/%d", selectedDay, selectedMonth + 1, selectedYear)
+                    dateButton.text = formattedDate
+                    val formattedISODate =
+                        String.format("%d-%02d-%02d", selectedYear, selectedMonth + 1, selectedDay)
+                    if (dateButton.id == R.id.departButton) {
+                        departFormatted = formattedISODate
+                        viewModel.setDepartDate(selectedYear, selectedMonth, selectedDay)
+                    } else {
+                        returnFormatted = formattedISODate
+                        viewModel.setReturnDate(selectedYear, selectedMonth, selectedDay)
+                        val departDate = Calendar.getInstance()
+                        val returnDate = Calendar.getInstance()
+                        departDate.set(
+                            departFormatted.substring(0, 4).toInt(),
+                            departFormatted.substring(5, 7).toInt() - 1,
+                            departFormatted.substring(8, 10).toInt()
+                        )
+                        returnDate.set(selectedYear, selectedMonth, selectedDay)
+                        if ((returnDate.timeInMillis - departDate.timeInMillis) / (24 * 60 * 60 * 1000) > 5) {
+                            Toast.makeText(
+                                context,
+                                "Return date must be within 5 days from departure date.",
+                                Toast.LENGTH_LONG
+                            ).show()
+                            dateButton.text = "Select Date"
+                            returnFormatted = ""
+                        }
+                    }
+                }, year, month, day)
+
             if (dateButton.id == R.id.departButton) {
-                departFormatted = formattedISODate
-                viewModel.setDepartDate(selectedYear, selectedMonth, selectedDay)
+                datePickerDialog.datePicker.minDate = calendar.timeInMillis
             } else {
-                returnFormatted = formattedISODate
-                viewModel.setReturnDate(selectedYear, selectedMonth, selectedDay)
-                val departDate = Calendar.getInstance()
-                val returnDate = Calendar.getInstance()
-                departDate.set(departFormatted.substring(0, 4).toInt(), departFormatted.substring(5, 7).toInt() - 1, departFormatted.substring(8, 10).toInt())
-                returnDate.set(selectedYear, selectedMonth, selectedDay)
-                if ((returnDate.timeInMillis - departDate.timeInMillis) / (24 * 60 * 60 * 1000) > 5) {
-                    Toast.makeText(context, "Return date must be within 5 days from departure date.", Toast.LENGTH_LONG).show()
-                    dateButton.text = "Select Date"
-                    returnFormatted = ""
-                }
+                val minReturnCalendar = Calendar.getInstance()
+                minReturnCalendar.set(
+                    departFormatted.substring(0, 4).toInt(),
+                    departFormatted.substring(5, 7).toInt() - 1,
+                    departFormatted.substring(8, 10).toInt()
+                )
+                minReturnCalendar.add(Calendar.DAY_OF_MONTH, 1)
+                datePickerDialog.datePicker.minDate = minReturnCalendar.timeInMillis
+
+                val maxReturnCalendar = Calendar.getInstance()
+                maxReturnCalendar.set(
+                    departFormatted.substring(0, 4).toInt(),
+                    departFormatted.substring(5, 7).toInt() - 1,
+                    departFormatted.substring(8, 10).toInt()
+                )
+                maxReturnCalendar.add(Calendar.DAY_OF_MONTH, 5)
+                datePickerDialog.datePicker.maxDate = maxReturnCalendar.timeInMillis
             }
-        }, year, month, day)
 
-        if (dateButton.id == R.id.departButton) {
-            datePickerDialog.datePicker.minDate = calendar.timeInMillis
-        } else {
-            val minReturnCalendar = Calendar.getInstance()
-            minReturnCalendar.set(departFormatted.substring(0, 4).toInt(), departFormatted.substring(5, 7).toInt() - 1, departFormatted.substring(8, 10).toInt())
-            minReturnCalendar.add(Calendar.DAY_OF_MONTH, 1)
-            datePickerDialog.datePicker.minDate = minReturnCalendar.timeInMillis
-
-            val maxReturnCalendar = Calendar.getInstance()
-            maxReturnCalendar.set(departFormatted.substring(0, 4).toInt(), departFormatted.substring(5, 7).toInt() - 1, departFormatted.substring(8, 10).toInt())
-            maxReturnCalendar.add(Calendar.DAY_OF_MONTH, 5)
-            datePickerDialog.datePicker.maxDate = maxReturnCalendar.timeInMillis
+            datePickerDialog.show()
         }
 
-        datePickerDialog.show()
-    }
 
+        private fun jsonFileToAirportMap(): HashMap<String, String> {
+            val jsonFile = context?.assets?.open("airports.json")
+            val reader = BufferedReader(InputStreamReader(jsonFile))
+            val stringBuilder = StringBuilder()
+            reader.useLines { lines -> lines.forEach { stringBuilder.append(it) } }
+            val jsonString = stringBuilder.toString()
 
-    private fun jsonFileToAirportMap(): HashMap<String, String> {
-        val jsonFile = context?.assets?.open("airports.json")
-        val reader = BufferedReader(InputStreamReader(jsonFile))
-        val stringBuilder = StringBuilder()
-        reader.useLines { lines -> lines.forEach { stringBuilder.append(it) } }
-        val jsonString = stringBuilder.toString()
+            val gson = Gson()
+            val listType = object : TypeToken<List<AirportEntry>>() {}.type
+            val airportEntries: List<AirportEntry> = gson.fromJson(jsonString, listType)
 
-        val gson = Gson()
-        val listType = object : TypeToken<List<AirportEntry>>() {}.type
-        val airportEntries: List<AirportEntry> = gson.fromJson(jsonString, listType)
-
-        val map = HashMap<String, String>()
-        for (entry in airportEntries) {
-            map[entry.name] = entry.latLong
+            val map = HashMap<String, String>()
+            for (entry in airportEntries) {
+                map[entry.name] = entry.latLong
+            }
+            return map
         }
-        return map
     }
-}
 data class AirportEntry(val name: String, val latLong: String)
 
