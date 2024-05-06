@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="@color/darknavy"
     android:orientation="vertical"
-    android:padding="24dp"
+    android:padding="15dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".TripSearch">
 
@@ -89,14 +89,11 @@
 
     <LinearLayout
         android:id="@+id/linearLayout2"
-        android:layout_width="364dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        >
 
 
         <EditText
@@ -214,7 +211,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:orientation="vertical"
-        android:paddingBottom="0dp"
         app:layout_constraintVertical_bias="0.723">
 
         <CheckBox
@@ -260,6 +256,6 @@
         android:text="@string/search"
         android:textColor="#FFFFFF"
         android:textSize="19sp"
-        android:layout_marginTop="70dp" />
+        android:layout_marginTop="30dp" />
 
 </LinearLayout>
