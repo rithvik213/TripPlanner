@@ -156,15 +156,40 @@ class TripSearch : Fragment() {
         val datePickerDialog = DatePickerDialog(requireContext(), { _, selectedYear, selectedMonth, selectedDay ->
             val formattedDate = String.format("%02d/%02d/%d", selectedDay, selectedMonth + 1, selectedYear)
             dateButton.text = formattedDate
-            if(dateButton.id == R.id.departButton)
+            if (dateButton.id == R.id.departButton) {
                 departFormatted = String.format("%d-%02d-%02d", selectedYear, selectedMonth + 1, selectedDay)
-            else
+            } else {
                 returnFormatted = String.format("%d-%02d-%02d", selectedYear, selectedMonth + 1, selectedDay)
+                // Check if the selected return date is within 5 days from the departure date
+                val departDate = Calendar.getInstance()
+                val returnDate = Calendar.getInstance()
+                departDate.set(departFormatted.substring(0, 4).toInt(), departFormatted.substring(5, 7).toInt() - 1, departFormatted.substring(8, 10).toInt())
+                returnDate.set(selectedYear, selectedMonth, selectedDay)
+                if ((returnDate.timeInMillis - departDate.timeInMillis) / (24 * 60 * 60 * 1000) > 5) {
+                    Toast.makeText(context, "Return date must be within 5 days from departure date.", Toast.LENGTH_LONG).show()
+                    dateButton.text = "Select Date"
+                    returnFormatted = ""
+                }
+            }
         }, year, month, day)
 
+        if (dateButton.id == R.id.departButton) {
+            datePickerDialog.datePicker.minDate = calendar.timeInMillis
+        } else {
+            val minReturnCalendar = Calendar.getInstance()
+            minReturnCalendar.set(departFormatted.substring(0, 4).toInt(), departFormatted.substring(5, 7).toInt() - 1, departFormatted.substring(8, 10).toInt())
+            minReturnCalendar.add(Calendar.DAY_OF_MONTH, 1)  // Minimum return date is the day after departure
+            datePickerDialog.datePicker.minDate = minReturnCalendar.timeInMillis
+
+            val maxReturnCalendar = Calendar.getInstance()
+            maxReturnCalendar.set(departFormatted.substring(0, 4).toInt(), departFormatted.substring(5, 7).toInt() - 1, departFormatted.substring(8, 10).toInt())
+            maxReturnCalendar.add(Calendar.DAY_OF_MONTH, 5)  // Maximum return date is 5 days after departure
+            datePickerDialog.datePicker.maxDate = maxReturnCalendar.timeInMillis
+        }
 
         datePickerDialog.show()
     }
+
 
     private fun jsonFileToAirportMap(): HashMap<String, String> {
         val jsonFile = context?.assets?.open("airports.json")
