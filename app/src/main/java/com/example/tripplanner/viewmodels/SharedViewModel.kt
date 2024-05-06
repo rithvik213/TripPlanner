@@ -1,4 +1,4 @@
-package com.example.tripplanner
+package com.example.tripplanner.viewmodels
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
