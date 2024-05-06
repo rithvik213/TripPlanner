@@ -55,6 +55,7 @@ class TripPage : Fragment() {
 
     private lateinit var daysItinerary: List<DayItinerary>
 
+    // Fills in many of the values already saved in our result fragment
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_trip_page, container, false)
@@ -92,6 +93,7 @@ class TripPage : Fragment() {
         val dayLabel = view.findViewById<TextView>(R.id.dayLabel)
         val viewPager = view.findViewById<ViewPager2>(R.id.itineraryViewPager)
 
+        // specifies the button for uploading to Google Calender and gets the last signed in Google Account
         calendarButton.setOnClickListener {
             val googleAccount = GoogleSignIn.getLastSignedInAccount(requireContext())
             if (googleAccount == null) {
@@ -100,6 +102,7 @@ class TripPage : Fragment() {
             if (googleAccount != null) {
                 Log.d("GoogleCalendar", "Adding events for account: ${googleAccount.displayName}")
                 parsedItineraryViewModel.itinerary.observe(viewLifecycleOwner) { itinerary ->
+                    // Parses the itinerary which had been turned into a string to save in the database
                     val eventsMap = parsedItineraryViewModel.parseItinerary(itineraryToParse)
                     Log.d("GoogleCalendar", "${itineraryToParse}")
                     parsedItineraryViewModel.addEventsToGoogleCalendar(requireContext(), googleAccount, eventsMap)
@@ -153,7 +156,6 @@ class TripPage : Fragment() {
                 val itineraryPagerAdapter = ItineraryPagerAdapter(daysItinerary, this)
                 itineraryViewPager.adapter = itineraryPagerAdapter
 
-                //excursionAdapter.updateExcursions(itinerary.excursions)
                 parsedItineraryViewModel.setItinerary(itinerary.itineraryDetails)
 
                 setupViewPager()
@@ -224,15 +226,7 @@ class TripPage : Fragment() {
         }
     }
 
-    private fun parseItineraryDetails(details: String): List<DayItinerary> {
-        return try {
-            val type = object : TypeToken<List<DayItinerary>>() {}.type
-            Gson().fromJson(details, type)
-        } catch (e: Exception) {
-            listOf<DayItinerary>()
-        }
-    }
-
+    // Must parse the itinerary slightly differently for saving to google calender versus here updating the recylcerView
     private fun parseItineraryToDayItinerary(itinerary: String): List<DayItinerary> {
         val parsed = mutableMapOf<String, MutableList<Excursion>>()
         val regex = """\(Day \d+: ([^|]+)\|([^|]+)\|?([^)]*)\)""".toRegex()
@@ -250,7 +244,6 @@ class TripPage : Fragment() {
                 parsed[date]!!.add(excursion)
             }
         }
-
 
         Log.d("Parsing", "Parsed Itinerary: $parsed")
 

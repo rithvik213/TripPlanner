@@ -41,6 +41,7 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
+// Our fragment to display all of the initial flight information and generated itinerary
 class Results : Fragment() {
     private lateinit var adapter: ExcursionAdapter
     private var excursions: MutableList<Excursion> = mutableListOf()
@@ -141,8 +142,8 @@ class Results : Fragment() {
         }
 
         saveButton.setOnClickListener {
-            val formattedItinerary = formatItineraryForSaving(daysItinerary)
-            if (this::departAirport.isInitialized && this::arrivalAirport.isInitialized) {  // Ensure variables are initialized
+            val formattedItinerary = formatItineraryForSaving(daysItinerary) // turns the list of excursions into a string
+            if (this::departAirport.isInitialized && this::arrivalAirport.isInitialized) {
                 saveItinerary(
                     cityName = cityName,
                     itineraryDetails = formattedItinerary,
@@ -171,12 +172,11 @@ class Results : Fragment() {
 
         }
 
-
         viewModel = ViewModelProvider(requireActivity()).get(ExcursionsViewModel::class.java)
         viewModel.excursions.observe(viewLifecycleOwner) { updateRecyclerView() }
 
         arguments?.let {
-            cityName = it.getString("cityName", "Austin")  //Default to "Austin" if no argument is passed
+            cityName = it.getString("cityName", "Austin")
             departDate = it.getString("departDate","")
             returnDate = it.getString("returnDate", "")
             origin = it.getString("origin", "")
@@ -187,7 +187,6 @@ class Results : Fragment() {
         }
 
         chatGPTService = ChatGPTService("OPEN_AI_KEY")
-
         leftArrowButton.isEnabled = false
         rightArrowButton.isEnabled = false
     }
@@ -256,7 +255,6 @@ class Results : Fragment() {
             userId = account.id ?: ""
         } else {
             Toast.makeText(context, "User not logged in", Toast.LENGTH_LONG).show()
-            //findNavController().navigate(R.id.loginFragment)
         }
     }
 
@@ -283,7 +281,7 @@ class Results : Fragment() {
         adapter.updateExcursions(ArrayList(excursions))
     }
 
-
+    // Only generates the full itinerary once calls to both SerpAPI and TripAdvisor have been made
     private fun tryGenerateItinerary() {
         if (isAttractionsFetched && isEventsFetched) {
             generateItinerary()
@@ -335,12 +333,10 @@ class Results : Fragment() {
             override fun onAttractionsFetched(attractions: List<TripAdvisorManager.AttractionDetail>) {
                 Log.d("ResultsFragment", "Number of attractions fetched: ${attractions.size}")
                 val newExcursions = attractions.map { attractionDetail ->
-                    // Log each attraction detail
                     Log.d("ResultsFragment", "Attraction Fetched: ${attractionDetail.name}, Image URL: ${attractionDetail.imageUrl ?: "No Image URL"}")
                     Excursion(
                         name = attractionDetail.name,
-                        time = "Can Be Any Time",
-                        //TODO: NEED DEFAULT URL
+                        time = "Can Be Any Time", // necessary for generating itinerary
                         imageUrl = attractionDetail.imageUrl ?: "default_image_url"  // Ensure image URL is handled
                     )
                 }
@@ -350,16 +346,14 @@ class Results : Fragment() {
                     viewModel.addExcursions(newExcursions)  // Add all fetched excursions initially
                     isAttractionsFetched = true
                     tryGenerateItinerary()
-                    //generateItinerary()
                 }
             }
-
+            // Still allows for itinerary to be generated
             override fun onAttractionFetchFailed(errorMessage: String) {
                 Log.e("ResultsFragment", "Failed to fetch attractions: $errorMessage")
                 Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
                 isAttractionsFetched = true
                 tryGenerateItinerary()
-                //generateItinerary()
             }
         }
 
@@ -368,10 +362,7 @@ class Results : Fragment() {
             "things to do near $cityName", null, attractionListener)
     }
 
-
-
-
-
+    // fetches events from SerpAPI and turns them into type excursions
     private fun fetchEvents(cityName: String) {
         val eventFetcher = EventFetcher(
             cityName,
@@ -384,18 +375,14 @@ class Results : Fragment() {
                     val eventsExcursions = events.map { event ->
                         Excursion(event.title, event.date.`when` + " is the only date and time you can put this event in the itinerary")
                     }
-                    //Toast.makeText(context, "TEST", Toast.LENGTH_LONG).show()
-
                     activity?.runOnUiThread {
                         excursions.addAll(eventsExcursions)
-                        //updateRecyclerView()
                         viewModel.addExcursions(eventsExcursions)
-                        //generateItinerary()
                         isEventsFetched = true
                         tryGenerateItinerary()
                     }
                 }
-
+                // as with TripAdvisor still allows itinerary creation even if failed to fetch
                 override fun onEventFetchFailed(errorMessage: String) {
                     Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
                     isEventsFetched = true
@@ -405,15 +392,19 @@ class Results : Fragment() {
         eventFetcher.fetchEvents()
     }
 
+    // Itinerary generation based on all the excursions added by SerpAPI and TripAdvisor
     private fun generateItinerary() {
         if (excursions.isNotEmpty()) {
             Log.d("ResultsFragment", "Starting itinerary generation with ${excursions.size} excursions")
             CoroutineScope(Dispatchers.IO).launch {
                 try {
+                    // Generate prompt for ChatGPT
                     val prompt = buildItineraryPrompt()
                     Log.d("ResultsFragment", "Itinerary Prompt: $prompt")
+                    // Get the response from chatGPT
                     val itinerary = chatGPTService.generateResponse(prompt)
                     Log.d("ResultsFragment", "Generated Itinerary Text: $itinerary")
+                    // Turn this back into a list for the recyclerView
                     val parsedItineraries = parseItinerary(itinerary)
                     Log.d("ResultsFragment", "Parsed Itineraries: ${parsedItineraries.size} days")
 
@@ -440,9 +431,9 @@ class Results : Fragment() {
         }
     }
 
-
     private fun buildItineraryPrompt(): String {
         val itineraryBuilder = StringBuilder()
+        // This is the radio button selected on trip_search fragment
         val selectedAttractions = viewModelPrefs.selectedAttractions.value?.joinToString(separator = ", ") { it }
         Log.d("BuildItinerary", "City: $cityName, Departure: $departDate, Return: $returnDate, Attractions: $selectedAttractions")
         itineraryBuilder.append("Generate a detailed day-by-day itinerary for a trip to $cityName from $departDate to $returnDate with the following attractions only including attractions from this list if they match the dates of the trip while prioritizing attractions that include the following types $selectedAttractions:\n")
@@ -456,7 +447,7 @@ class Results : Fragment() {
 
             itineraryBuilder.append("\n")
         }
-
+        // Must be very specific with chatGPT so we can then get the response necessary for parsing into necessary data class
         val sampleItinerary = "Day 1: Morning Breakfast on Sun Apr 21, 11am-12pm, Jim Gaffigan show at the Sun Theater on Sun Apr 21, 4pm-9pm. Each event in the itinerary must include its name, location if possible and the length 7:00pm-8:00pm like that. Events must happen sequentially and not overlap. Here is a sample for one day detailed itinerary. I need it like this for all days." +
                 " - 10:00am - Visit the Isabella Stewart Gardner Museum\n" +
                 " - 12:00pm - Lunch at a local cafe\n" +
@@ -471,6 +462,7 @@ class Results : Fragment() {
                 "You should output a formatted itinerary like this as a sample. $sampleItinerary"
     }
 
+    // Based on the exact format for the itinerary specified to be responded with by the ChatGPT prompt
     private fun parseItinerary(itineraryString: String): List<DayItinerary> {
         val days = itineraryString.split(Regex("(?=Day \\d+:)"))
             .filter { it.isNotBlank() }
@@ -497,10 +489,10 @@ class Results : Fragment() {
         }
     }
 
+    // Turning the itinerary into a string to save into the database that can also then be easily parsed again later
     private fun formatItineraryForSaving(daysItinerary: List<DayItinerary>): String {
         return daysItinerary.joinToString(separator = "\n") { day ->
             day.excursions.joinToString(separator = "") {"(" + day.date + "|" + it.time + "|" + it.name + ")"}
-            //"Date: ${day.date}\nExcursions: ${day.excursions.joinToString(separator = ", ") {it.time + " " + it.name }}"
         }
     }
 
@@ -573,7 +565,5 @@ class Results : Fragment() {
             }
         }
     }
-
-
 
 }
