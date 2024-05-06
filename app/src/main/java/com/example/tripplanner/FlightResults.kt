@@ -1,12 +1,15 @@
 package com.example.tripplanner
 
+import android.app.AlertDialog
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageButton
+import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -25,6 +28,9 @@ class FlightResults : Fragment() {
     private lateinit var destination: String
     private lateinit var returnDate: String
     private lateinit var latLong: String
+
+    private var loadingDialog: AlertDialog? = null
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -51,6 +57,7 @@ class FlightResults : Fragment() {
         flightsRecyclerView.layoutManager = layoutManager
 
         lifecycleScope.launch {
+            showLoadingDialog("Please wait as we look for flights...")
             val flightInfo = fetchFlightOffers(
                 originLoc = origin,
                 destLoc = destination,
@@ -62,8 +69,10 @@ class FlightResults : Fragment() {
                 max = 20
             )
             if (flightInfo != null) {
+                dismissLoadingDialog()
                 adapter.updateData(flightInfo.flightOffers)
             } else {
+                dismissLoadingDialog()
                 val errorMessage = "No flights found for the given parameters."
                 ErrorDialogFragment.newInstance(errorMessage).show(childFragmentManager, "error_dialog")
             }
@@ -120,6 +129,28 @@ class FlightResults : Fragment() {
             }
         }
         return view
+    }
+
+
+    private fun showLoadingDialog(message: String) {
+        if (loadingDialog == null) {
+            val dialogView = LayoutInflater.from(context).inflate(R.layout.results_loading_dialog, null)
+            loadingDialog = AlertDialog.Builder(requireContext())
+                .setView(dialogView)
+                .setCancelable(false)
+                .create()
+        }
+
+        val textView = loadingDialog?.findViewById<TextView>(R.id.userpromptname)
+        textView?.text = message
+
+        Log.d("LoadingDialog", "Updating dialog message to: $message")
+
+        loadingDialog?.show()
+    }
+
+    private fun dismissLoadingDialog() {
+        loadingDialog?.dismiss()
     }
 
 

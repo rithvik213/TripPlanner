@@ -161,8 +161,10 @@ class Results : Fragment() {
                     arrivalTerminal = arrivalTerminal,
                     departureTerminal2 = departTerminal2,
                     arrivalTerminal2 = arrivalTerminal2,
-                    totalPrice = price
+                    totalPrice = price,
+                    lat_long = latLong
                 )
+                viewModelPrefs.resetViewModel()
                 findNavController().navigate(R.id.action_resultsFragment_to_homeScreenFragment)
                 fetchItineraries()
             } else {
@@ -176,7 +178,7 @@ class Results : Fragment() {
         viewModel.excursions.observe(viewLifecycleOwner) { updateRecyclerView() }
 
         arguments?.let {
-            cityName = it.getString("cityName", "Austin")  //Default to "Austin" if no argument is passed
+            cityName = it.getString("cityName", "Austin")
             departDate = it.getString("departDate","")
             returnDate = it.getString("returnDate", "")
             origin = it.getString("origin", "")
@@ -230,7 +232,7 @@ class Results : Fragment() {
 
     private fun showLoadingDialog(message: String) {
         if (loadingDialog == null) {
-            val dialogView = LayoutInflater.from(context).inflate(R.layout.results_loading_dialog, null)
+            val dialogView = LayoutInflater.from(context).inflate(R.layout.results_itinerary_loading, null)
             loadingDialog = AlertDialog.Builder(requireContext())
                 .setView(dialogView)
                 .setCancelable(false)
@@ -329,6 +331,7 @@ class Results : Fragment() {
 
     private fun fetchAttractions(cityName: String) {
         val tripAdvisorManager = TripAdvisorManager()
+        showLoadingDialog("Please wait as we generate your itinerary...")
 
         // Define the Attraction Fetch Listener
         val attractionListener = object : TripAdvisorManager.AttractionFetchListener {
@@ -341,7 +344,7 @@ class Results : Fragment() {
                         name = attractionDetail.name,
                         time = "Can Be Any Time",
                         //TODO: NEED DEFAULT URL
-                        imageUrl = attractionDetail.imageUrl ?: "default_image_url"  // Ensure image URL is handled
+                        imageUrl = attractionDetail.imageUrl ?: "default_image_url"
                     )
                 }
 
@@ -441,6 +444,8 @@ class Results : Fragment() {
     }
 
 
+
+
     private fun buildItineraryPrompt(): String {
         val itineraryBuilder = StringBuilder()
         val selectedAttractions = viewModelPrefs.selectedAttractions.value?.joinToString(separator = ", ") { it }
@@ -522,7 +527,8 @@ class Results : Fragment() {
         arrivalTerminal: String,
         departureTerminal2: String?,
         arrivalTerminal2: String?,
-        totalPrice: String
+        totalPrice: String,
+        lat_long: String
     ) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
@@ -546,7 +552,8 @@ class Results : Fragment() {
                     arrivalTerminal = arrivalTerminal,
                     departureTerminal2 = departureTerminal2,
                     arrivalTerminal2 = arrivalTerminal2,
-                    totalPrice = totalPrice
+                    totalPrice = totalPrice,
+                    latLong = lat_long
                 )
                 database.itineraryDao().insertItinerary(itinerary)
                 withContext(Dispatchers.Main) {

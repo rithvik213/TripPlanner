@@ -43,6 +43,9 @@
     <string name="please_wait_as_we_personalize_your_experience">Please wait as we personalize your experience</string>
     <string name="go_back">Go back</string>
     <string name="please_wait_as_we_look_for_flights">Please wait as we look for flights...</string>
+    <string name="please_wait_as_we_generate_your_itinerary">Please wait as we generate your itinerary...</string>
+    <string name="destination_city">Destination City</string>
+    <string name="next">NEXT</string>
 
 
 </resources>
