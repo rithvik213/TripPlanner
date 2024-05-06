@@ -336,13 +336,14 @@ class Results : Fragment() {
                     Log.d("ResultsFragment", "Attraction Fetched: ${attractionDetail.name}, Image URL: ${attractionDetail.imageUrl ?: "No Image URL"}")
                     Excursion(
                         name = attractionDetail.name,
-                        time = "All Day",
+                        time = "Can Be Any Time",
                         //TODO: NEED DEFAULT URL
                         imageUrl = attractionDetail.imageUrl ?: "default_image_url"  // Ensure image URL is handled
                     )
                 }
 
                 activity?.runOnUiThread {
+                    excursions.addAll(newExcursions)
                     viewModel.addExcursions(newExcursions)  // Add all fetched excursions initially
                     isAttractionsFetched = true
                     tryGenerateItinerary()
@@ -378,7 +379,7 @@ class Results : Fragment() {
                 EventFetcher.EventFetchListener {
                 override fun onEventsFetched(events: List<EventFetcher.EventResult>) {
                     val eventsExcursions = events.map { event ->
-                        Excursion(event.title, event.date.`when`)
+                        Excursion(event.title, event.date.`when` + " is the only date and time you can put this event in the itinerary")
                     }
                     //Toast.makeText(context, "TEST", Toast.LENGTH_LONG).show()
 
