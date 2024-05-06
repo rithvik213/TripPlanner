@@ -15,7 +15,7 @@
     <ImageView
         android:id="@+id/trippagepicture"
         android:layout_width="match_parent"
-        android:layout_height="296dp"
+        android:layout_height="225dp"
         android:background="@color/navy"
         android:scaleType="centerCrop"/>
 
@@ -174,7 +174,7 @@
                 android:text="ORG"
                 android:layout_below="@+id/returnDate"
                 android:textColor="@color/black"
-                android:layout_marginStart="30dp"
+                android:layout_marginStart="35dp"
                 android:layout_toRightOf="@id/departureAirport2"/>
 
             <TextView
