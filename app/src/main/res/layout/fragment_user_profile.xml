@@ -1,28 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_weight="9"
+    android:orientation="vertical"
     android:layout_height="match_parent"
     android:background="@color/darknavy"
     tools:context=".UserProfile">
 
-    <EditText
+    <TextView
         android:id="@+id/name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/poppins"
+        android:layout_gravity="center"
+        android:padding="20dp"
         android:text=""
         android:hint="@string/name"
         android:textColorHint="@color/white"
         android:textColor="@color/white"
         android:textSize="24sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.072" />
+         />
 
     <TextView
         android:id="@+id/tripsHeading"
@@ -34,30 +32,24 @@
         android:textColor="#FFFFFF"
         android:padding="10sp"
         android:textSize="24sp"
-        android:layout_marginStart="16dp"
         app:layout_constraintTop_toBottomOf="@+id/name"
         app:layout_constraintStart_toStartOf="parent"
         />
 
-=   <com.google.android.gms.maps.MapView
+   <com.google.android.gms.maps.MapView
     android:id="@+id/map"
-    android:layout_width="0dp"
+    android:layout_width="match_parent"
     android:layout_height="250dp"
-    app:layout_constraintTop_toBottomOf="@id/tripsHeading"
-    app:layout_constraintBottom_toTopOf="@id/statsContainer"
-    app:layout_constraintStart_toStartOf="parent"
+    android:padding="20dp"
     android:layout_marginStart="16dp"
     android:layout_marginEnd="16dp"
-    app:layout_constraintEnd_toEndOf="parent" />
+    />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/statsContainer"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@id/map"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="15dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp">
 
@@ -88,7 +80,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Distance Traveled"
+                android:text="Distance Traveled (miles)"
                 android:fontFamily="@font/poppins"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large"
                 android:textColor="@color/black" />
@@ -107,19 +99,7 @@
 
 
 
-    <Button
-        android:id="@+id/logoutButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:fontFamily="@font/poppinsbold"
-        android:textSize="19sp"
-        android:text="@string/logout"
-        android:textColor="@color/white"
-        android:backgroundTint="@color/navy"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+</LinearLayout>
