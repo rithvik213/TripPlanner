@@ -22,4 +22,7 @@ interface ItineraryDao {
 
     @Query("SELECT * FROM itineraries WHERE id = :itineraryId")
     fun getItineraryById(itineraryId: Int): LiveData<Itinerary>
+
+    @Query("SELECT lat_long FROM itineraries WHERE user_id = :userId")
+    fun getUserLatLongs(userId: String): List<String>
 }
