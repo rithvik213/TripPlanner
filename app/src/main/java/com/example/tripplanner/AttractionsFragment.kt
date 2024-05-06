@@ -19,6 +19,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.example.tripplanner.apis.tripadvisor.TripAdvisorManager
+import com.example.tripplanner.viewmodels.AttractionsViewModel
 
 
 class AttractionsFragment : Fragment() {

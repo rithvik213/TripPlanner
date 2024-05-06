@@ -10,15 +10,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.example.tripplanner.viewmodels.UserViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 
-class OnboardingFragment1 : Fragment(), GoogleSignInHelper.SignInResultListener {
+class OnboardingFragment : Fragment(), GoogleSignInHelper.SignInResultListener {
 
     private lateinit var googleSignInHelper: GoogleSignInHelper
     private lateinit var rootView: ViewGroup

@@ -12,6 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.tripplanner.adapters.FlightAdapter
 import com.example.tripplanner.apis.amadeus.fetchFlightOffers
 import kotlinx.coroutines.launch
 

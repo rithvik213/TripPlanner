@@ -16,6 +16,12 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
+import com.example.tripplanner.adapters.ExcursionAdapter
+import com.example.tripplanner.adapters.ItineraryPagerAdapter
+import com.example.tripplanner.data.DayItinerary
+import com.example.tripplanner.data.Excursion
+import com.example.tripplanner.viewmodels.ItineraryViewModel
+import com.example.tripplanner.viewmodels.ParsedItineraryViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken

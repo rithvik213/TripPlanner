@@ -1,7 +1,6 @@
-package com.example.tripplanner
+package com.example.tripplanner.adapters
 
 import android.graphics.Color
-import android.util.Log
 import com.bumptech.glide.Glide
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.tripplanner.R
 import com.example.tripplanner.apis.amadeus.data.FlightOffer
 import java.security.MessageDigest
 import java.text.SimpleDateFormat
@@ -91,8 +91,12 @@ class FlightAdapter(private var flightInfoList: List<FlightOffer>) : RecyclerVie
             itemView.findViewById<TextView>(R.id.returningInboundTer).text = "Terminal " + arrivalTerminal2
             itemView.findViewById<TextView>(R.id.flightPrice).text = "$" + price
 
-            loadAirlineLogo(flightInfo.itineraries[0].segments[0].carrierCode, itemView.findViewById(R.id.departingLogo))
-            loadAirlineLogo(flightInfo.itineraries[1].segments[0].carrierCode, itemView.findViewById(R.id.returningLogo))
+            loadAirlineLogo(flightInfo.itineraries[0].segments[0].carrierCode, itemView.findViewById(
+                R.id.departingLogo
+            ))
+            loadAirlineLogo(flightInfo.itineraries[1].segments[0].carrierCode, itemView.findViewById(
+                R.id.returningLogo
+            ))
 
             if (isSelected) {
                 itemView.setBackgroundColor(Color.TRANSPARENT)
