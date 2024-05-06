@@ -24,6 +24,7 @@ class FlightResults : Fragment() {
     private lateinit var origin: String
     private lateinit var destination: String
     private lateinit var returnDate: String
+    private lateinit var latLong: String
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,6 +38,7 @@ class FlightResults : Fragment() {
             origin = it.getString("origin", "")
             destination = it.getString("destination", "")
             budget = it.getString("budget", "0").removePrefix("$").toInt()
+            latLong = it.getString("latLong", "0, 0")
         }
 
         val flightsRecyclerView: RecyclerView = view.findViewById(R.id.flightReyclerView)
@@ -109,6 +111,8 @@ class FlightResults : Fragment() {
                 bundle.putString("duration2", fi.itineraries[1].segments[0].duration)
 
                 bundle.putString("price.total", fi.price.total)
+
+                bundle.putString("latLong", latLong)
 
                 findNavController().navigate(R.id.action_flightResultsFragment_to_resultsFragment, bundle)
             } else {
