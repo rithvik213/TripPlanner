@@ -34,12 +34,15 @@
     <string name="passprot">Passport Number</string>
     <string name="KTN">Known Traveler Number</string>
     <string name="name">Name</string>
+    <string name="budgetSeekbar">0</string>
+    <string name="city">City</string>
     <string name="welcome">Welcome, User</string>
     <string name="nearby">Nearby</string>
     <string name="discover">Discover</string>
     <string name="explorepop">Explore Popular Destinations</string>
     <string name="please_wait_as_we_personalize_your_experience">Please wait as we personalize your experience</string>
     <string name="go_back">Go back</string>
+    <string name="please_wait_as_we_look_for_flights">Please wait as we look for flights...</string>
 
 
 </resources>
