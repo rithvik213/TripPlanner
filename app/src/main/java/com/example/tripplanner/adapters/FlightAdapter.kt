@@ -13,6 +13,11 @@ import com.example.tripplanner.apis.amadeus.data.FlightOffer
 import java.security.MessageDigest
 import java.text.SimpleDateFormat
 import java.util.*
+/* An adapter for displaying the flight results for a user to select
+* Allows the user to actually choose the RecyclerView element and sets an event
+* listener to each item
+* Also finds an image associated with each airline in the button using Airhex API
+ */
 class FlightAdapter(private var flightInfoList: List<FlightOffer>) : RecyclerView.Adapter<FlightAdapter.FlightViewHolder>() {
 
     private var selectedItem = RecyclerView.NO_POSITION
@@ -36,6 +41,7 @@ class FlightAdapter(private var flightInfoList: List<FlightOffer>) : RecyclerVie
         notifyDataSetChanged()
     }
 
+    // Finds the actual selected flight from our list of returned flights that fit user's parameters
     fun getSelectedFlightInfo(): FlightOffer? {
         return if (selectedItem != RecyclerView.NO_POSITION) {
             flightInfoList[selectedItem]
@@ -105,6 +111,7 @@ class FlightAdapter(private var flightInfoList: List<FlightOffer>) : RecyclerVie
             }
         }
 
+        // Helper function for finding the flight logo
         private fun loadAirlineLogo(airlineCode: String, imageView: ImageView) {
             val imageSize = "_350_100_r"
             val secret = "VDjfGgv8mxiTvvLLwGicD6V2eq"
@@ -116,6 +123,7 @@ class FlightAdapter(private var flightInfoList: List<FlightOffer>) : RecyclerVie
                 .into(imageView)
         }
 
+        // Helper function to format api key parameter of API request correctly
         private fun md5(input: String): String {
             val md = MessageDigest.getInstance("MD5")
             val messageDigest = md.digest(input.toByteArray())
