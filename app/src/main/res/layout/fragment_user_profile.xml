@@ -15,7 +15,7 @@
         android:layout_gravity="center"
         android:padding="20dp"
         android:text=""
-        android:hint="Your Travel Dashboard"
+        android:hint="@string/your_travel_dashboard"
         android:textColorHint="@color/white"
         android:textColor="@color/white"
         android:textSize="24sp" />
@@ -29,7 +29,7 @@
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:textColor="@color/white"
-        android:text="Welcome to your travel overview! Here's a look at your upcoming journeys. Use this map to view all your planned trips." />
+        android:text="@string/welcome_to_your_travel_overview_here_s_a_look_at_your_upcoming_journeys_use_this_map_to_view_all_your_planned_trips" />
 
     <FrameLayout
         android:layout_width="match_parent"

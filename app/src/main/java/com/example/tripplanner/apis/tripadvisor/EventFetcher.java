@@ -55,7 +55,8 @@ public class EventFetcher {
         parameters.put("q", "Events in " + cityName + " " + departDate + " to " + returnDate);
         parameters.put("hl", "en");
         parameters.put("gl", "us");
-        parameters.put("api_key", "b682993fcf1120a1979565cd8481ccd12814bea8cec130beeb9c2b7e800f37ae");
+        //parameters.put("api_key", "b682993fcf1120a1979565cd8481ccd12814bea8cec130beeb9c2b7e800f37ae");
+        parameters.put("api_key", "5fb88cd8c12273ec18bd6a665e02f094de4cea279ec0489162f2a4860efa63e5");
 
         Call<JsonObject> call = service.getEvents(parameters);
         call.enqueue(new Callback<JsonObject>() {
@@ -66,23 +67,21 @@ public class EventFetcher {
                     List<EventResult> events = new Gson().fromJson(response.body().getAsJsonArray("events_results"), new TypeToken<List<EventResult>>(){}.getType());
                     listener.onEventsFetched(events);
                 } else {
-                    // Error handling
                     String errorMessage = "Failed to retrieve events";
                     if (response.errorBody() != null) {
                         try {
-                            // Attempt to parse the error body if present
                             errorMessage += ": " + response.errorBody().string();
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     }
-                    Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show();
+                    listener.onEventFetchFailed(errorMessage);
                 }
             }
 
             @Override
             public void onFailure(Call<JsonObject> call, Throwable t) {
-                Toast.makeText(context, "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                listener.onEventFetchFailed("Error: " + t.getMessage());
             }
         });
     }
