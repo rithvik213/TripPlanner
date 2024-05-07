@@ -46,6 +46,16 @@
     <string name="please_wait_as_we_generate_your_itinerary">Please wait as we generate your itinerary...</string>
     <string name="destination_city">Destination City</string>
     <string name="next">NEXT</string>
+    <string name="discover_together">Discover Together</string>
+    <string name="plan_and_share_group_trips_effortlessly">Plan and share group trips effortlessly</string>
+    <string name="terminal">Terminal</string>
+    <string name="see_more">See More</string>
+    <string name="choose_a_flight">Choose a Flight</string>
+    <string name="excursions_and_itinerary">Excursions and Itinerary</string>
+    <string name="your_travel_dashboard">Your Travel Dashboard</string>
+    <string name="welcome_to_your_travel_overview_here_s_a_look_at_your_upcoming_journeys_use_this_map_to_view_all_your_planned_trips">Welcome to your travel overview! Here\'s a look at your upcoming journeys. Use this map to view all your planned trips.</string>
+    <string name="start_exploring">Start Exploring</string>
+    <string name="discover_nearby_attractions">Discover nearby attractions</string>
 
 
 </resources>
