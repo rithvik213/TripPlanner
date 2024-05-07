@@ -67,7 +67,7 @@
 
     <ImageView
         android:layout_width="320dp"
-        android:layout_height="120dp"
+        android:layout_height="100dp"
         android:layout_gravity="center_horizontal"
         android:background="@drawable/ticketbackground"/>
 
@@ -261,7 +261,9 @@
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/itineraryViewPager"
         android:layout_width="match_parent"
-        android:layout_height="200dp"/>
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_height="220dp"/>
 
 
 
