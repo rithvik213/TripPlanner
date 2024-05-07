@@ -51,8 +51,8 @@ public class EventFetcher {
 
         // Parameters for the API body and specifying the search parameters
         Map<String, String> parameters = new HashMap<>();
-        parameters.put("engine", "google_events");
-        parameters.put("q", "Events in " + cityName + " " + departDate + " to " + returnDate);
+        parameters.put("engine", "google_events"); // To specify the data we want back
+        parameters.put("q", "Events in " + cityName + " " + departDate + " to " + returnDate); // Can take any length string input, similar to Google Search
         parameters.put("hl", "en");
         parameters.put("gl", "us");
         //parameters.put("api_key", "SERP_API_KEY");
