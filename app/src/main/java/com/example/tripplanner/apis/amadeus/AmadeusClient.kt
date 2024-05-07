@@ -20,6 +20,7 @@ object AmadeusApiClient {
             .create(AmadeusApiService::class.java)
     }
 
+    //Use custom timeout for Amadeus because calls can sometimes be long, also add TokenInterceptor
     private fun createOkHttpClient(): OkHttpClient {
         return OkHttpClient.Builder()
             .addInterceptor(TokenInterceptor())
@@ -40,18 +41,24 @@ class TokenInterceptor : Interceptor {
             val originalRequest = chain.request()
             val newRequestBuilder = originalRequest.newBuilder()
 
+            //Use the bearer token from our SimpleTokenManager if it's a GET call
+            //The only non-GET call is when we're trying to get another bearer token
             if (originalRequest.method() == "GET") {
                 newRequestBuilder.header("Authorization", "Bearer $token")
             }
 
             newRequestBuilder.build()
+
         } else {
             chain.request()
         }
 
         var response = chain.proceed(request)
 
+        //401 is the error code received if our token isn't valid anymore
         if (response.code() == 401) {
+
+            //Get a new token
             val refreshTokenResponse = AmadeusApiClient.client.getToken().execute()
 
             if (refreshTokenResponse.isSuccessful) {
@@ -59,6 +66,7 @@ class TokenInterceptor : Interceptor {
                 newToken?.let {
                     SimpleTokenManager.setToken(newToken)
 
+                    //Resend the request that returned 401 with the new token
                     val newRequest = request.newBuilder()
                         .header("Authorization", "Bearer $newToken")
                         .build()
