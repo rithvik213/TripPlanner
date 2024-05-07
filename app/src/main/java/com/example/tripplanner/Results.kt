@@ -363,7 +363,7 @@ class Results : Fragment() {
 
         //Call fetchData from TripAdvisorManager to fetch and handle all the data
         tripAdvisorManager.fetchData(requireContext(),
-            "things to do near $cityName", null, attractionListener)
+            "things to do near $cityName", null, "attractions",attractionListener)
     }
 
     //fetches events from SerpAPI and turns them into type excursions
