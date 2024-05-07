@@ -10,7 +10,7 @@ import com.bumptech.glide.Glide
 import com.example.tripplanner.data.Destination
 import com.example.tripplanner.R
 
-
+//RecyclerView adapter for PopularDestinations, shown in Discover Page
 class PopularDestinationsAdapter(private val items: List<Destination>, private val onDestinationClicked: (Destination) -> Unit) : RecyclerView.Adapter<PopularDestinationsAdapter.ViewHolder>() {
 
     class ViewHolder(view: View, onClick: (Int) -> Unit) : RecyclerView.ViewHolder(view) {
@@ -35,6 +35,8 @@ class PopularDestinationsAdapter(private val items: List<Destination>, private v
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = items[position]
         holder.titleView.text = item.title
+
+        //Use Glide to show img from URL
         if (item.imageUrl != null) {
             Glide.with(holder.itemView.context)
                 .load(item.imageUrl)

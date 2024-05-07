@@ -17,7 +17,7 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import com.google.android.material.bottomappbar.BottomAppBar
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
-
+//Main activity is just used as a container and for the bottom app bar
 class MainActivity : AppCompatActivity() {
 
     private lateinit var navController: NavController
@@ -39,8 +39,6 @@ class MainActivity : AppCompatActivity() {
         fabPerson.visibility = View.GONE
         fabHome.visibility = View.GONE
         fabTrips.visibility = View.GONE
-
-
 
         supportActionBar?.setDisplayHomeAsUpEnabled(false)
         supportActionBar?.setDisplayShowHomeEnabled(false)
@@ -65,6 +63,7 @@ class MainActivity : AppCompatActivity() {
             navController.navigate(R.id.global_action_to_tripScreen)
         }
 
+        //Make sure we don't have the bottom app bar in the onboarding section
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
                 R.id.onboardingFragment -> {
