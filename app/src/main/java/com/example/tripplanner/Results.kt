@@ -407,11 +407,11 @@ class Results : Fragment() {
         )
 
         //Parse our known input dates
-        DateUtils.parseDate(departDate, "yyyy-MM-dd").also {
+        val startDate = DateUtils.parseDate(departDate, "yyyy-MM-dd").also {
             Log.d("ResultsFragment", "Parsed start date: $it")
         }
 
-        DateUtils.parseDate(returnDate, "yyyy-MM-dd").also {
+        val endDate = DateUtils.parseDate(returnDate, "yyyy-MM-dd").also {
             Log.d("ResultsFragment", "Parsed end date: $it")
         }
 
