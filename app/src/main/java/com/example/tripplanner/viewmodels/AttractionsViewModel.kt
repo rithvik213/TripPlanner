@@ -6,7 +6,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.viewModelScope
 import com.example.tripplanner.apis.tripadvisor.TripAdvisorManager
+import kotlinx.coroutines.launch
 
 // Allows us to cache TripAdvisor calls for our home page
 class AttractionsViewModel : ViewModel() {
@@ -69,6 +71,51 @@ class AttractionsViewModel : ViewModel() {
 
         Log.d("AttractionsViewModel", "Fetching attractions for key: $key")
 
+        viewModelScope.launch {
+            isLoadingAttractions.value = true
+
+            // Check cache first
+            val cachedAttractions = attractionsCache[key]
+            if (cachedAttractions != null) {
+                Log.d("AttractionsViewModel", "Using cached data for key: $key")
+                _attractions.postValue(cachedAttractions.filter { it.imageUrl?.isNotEmpty() == true }) // Post only attractions with images
+                isLoadingAttractions.value = false
+            } else {
+                Log.d("AttractionsViewModel", "No cache found for key: $key, fetching from API")
+                try {
+                    val attractions = tripAdvisorManager.fetchSearchTheLocation(
+                        "Current Location",
+                        "attractions",
+                        key,
+                        searchQuery
+                    )
+                    if (attractions.isNotEmpty()) {
+                        Log.d("AttractionsViewModel", "Attractions fetched successfully: ${attractions.size}")
+                        val attractionsWithImages = attractions.filter { it.imageUrl?.isNotEmpty() == true }
+                        attractionsCache[key] = attractionsWithImages // Cache the filtered list
+                        _attractions.postValue(attractionsWithImages)
+                    } else {
+                        Log.d("AttractionsViewModel", "No attractions returned from API")
+                        _attractions.postValue(listOf())
+                    }
+                } catch (e: Exception) {
+                    Log.e("AttractionsViewModel", "Error fetching attractions: ${e.message}")
+                    _attractions.postValue(listOf())
+                } finally {
+                    isLoadingAttractions.value = false
+                }
+            }
+        }
+    }
+
+
+    /*
+    fun fetchNearbyAttractions(context: Context, latitude: Double, longitude: Double) {
+        val key = "$latitude,$longitude"
+        val searchQuery = "things to do near me"
+
+        Log.d("AttractionsViewModel", "Fetching attractions for key: $key")
+
         // Check cache first
         attractionsCache[key]?.let {
             Log.d("AttractionsViewModel", "Using cached data for key: $key")
@@ -105,6 +152,8 @@ class AttractionsViewModel : ViewModel() {
                 })
         }
     }
+
+     */
 
 
     fun updateCurrentCity(cityName: String) {
