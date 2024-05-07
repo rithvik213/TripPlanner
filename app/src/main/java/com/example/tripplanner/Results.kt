@@ -14,6 +14,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
 import com.example.tripplanner.adapters.ExcursionAdapter
@@ -88,6 +89,9 @@ class Results : Fragment() {
     private lateinit var dayLabelTextView: TextView
 
     private var loadingDialog: AlertDialog? = null
+
+    private var isItineraryGenerated = false
+
 
 
     @SuppressLint("ResourceType")
@@ -267,8 +271,16 @@ class Results : Fragment() {
         database = app.database
 
         val tripAdvisorManager = TripAdvisorManager()
-        tripAdvisorManager.fetchCityImage(cityName) { fetchedImageUrl ->
-            imageUrl = fetchedImageUrl
+
+        lifecycleScope.launch {
+            try {
+                val fetchedImageUrl = tripAdvisorManager.fetchCityImage(cityName)
+                imageUrl = fetchedImageUrl
+                // Update the UI or do further processing with the fetched image URL
+            } catch (e: Exception) {
+                // Handle any errors, such as a failed network request
+                Log.e("ImageFetch", "Failed to fetch image URL: ${e.message}")
+            }
         }
 
         fetchFlights(view)
@@ -286,10 +298,17 @@ class Results : Fragment() {
 
     // Only generates the full itinerary once calls to both SerpAPI and TripAdvisor have been made
     private fun tryGenerateItinerary() {
-        if (isAttractionsFetched && isEventsFetched) {
-            generateItinerary()
+        Log.d("ResultsFragment", "Attempting to generate itinerary. Attractions Fetched: $isAttractionsFetched, Events Fetched: $isEventsFetched")
+        synchronized(this) {
+            if (isAttractionsFetched && isEventsFetched && !isItineraryGenerated) {
+                isItineraryGenerated = true
+                generateItinerary()
+            } else {
+                Log.d("ResultsFragment", "Cannot generate itinerary yet. Waiting for more data or already generated.")
+            }
         }
     }
+
 
 
     private fun fetchFlights(view: View){
@@ -332,112 +351,125 @@ class Results : Fragment() {
         val tripAdvisorManager = TripAdvisorManager()
         showLoadingDialog("Please wait as we generate your itinerary...")
 
-        // Define the Attraction Fetch Listener
-        val attractionListener = object : TripAdvisorManager.AttractionFetchListener {
+        //Prepare the listener implementation to handle fetched data or errors
+        val listener = object : TripAdvisorManager.AttractionFetchListener {
             override fun onAttractionsFetched(attractions: List<TripAdvisorManager.AttractionDetail>) {
-                Log.d("ResultsFragment", "Number of attractions fetched: ${attractions.size}")
-                val newExcursions = attractions.map { attractionDetail ->
-                    Log.d("ResultsFragment", "Attraction Fetched: ${attractionDetail.name}, Image URL: ${attractionDetail.imageUrl ?: "No Image URL"}")
-                    Excursion(
-                        name = attractionDetail.name,
-                        time = "Can Be Any Time", // necessary for generating itinerary
-                        imageUrl = attractionDetail.imageUrl ?: "default_image_url"  // Ensure image URL is handled
-                    )
-                }
-
-                activity?.runOnUiThread {
+                lifecycleScope.launch(Dispatchers.Main) {
+                    val newExcursions = attractions.map { detail ->
+                        Excursion(
+                            name = detail.name,
+                            time = "Can Be Any Time",
+                            imageUrl = detail.imageUrl ?: "default_image_url"
+                        )
+                    }
                     excursions.addAll(newExcursions)
-                    viewModel.addExcursions(newExcursions)  // Add all fetched excursions initially
+                    viewModel.addExcursions(newExcursions)
                     isAttractionsFetched = true
                     tryGenerateItinerary()
                 }
             }
-            // Still allows for itinerary to be generated
+
             override fun onAttractionFetchFailed(errorMessage: String) {
-                Log.e("ResultsFragment", "Failed to fetch attractions: $errorMessage")
-                Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
-                isAttractionsFetched = true
-                tryGenerateItinerary()
+                lifecycleScope.launch(Dispatchers.Main) {
+                    Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
+                    dismissLoadingDialog()
+                    isAttractionsFetched = true
+                    tryGenerateItinerary()
+                }
             }
         }
 
-        //Call fetchData from TripAdvisorManager to fetch and handle all the data
-        tripAdvisorManager.fetchData(requireContext(),
-            "things to do near $cityName", null, "attractions",attractionListener)
+        //Make the call to fetchData providing the listener
+        tripAdvisorManager.fetchData(requireContext(), "things to do near $cityName", null, "attractions", listener)
     }
+
+
 
     //fetches events from SerpAPI and turns them into type excursions
     private fun fetchEvents(cityName: String) {
-        Log.d("FetchEvents", "Starting to fetch events.")
+        Log.d("ResultsFragment", "Starting to fetch events.")
+
         val possibleDateFormats = arrayOf(
             "yyyy-MM-dd",        //Standard ISO format
             "EEE, MMM dd",       //e.g., "Sun, May 26"
             "MMM dd",            //e.g., "May 26"
-            "EEE, MMM dd, yyyy", //Full date with year
-            "MM/dd/yyyy"         //US standard format
+            "EEE, MMM dd, yyyy", // Full date with year
+            "MM/dd/yyyy"         // US standard format
         )
 
         val startDate = try {
             DateUtils.parseDate(departDate, *possibleDateFormats).also {
-                Log.d("FetchEvents", "Parsed start date: $it")
+                Log.d("ResultsFragment", "Parsed start date: $it")
             }
         } catch (e: ParseException) {
-            Log.e("FetchEvents", "Failed to parse start date: $departDate", e)
+            Log.e("ResultsFragment", "Failed to parse start date: $departDate", e)
+            isEventsFetched = true
+            tryGenerateItinerary()
             return
         }
 
         val endDate = try {
             DateUtils.parseDate(returnDate, *possibleDateFormats).also {
-                Log.d("FetchEvents", "Parsed end date: $it")
+                Log.d("ResultsFragment", "Parsed end date: $it")
             }
         } catch (e: ParseException) {
-            Log.e("FetchEvents", "Failed to parse end date: $returnDate", e)
+            Log.e("ResultsFragment", "Failed to parse end date: $returnDate", e)
+            isEventsFetched = true
+            tryGenerateItinerary()
             return
         }
 
-        val eventFetcher = EventFetcher(
-            cityName,
-            requireContext(),
-            departDate,
-            returnDate,
-            object : EventFetcher.EventFetchListener {
-                override fun onEventsFetched(events: List<EventFetcher.EventResult>) {
-                    Log.d("FetchEvents", "Processing ${events.size} events.")
-                    val eventsExcursions = events.filter { event ->
-                        val dateString = extractDatePart(event.date.`when`)
-                        Log.d("FetchEvents", "Processing event date: ${event.date.`when`} extracted as: $dateString")
-                        val eventDate = dateString?.let {
-                            try {
-                                DateUtils.parseDate(it, *possibleDateFormats)
-                            } catch (e: ParseException) {
-                                Log.d("FetchEvents", "Skipping event with invalid date format: $it")
-                                null
+        try {
+            val eventFetcher = EventFetcher(
+                cityName,
+                requireContext(),
+                departDate,
+                returnDate,
+                object : EventFetcher.EventFetchListener {
+                    override fun onEventsFetched(events: List<EventFetcher.EventResult>) {
+                        Log.d("ResultsFragment", "Processing ${events.size} events.")
+                        val eventsExcursions = events.filter { event ->
+                            val dateString = extractDatePart(event.date.`when`)
+                            Log.d("ResultsFragment", "Processing event date: ${event.date.`when`} extracted as: $dateString")
+                            val eventDate = dateString?.let {
+                                try {
+                                    DateUtils.parseDate(it, *possibleDateFormats)
+                                } catch (e: ParseException) {
+                                    Log.d("ResultsFragment", "Skipping event with invalid date format: $it")
+                                    null
+                                }
                             }
+                            (eventDate != null && !eventDate.before(startDate) && !eventDate.after(endDate)).also {
+                                if (it) Log.d("ResultsFragment", "Included event: ${event.title} on $dateString")
+                                else Log.d("ResultsFragment", "Excluded event: ${event.title} on $dateString")
+                            }
+                        }.map { event ->
+                            Excursion(event.title, event.date.`when`)
                         }
-                        (eventDate != null && !eventDate.before(startDate) && !eventDate.after(endDate)).also {
-                            if (it) Log.d("FetchEvents", "Included event: ${event.title} on $dateString")
-                            else Log.d("FetchEvents", "Excluded event: ${event.title} on $dateString")
+
+                        activity?.runOnUiThread {
+                            excursions.addAll(eventsExcursions)
+                            viewModel.addExcursions(eventsExcursions)
+                            isEventsFetched = true
+                            tryGenerateItinerary()
                         }
-                    }.map { event ->
-                        Excursion(event.title, event.date.`when`)
                     }
-                    activity?.runOnUiThread {
-                        excursions.addAll(eventsExcursions)
-                        viewModel.addExcursions(eventsExcursions)
+
+                    override fun onEventFetchFailed(errorMessage: String) {
+                        Log.e("ResultsFragment", "Error fetching events: $errorMessage")
+                        Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
                         isEventsFetched = true
                         tryGenerateItinerary()
                     }
-                }
-
-                override fun onEventFetchFailed(errorMessage: String) {
-                    Log.e("FetchEvents", "Error fetching events: $errorMessage")
-                    Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
-                    isEventsFetched = true
-                    tryGenerateItinerary()
-                }
-            })
-        eventFetcher.fetchEvents()
+                })
+            eventFetcher.fetchEvents()
+        } catch (e: Exception) {
+            Log.e("ResultsFragment", "Exception while fetching events: ${e.message}", e)
+            isEventsFetched = true
+            tryGenerateItinerary()
+        }
     }
+
 
     fun extractDatePart(dateStr: String): String? {
         val regex = Regex(
@@ -448,10 +480,9 @@ class Results : Fragment() {
     }
 
 
-
-
     //Itinerary generation based on all the excursions added by SerpAPI and TripAdvisor
     private fun generateItinerary() {
+        Log.d("ResultsFragment", "Generating itinerary with ${excursions.size} excursions")
         if (excursions.isNotEmpty()) {
             Log.d("ResultsFragment", "Starting itinerary generation with ${excursions.size} excursions")
             CoroutineScope(Dispatchers.IO).launch {
