@@ -59,6 +59,7 @@ class AttractionsFragment : Fragment() {
             toggleDescription(descriptionTextView, seeMoreButton)
         }
 
+        //Button to goto the website of an attraction, makes sure that the URL is valid before sending
         val websiteButton = view.findViewById<ImageButton>(R.id.getWebsite)
         websiteButton.setOnClickListener {
             viewModel.attractionDetails.value?.website?.let { url ->
@@ -72,6 +73,8 @@ class AttractionsFragment : Fragment() {
         }
 
         val directionsButton = view.findViewById<ImageButton>(R.id.getDirections)
+
+        //Button to get directions to an attraction using stored address and google maps
         directionsButton.setOnClickListener {
             viewModel.attractionDetails.value?.address_obj?.address_string?.let { address ->
                 val uri = Uri.parse("http://maps.google.co.in/maps?q=${Uri.encode(address)}")

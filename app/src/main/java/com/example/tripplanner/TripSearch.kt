@@ -110,6 +110,7 @@ class TripSearch : Fragment() {
             val destLen = destAirport.text.toString().length
             val originLen = originAirport.text.toString().length
             val budget = view.findViewById<TextView>(R.id.budget).text.toString()
+            //Check if all of the required elements are filled
             if (destEditText.text.toString()
                     .isEmpty() || departFormatted.isEmpty() || returnFormatted.isEmpty() || budget.isEmpty() || budget == "0" || destLen == 0 || originLen == 0
             ) {
@@ -148,7 +149,7 @@ class TripSearch : Fragment() {
             }
         }
 
-
+        //Seekbar for the budget, has values between 0-3500 though 0 isn't allowed
         val budgetSeekbar: SeekBar = view.findViewById(R.id.budgetseekbar)
         val budget: TextView = view.findViewById(R.id.budget)
         budgetSeekbar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -176,8 +177,11 @@ class TripSearch : Fragment() {
 
         setupCheckBoxListeners(view)
 
+        //Create the map from airports to latLongs, keys are airports so we use them for autoComplete
         val autoCompleteMap = jsonFileToAirportMap()
         val autoCompleteStrings = autoCompleteMap.keys.toList()
+
+        //ArrayAdapter for the AutoCompleteTextView so we that we can use airport strings within it
         val adapter = ArrayAdapter(
             view.context,
             android.R.layout.simple_dropdown_item_1line,
@@ -201,6 +205,7 @@ class TripSearch : Fragment() {
             Log.i("destAirport", lastSelectedDest.toString())
         }
 
+        //Make sure the user can't edit the airport string once it's been selected
         originAirport.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
             if (!hasFocus) {
                 originAirport.setText(lastSelectedOrigin)
@@ -215,7 +220,8 @@ class TripSearch : Fragment() {
         return view
     }
 
-
+    //Sets up the checkboxes for particular types of attractions the user might want
+    //Current list includes Theme Parks, Restaurants, Museums and Beaches
     private fun setupCheckBoxListeners(view: View) {
 
         val checkBoxIds = listOf(
@@ -245,6 +251,8 @@ class TripSearch : Fragment() {
     }
 
 
+    //Show the calendar and store date values in two different formats, making sure length doesn't
+    //exceed 5 days
     private fun showDatePickerDialog(dateButton: Button) {
         val calendar = Calendar.getInstance()
         val year = calendar.get(Calendar.YEAR)
@@ -252,10 +260,15 @@ class TripSearch : Fragment() {
         val day = calendar.get(Calendar.DAY_OF_MONTH)
 
         val datePickerDialog = DatePickerDialog(requireContext(), { _, selectedYear, selectedMonth, selectedDay ->
+
+            //This date is the date we display on the button itself
             val formattedDate = String.format("%02d/%02d/%d", selectedDay, selectedMonth + 1, selectedYear)
             dateButton.text = formattedDate
+
+            //This date is for the Amadeus API because it requires this format
             val formattedISODate = String.format("%d-%02d-%02d", selectedYear, selectedMonth + 1, selectedDay)
 
+            //Check which button it is and assign formattedISODate to the correct variable
             if (dateButton.id == R.id.departButton) {
                 departFormatted = formattedISODate
                 viewModel.setDepartDate(selectedYear, selectedMonth, selectedDay)
@@ -263,33 +276,43 @@ class TripSearch : Fragment() {
                 returnFormatted = formattedISODate
                 viewModel.setReturnDate(selectedYear, selectedMonth, selectedDay)
 
+                //Check that the date isn't empty and has length 10 (YYYY-MM-DD)
                 if (departFormatted.isNotEmpty() && departFormatted.length >= 10) {
                     val departDate = Calendar.getInstance()
                     val returnDate = Calendar.getInstance()
 
+                    //Set the departDate using substring of the formatted date (YYYY, MM, DD)
                     departDate.set(
                         departFormatted.substring(0, 4).toInt(),
                         departFormatted.substring(5, 7).toInt() - 1,
                         departFormatted.substring(8, 10).toInt()
                     )
-                    returnDate.set(selectedYear, selectedMonth, selectedDay)
 
+                    //Check if difference between return and departure dates is more than 5 days
                     if ((returnDate.timeInMillis - departDate.timeInMillis) / (24 * 60 * 60 * 1000) > 5) {
+
+                        //If it is, show a toast saying it can't be more than 5 days
                         Toast.makeText(
                             context,
                             "Return date must be within 5 days from departure date.",
                             Toast.LENGTH_LONG
                         ).show()
+
+                        //Reset values
                         dateButton.text = "Select Date"
                         returnFormatted = ""
                     }
                 }
+
             }
         }, year, month, day)
 
         datePickerDialog.datePicker.minDate = calendar.timeInMillis
 
+        //Set min and max selectable dates for the return date picker
         if (dateButton.id == R.id.returnButton && departFormatted.isNotEmpty() && departFormatted.length >= 10) {
+
+            //Create calendar with departure date + 1  as the minimum return date
             val minReturnCalendar = Calendar.getInstance().apply {
                 set(
                     departFormatted.substring(0, 4).toInt(),
@@ -298,8 +321,11 @@ class TripSearch : Fragment() {
                 )
                 add(Calendar.DAY_OF_MONTH, 1)
             }
+
+            //Set the minimum date
             datePickerDialog.datePicker.minDate = minReturnCalendar.timeInMillis
 
+            //Create calendar with depart date + 5 as maximum return date
             val maxReturnCalendar = Calendar.getInstance().apply {
                 set(
                     departFormatted.substring(0, 4).toInt(),
@@ -308,31 +334,39 @@ class TripSearch : Fragment() {
                 )
                 add(Calendar.DAY_OF_MONTH, 5)
             }
+
+            //Set the maximum date
             datePickerDialog.datePicker.maxDate = maxReturnCalendar.timeInMillis
         }
-
         datePickerDialog.show()
     }
 
-
-
+    //Read the airports json file, convert it to a Map w/ airports as keys and latLongs as values
     private fun jsonFileToAirportMap(): HashMap<String, String> {
-            val jsonFile = context?.assets?.open("airports.json")
-            val reader = BufferedReader(InputStreamReader(jsonFile))
-            val stringBuilder = StringBuilder()
-            reader.useLines { lines -> lines.forEach { stringBuilder.append(it) } }
-            val jsonString = stringBuilder.toString()
 
-            val gson = Gson()
-            val listType = object : TypeToken<List<AirportEntry>>() {}.type
-            val airportEntries: List<AirportEntry> = gson.fromJson(jsonString, listType)
+        //Open the json file and read it
+        val jsonFile = context?.assets?.open("airports.json")
+        val reader = BufferedReader(InputStreamReader(jsonFile))
+        val stringBuilder = StringBuilder()
 
-            val map = HashMap<String, String>()
-            for (entry in airportEntries) {
-                map[entry.name] = entry.latLong
-            }
-            return map
+        reader.useLines { lines -> lines.forEach { stringBuilder.append(it) } }
+        val jsonString = stringBuilder.toString()
+
+        //Parse the json string into a list of AirportEntry objects
+        val gson = Gson()
+
+        //We need to get the type of what we're going to parse the json (AirportEntry List)
+        //This is because gson.fromJson needs a genericized type
+        val listType = object : TypeToken<List<AirportEntry>>() {}.type
+        val airportEntries: List<AirportEntry> = gson.fromJson(jsonString, listType)
+
+        //Create the Map and iterate through the list of AirportEntrys to input them into the map
+        val map = HashMap<String, String>()
+        for (entry in airportEntries) {
+            map[entry.name] = entry.latLong
         }
+        return map
+    }
     }
 data class AirportEntry(val name: String, val latLong: String)
 
