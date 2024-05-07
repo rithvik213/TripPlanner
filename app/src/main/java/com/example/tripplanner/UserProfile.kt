@@ -1,6 +1,5 @@
 package com.example.tripplanner
 
-import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -8,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModelProvider
 import com.example.tripplanner.database.AppDatabase
 import com.example.tripplanner.database.MyApp
@@ -27,15 +25,13 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class UserProfile : Fragment(), OnMapReadyCallback {
-    private lateinit var mapView: MapView
+    private var mapView: MapView? = null
     private lateinit var googleMap: GoogleMap
     private lateinit var userViewModel: UserViewModel
     private lateinit var appDatabase: AppDatabase
 
     private var job = Job()
     private val uiScope = CoroutineScope(Dispatchers.Main + job)
-
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,24 +41,17 @@ class UserProfile : Fragment(), OnMapReadyCallback {
         appDatabase = app.database
         userViewModel = ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
         val view = inflater.inflate(R.layout.fragment_user_profile, container, false)
-        mapView = view.findViewById(R.id.map)
-        mapView.onCreate(savedInstanceState)
-        mapView.getMapAsync(this)
+        mapView = view.findViewById<MapView>(R.id.map)
+        mapView?.onCreate(savedInstanceState)
+        mapView?.getMapAsync(this)
         return view
     }
 
     override fun onMapReady(map: GoogleMap) {
         googleMap = map
-        if (mapView.viewTreeObserver.isAlive) {
-            mapView.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
-                override fun onGlobalLayout() {
-                    mapView.viewTreeObserver.removeOnGlobalLayoutListener(this)
-                    plotTrips()
-                }
-            })
-        }
+        googleMap.clear()
+        plotTrips()
     }
-
 
     private fun plotTrips() {
         uiScope.launch {
@@ -72,7 +61,8 @@ class UserProfile : Fragment(), OnMapReadyCallback {
                 val itineraries = withContext(Dispatchers.IO) {
                     appDatabase.itineraryDao().getItinerariesByUser(userId)
                 }
-                if (itineraries.isNotEmpty()) {
+
+                if (isAdded && itineraries.isNotEmpty()) {
                     val boundsBuilder = LatLngBounds.Builder()
                     itineraries.forEach { itinerary ->
                         val parts = itinerary.latLong.split(", ")
@@ -83,62 +73,45 @@ class UserProfile : Fragment(), OnMapReadyCallback {
                         boundsBuilder.include(latLng)
                     }
 
-                    if (itineraries.size == 1) {
-                        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(itineraries.first().let {
-                            LatLng(it.latLong.split(", ")[0].toDouble(), it.latLong.split(", ")[1].toDouble())
-                        }, 10f))
-                    } else {
-                        val bounds = boundsBuilder.build()
-                        val width = mapView.width
-                        val height = mapView.height
-                        val padding = 200
-                        if (width > 0 && height > 0) {
-                            val cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding)
-                            googleMap.animateCamera(cameraUpdate)
-                        }
+                    val bounds = boundsBuilder.build()
+                    val width = mapView?.width ?: 0
+                    val height = mapView?.height ?: 0
+                    val padding = 200
+                    if (width > 0 && height > 0) {
+                        val cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding)
+                        googleMap.animateCamera(cameraUpdate)
                     }
                 }
             } else {
-                Toast.makeText(context, "User not logged in", Toast.LENGTH_LONG).show()
+                if (isAdded) {
+                    Toast.makeText(context, "User not logged in", Toast.LENGTH_LONG).show()
+                }
             }
         }
     }
 
 
-
-    override fun onStart() {
-        super.onStart()
-        mapView.onStart()
-    }
-
     override fun onResume() {
         super.onResume()
-        mapView.onResume()
+        mapView?.onResume()
+        plotTrips()
     }
 
     override fun onPause() {
-        mapView.onPause()
+        mapView?.onPause()
         super.onPause()
     }
 
     override fun onStop() {
-        mapView.onStop()
+        mapView?.onStop()
         super.onStop()
     }
 
-    override fun onDestroy() {
-        mapView.onDestroy()
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
+        mapView?.onDestroy()
+        mapView = null
         job.cancel()
     }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        mapView.onSaveInstanceState(outState)
-    }
-
-    override fun onLowMemory() {
-        super.onLowMemory()
-        mapView.onLowMemory()
-    }
 }
+
