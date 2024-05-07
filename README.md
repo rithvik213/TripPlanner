@@ -1,3 +1,5 @@
+![0AF2115B-6FFC-463F-822F-A959B26712DE_1_201_a](https://github.com/rithvik213/TripPlanner/assets/91804661/04f2fbd1-1f5f-4073-a4eb-77cdf726cec3)
+
 # Trip Planner
 
 Welcome to Trip Planner, your ultimate solution for stress-free and personalized travel planning. Whether you're a busy parent, a financially-conscious student, or a business professional, Trip Planner has everything you need to create memorable experiences without the overwhelm.
@@ -41,3 +43,5 @@ Check out our storyboard on [Figma](https://www.figma.com/file/74cVeOlz14VIgggVB
 - [Google Maps Android SDK](https://developers.google.com/maps/documentation/android-sdk/overview)
 - [Build ChatGPT-like Android App](https://www.geeksforgeeks.org/how-to-build-a-chatgpt-like-app-in-android-using-openai-api/#)
 
+### Demo
+https://github.com/rithvik213/TripPlanner/assets/91804661/ab300351-b22f-4b65-85e0-25015b8ec278 
