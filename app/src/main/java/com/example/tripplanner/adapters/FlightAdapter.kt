@@ -14,7 +14,12 @@ import java.security.MessageDigest
 import java.text.SimpleDateFormat
 import java.util.*
 
-//The recyclerView adapter for displaying flights in flight_results
+/* An adapter for displaying the flight results for a user to select
+* Allows the user to actually choose the RecyclerView element and sets an event
+* listener to each item
+* Also finds an image associated with each airline in the button using Airhex API
+*/
+
 class FlightAdapter(private var flightInfoList: List<FlightOffer>) : RecyclerView.Adapter<FlightAdapter.FlightViewHolder>() {
 
     private var selectedItem = RecyclerView.NO_POSITION
@@ -40,6 +45,7 @@ class FlightAdapter(private var flightInfoList: List<FlightOffer>) : RecyclerVie
         flightInfoList = flightOffers
         notifyDataSetChanged()
     }
+
 
     //This is for the FlightResults file because we need the selected flight to pass into results
     fun getSelectedFlightInfo(): FlightOffer? {

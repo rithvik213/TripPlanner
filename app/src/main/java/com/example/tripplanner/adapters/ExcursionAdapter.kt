@@ -8,7 +8,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.tripplanner.data.Excursion
 import com.example.tripplanner.R
 
-//Excursion adapter for the excursion recyclerView shown in TripPage and Results fragments
+/* Adapter class needed for both our trip_page and result fragments for displaying our
+excursions that make up our itinerary to display in a RecyclerView
+*/
+
 class ExcursionAdapter(private var excursionList: MutableList<Excursion>) :
     RecyclerView.Adapter<ExcursionAdapter.ExcursionViewHolder>() {
 

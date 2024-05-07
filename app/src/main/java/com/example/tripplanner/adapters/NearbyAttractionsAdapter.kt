@@ -11,7 +11,13 @@ import com.example.tripplanner.data.Attraction
 import com.example.tripplanner.R
 import com.example.tripplanner.apis.tripadvisor.TripAdvisorManager
 
-//RecyclerView adapter for NearbyAttractions, shown in Discover Page
+
+/* Adapter that allows us to display nearby attractions for users who have
+* allowed location permissions on our discover page and puts text below
+* fetched image and sets each element of RecyclerView as button that can
+* be clicked to get a further description
+*/
+
 class NearbyAttractionsAdapter(var items: List<TripAdvisorManager.AttractionDetail>, private val onAttractionClick: (Int) -> Unit) :
     RecyclerView.Adapter<NearbyAttractionsAdapter.ViewHolder>() {
 

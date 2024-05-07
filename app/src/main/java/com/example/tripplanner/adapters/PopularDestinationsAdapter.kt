@@ -10,7 +10,14 @@ import com.bumptech.glide.Glide
 import com.example.tripplanner.data.Destination
 import com.example.tripplanner.R
 
-//RecyclerView adapter for PopularDestinations, shown in Discover Page
+
+/* Adapter that allows us to display popular attractions for any user
+* on the discover page fragment and puts text below
+* image of location and sets each element of RecyclerView as button that can
+* be clicked to get bring user to trip search fragment with this destination
+* already pre-set
+ */
+
 class PopularDestinationsAdapter(private val items: List<Destination>, private val onDestinationClicked: (Destination) -> Unit) : RecyclerView.Adapter<PopularDestinationsAdapter.ViewHolder>() {
 
     class ViewHolder(view: View, onClick: (Int) -> Unit) : RecyclerView.ViewHolder(view) {
