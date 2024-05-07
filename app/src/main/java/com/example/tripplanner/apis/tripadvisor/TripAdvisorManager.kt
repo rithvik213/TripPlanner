@@ -40,8 +40,8 @@ class TripAdvisorManager {
     private val service = retrofit.create(TripAdvisorService::class.java)
 
     // Fetches the images and the attraction names for a give city
-    fun fetchData(context: Context, searchQuery: String, latLong: String?, listener: AttractionFetchListener) {
-        fetchAttractions(context, searchQuery, latLong, object : AttractionFetchListener {
+    fun fetchData(context: Context, searchQuery: String, latLong: String?, category: String?, listener: AttractionFetchListener) {
+        fetchAttractions(context, searchQuery, latLong, category, object : AttractionFetchListener {
             override fun onAttractionsFetched(attractions: List<AttractionDetail>) {
                 // Process each fetched attraction to get images
                 attractions.forEach { attraction ->
@@ -58,6 +58,7 @@ class TripAdvisorManager {
             }
         })
     }
+
 
     fun fetchCityImage(cityName: String, callback: (String) -> Unit) {
         fetchLocationId(cityName) { locationId ->
@@ -109,13 +110,16 @@ class TripAdvisorManager {
         })
     }
 
-    fun fetchAttractions(context: Context, searchQuery: String, latLong: String?, listener: AttractionFetchListener) {
+    fun fetchAttractions(context: Context, searchQuery: String, latLong: String?, category: String?, listener: AttractionFetchListener) {
         // Constructing the URL to include necessary parameters
         val url = buildString {
             append("https://api.content.tripadvisor.com/api/v1/location/search?")
             append("searchQuery=${searchQuery.urlEncode()}")
             if (!latLong.isNullOrEmpty()) {
                 append("&latLong=${latLong.urlEncode()}")
+            }
+            if (!category.isNullOrEmpty()) {
+                append("&category=${category.urlEncode()}")
             }
             append("&language=en")
             append("&key=$apiKey")
@@ -143,6 +147,7 @@ class TripAdvisorManager {
             }
         })
     }
+
 
 
     // Gets images for our home screen based on our current location
