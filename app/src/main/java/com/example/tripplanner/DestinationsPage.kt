@@ -23,6 +23,7 @@ class DestinationsPage : Fragment() {
 
     }
 
+    //This is the fragment for the premade trips we have on the bottom in the home screen
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -43,10 +44,11 @@ class DestinationsPage : Fragment() {
                 .into(imageView)
         }
 
+        //Navigate to tripSearch with destination city already selected and filled in
         planTripButton = view.findViewById(R.id.plantripbutton)
         planTripButton.setOnClickListener {
             val bundle = Bundle().apply {
-                putString("destinationCity", destinationTitle) // Use the correct variable for city name
+                putString("destinationCity", destinationTitle)
             }
             findNavController().navigate(R.id.action_destinationcity_to_tripsearchfragment, bundle)
         }

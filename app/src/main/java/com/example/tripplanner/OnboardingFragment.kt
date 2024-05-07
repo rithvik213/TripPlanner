@@ -46,22 +46,26 @@ class OnboardingFragment : Fragment(), GoogleSignInHelper.SignInResultListener {
     }
 
     private fun switchToLayout(layoutResId: Int) {
+        //Inflate the new layout and replace the current layout with it
         val newLayout = LayoutInflater.from(context).inflate(layoutResId, rootView, false)
         rootView.removeAllViews()
         rootView.addView(newLayout)
 
+        //Set up specific functionalities based on the layout
         when (layoutResId) {
             R.layout.discover_together -> setupDiscoverTogetherLayout(newLayout)
             R.layout.start_exploring -> setupStartExploringLayout(newLayout)
         }
     }
 
+    //Start sign in with Discover Togther Layout
     private fun setupDiscoverTogetherLayout(view: View) {
         view.findViewById<ImageButton>(R.id.googlesigninbutton)?.setOnClickListener {
             googleSignInHelper.startSignIn()
         }
     }
 
+    //Request location perms in the start exploring layout
     private fun setupStartExploringLayout(view: View) {
         view.findViewById<ImageButton>(R.id.grantPermissions).setOnClickListener {
             requestLocationPermission()
@@ -70,9 +74,11 @@ class OnboardingFragment : Fragment(), GoogleSignInHelper.SignInResultListener {
 
     override fun onSignInSuccess(account: GoogleSignInAccount) {
         Log.d("GoogleSignIn", "Sign-in successful for account: ${account.displayName}")
+        //If we have location permissions goto the Discover Page
         if (hasLocationPermission()) {
             account.displayName?.let { navigateToDiscoverPage(it) }
         } else {
+            //If not, goto Start Exploring layout so we can request it
             switchToLayout(R.layout.start_exploring)
         }
         userViewModel.setGoogleAccount(account)
@@ -98,6 +104,8 @@ class OnboardingFragment : Fragment(), GoogleSignInHelper.SignInResultListener {
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         Log.d("GoogleSignIn", "Request code: $requestCode, grantResults: ${grantResults.joinToString()}")
+
+        //If location permission is granted, get the Google account and goto to the Discover Page
         if (requestCode == 1000 && grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             val account = GoogleSignIn.getLastSignedInAccount(requireContext())
             if (account != null) {
@@ -110,7 +118,6 @@ class OnboardingFragment : Fragment(), GoogleSignInHelper.SignInResultListener {
             Log.d("GoogleSignIn", "Location permission was denied by user.")
         }
     }
-
 
     private fun navigateToDiscoverPage(userName: String) {
         val bundle = Bundle().apply {

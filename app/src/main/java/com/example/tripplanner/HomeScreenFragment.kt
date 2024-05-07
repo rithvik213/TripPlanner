@@ -29,6 +29,7 @@ class HomeScreenFragment : Fragment() {
         textViewEmpty = view.findViewById(R.id.textViewEmpty)
         recyclerView.layoutManager = LinearLayoutManager(context)
 
+        //The plus icon button which allows the user to make a new trip
         view.findViewById<FloatingActionButton>(R.id.fab_add)?.setOnClickListener {
             findNavController().navigate(R.id.action_homeScreenFragment_to_tripSearchFragment)
         }
@@ -41,14 +42,18 @@ class HomeScreenFragment : Fragment() {
 
         viewModel = ViewModelProvider(this).get(ItineraryViewModel::class.java)
 
+        //Get the parameters for the clicked trip and move to trip page to display in mroe detail
         adapter = ItineraryAdapter(emptyList()) { tripId ->
             val bundle = Bundle().apply { putInt("tripId", tripId) }
             findNavController().navigate(R.id.action_homeScreenFragment_to_tripPage, bundle)
         }
         recyclerView.adapter = adapter
 
+
         viewModel.allItineraries.observe(viewLifecycleOwner) { itineraries ->
             adapter.updateData(itineraries)
+
+            //Only show the the "No trips yet" text if there actually aren't any
             textViewEmpty.visibility = if (itineraries.isEmpty()) View.VISIBLE else View.GONE
         }
     }
