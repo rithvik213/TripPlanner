@@ -11,6 +11,7 @@ import com.example.tripplanner.data.Attraction
 import com.example.tripplanner.R
 import com.example.tripplanner.apis.tripadvisor.TripAdvisorManager
 
+//RecyclerView adapter for NearbyAttractions, shown in Discover Page
 class NearbyAttractionsAdapter(var items: List<TripAdvisorManager.AttractionDetail>, private val onAttractionClick: (Int) -> Unit) :
     RecyclerView.Adapter<NearbyAttractionsAdapter.ViewHolder>() {
 

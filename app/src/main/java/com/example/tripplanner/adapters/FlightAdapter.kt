@@ -13,6 +13,8 @@ import com.example.tripplanner.apis.amadeus.data.FlightOffer
 import java.security.MessageDigest
 import java.text.SimpleDateFormat
 import java.util.*
+
+//The recyclerView adapter for displaying flights in flight_results
 class FlightAdapter(private var flightInfoList: List<FlightOffer>) : RecyclerView.Adapter<FlightAdapter.FlightViewHolder>() {
 
     private var selectedItem = RecyclerView.NO_POSITION
@@ -22,8 +24,11 @@ class FlightAdapter(private var flightInfoList: List<FlightOffer>) : RecyclerVie
         return FlightViewHolder(view)
     }
 
+    //We bind using the flightInfoList returned by the Amadeus API which is already ordered by price
     override fun onBindViewHolder(holder: FlightViewHolder, position: Int) {
         val flightInfo = flightInfoList[position]
+
+        //Pass in the boolean of if this is the selected flight
         holder.bindFlightInfo(flightInfo, position == selectedItem)
     }
 
@@ -36,6 +41,7 @@ class FlightAdapter(private var flightInfoList: List<FlightOffer>) : RecyclerVie
         notifyDataSetChanged()
     }
 
+    //This is for the FlightResults file because we need the selected flight to pass into results
     fun getSelectedFlightInfo(): FlightOffer? {
         return if (selectedItem != RecyclerView.NO_POSITION) {
             flightInfoList[selectedItem]
@@ -52,6 +58,7 @@ class FlightAdapter(private var flightInfoList: List<FlightOffer>) : RecyclerVie
             itemView.setOnClickListener(this)
         }
 
+        //Keep track of the selected flight, even if recyclerView scrolls past and changes position values
         override fun onClick(v: View?) {
             val position = adapterPosition
             if (position != RecyclerView.NO_POSITION) {
@@ -59,6 +66,8 @@ class FlightAdapter(private var flightInfoList: List<FlightOffer>) : RecyclerVie
                 notifyDataSetChanged()
             }
         }
+
+        //Bind all the values from the flightInfo data class we get from Amadeus
         fun bindFlightInfo(flightInfo: FlightOffer, isSelected: Boolean) {
             val departAirport = flightInfo.itineraries[0].segments[0].departure.iataCode
             val arrivalAirport = flightInfo.itineraries[0].segments[0].arrival.iataCode
@@ -91,6 +100,7 @@ class FlightAdapter(private var flightInfoList: List<FlightOffer>) : RecyclerVie
             itemView.findViewById<TextView>(R.id.returningInboundTer).text = "Terminal " + arrivalTerminal2
             itemView.findViewById<TextView>(R.id.flightPrice).text = "$" + price
 
+            //Use Airhex API in order to load airline carrier logos on the fly
             loadAirlineLogo(flightInfo.itineraries[0].segments[0].carrierCode, itemView.findViewById(
                 R.id.departingLogo
             ))
@@ -98,6 +108,7 @@ class FlightAdapter(private var flightInfoList: List<FlightOffer>) : RecyclerVie
                 R.id.returningLogo
             ))
 
+            //If this is the selected flight, make sure the user can see it
             if (isSelected) {
                 itemView.setBackgroundColor(Color.TRANSPARENT)
             } else {
@@ -105,9 +116,12 @@ class FlightAdapter(private var flightInfoList: List<FlightOffer>) : RecyclerVie
             }
         }
 
+        //Get the airline logos using a call to Airhex, and use Glide to load URL into the imageView
         private fun loadAirlineLogo(airlineCode: String, imageView: ImageView) {
             val imageSize = "_350_100_r"
             val secret = "AIRHEX_KEY"
+
+            //Airhex needs an md5 hash of these variables for the API call
             val apiKey = md5(airlineCode + imageSize + "_" + secret)
             val imageURL = "https://content.airhex.com/content/logos/airlines_$airlineCode$imageSize.png?md5apikey=$apiKey"
 
@@ -116,6 +130,7 @@ class FlightAdapter(private var flightInfoList: List<FlightOffer>) : RecyclerVie
                 .into(imageView)
         }
 
+        //Hash our string with md5 and then turn the byte array back into a string
         private fun md5(input: String): String {
             val md = MessageDigest.getInstance("MD5")
             val messageDigest = md.digest(input.toByteArray())

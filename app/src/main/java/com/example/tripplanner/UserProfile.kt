@@ -54,21 +54,34 @@ class UserProfile : Fragment(), OnMapReadyCallback {
     }
 
     private fun plotTrips() {
+        //Do in coroutine to make sure main thread isn't bogged down by potentially heavy work
         uiScope.launch {
             val account = userViewModel.getGoogleAccount()
+
+            //Make sure that the user's account isn't null
             if (account != null) {
+                //Get the userid, and stop if it's null
                 val userId = account.id ?: return@launch
+
+                //Get the user's itineraries
                 val itineraries = withContext(Dispatchers.IO) {
                     appDatabase.itineraryDao().getItinerariesByUser(userId)
                 }
 
+                //Check if the fragment is added to activity and if we have any itineraries
                 if (isAdded && itineraries.isNotEmpty()) {
+                    // Create a builder for LatLngBounds to encompass all markers
                     val boundsBuilder = LatLngBounds.Builder()
+
+                    //For each itinerary, get the latlong coords and make an LatLng object
                     itineraries.forEach { itinerary ->
+                        // Split the latitude and longitude from the "latLong" string
                         val parts = itinerary.latLong.split(", ")
                         val latitude = parts[0].toDouble()
                         val longitude = parts[1].toDouble()
                         val latLng = LatLng(latitude, longitude)
+
+                        //Add a marker to the embedded google map at the latlong locations
                         googleMap.addMarker(MarkerOptions().position(latLng).title(itinerary.cityName))
                         boundsBuilder.include(latLng)
                     }
@@ -78,7 +91,10 @@ class UserProfile : Fragment(), OnMapReadyCallback {
                     val height = mapView?.height ?: 0
                     val padding = 200
                     if (width > 0 && height > 0) {
+                        //Update the camera to move so it shows all the markers
                         val cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding)
+
+                        //Then animate it camera to the bounds
                         googleMap.animateCamera(cameraUpdate)
                     }
                 }
@@ -91,6 +107,7 @@ class UserProfile : Fragment(), OnMapReadyCallback {
     }
 
 
+    //Make sure to pause and stop the mapView as necessary since it doesn't do it on its own
     override fun onResume() {
         super.onResume()
         mapView?.onResume()

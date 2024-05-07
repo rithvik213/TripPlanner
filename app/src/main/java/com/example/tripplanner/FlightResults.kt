@@ -37,6 +37,7 @@ class FlightResults : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_flight_results, container, false)
+        //Grab the bundle arguments passed to us from trip_search
         arguments?.let {
             cityName = it.getString("cityName", "Austin")
             departDate = it.getString("departDate","")
@@ -47,15 +48,15 @@ class FlightResults : Fragment() {
             latLong = it.getString("latLong", "0, 0")
         }
 
+        //Define the recyclerView and adapter, pass in an emptyList for now b/c we'll update later
         val flightsRecyclerView: RecyclerView = view.findViewById(R.id.flightReyclerView)
-
         val adapter = FlightAdapter(emptyList())
         flightsRecyclerView.adapter = adapter
-
 
         val layoutManager = LinearLayoutManager(requireContext())
         flightsRecyclerView.layoutManager = layoutManager
 
+        //Execute the Amadeus API call in a coroutine and show loading dialog for user feedback
         lifecycleScope.launch {
             showLoadingDialog("Please wait as we look for flights...")
             val flightInfo = fetchFlightOffers(
@@ -68,6 +69,7 @@ class FlightResults : Fragment() {
                 currencyCode = "USD",
                 max = 20
             )
+            //If we fight flights, update the recyclerView, if not, show an errorDialog and go back
             if (flightInfo != null) {
                 dismissLoadingDialog()
                 adapter.updateData(flightInfo.flightOffers)
@@ -86,7 +88,9 @@ class FlightResults : Fragment() {
             findNavController().navigate(R.id.action_flightResultsFragment_to_tripSearchFragment)
         }
 
+        //Get ready to pass in everything we need in results_fragment
         nextButton.setOnClickListener {
+            //Grab the flight the user picked from adapter, if it's null tell them to pick one
             val fi = adapter.getSelectedFlightInfo()
             if (fi != null) {
                 val bundle = Bundle()
@@ -131,7 +135,7 @@ class FlightResults : Fragment() {
         return view
     }
 
-
+    //Similar loading dialog to elsewhere in the code, for user feedback
     private fun showLoadingDialog(message: String) {
         if (loadingDialog == null) {
             val dialogView = LayoutInflater.from(context).inflate(R.layout.results_loading_dialog, null)
@@ -152,6 +156,4 @@ class FlightResults : Fragment() {
     private fun dismissLoadingDialog() {
         loadingDialog?.dismiss()
     }
-
-
 }
