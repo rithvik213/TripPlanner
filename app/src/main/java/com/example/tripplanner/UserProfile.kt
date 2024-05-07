@@ -79,18 +79,23 @@ class UserProfile : Fragment(), OnMapReadyCallback {
                         val latitude = parts[0].toDouble()
                         val longitude = parts[1].toDouble()
                         val latLng = LatLng(latitude, longitude)
-                        googleMap.addMarker(MarkerOptions()
-                            .position(latLng)
-                            .title(itinerary.cityName))
+                        googleMap.addMarker(MarkerOptions().position(latLng).title(itinerary.cityName))
                         boundsBuilder.include(latLng)
                     }
-                    val bounds = boundsBuilder.build()
-                    val width = mapView.width
-                    val height = mapView.height
-                    val padding = 200
-                    if (width > 0 && height > 0) {
-                        val cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding)
-                        googleMap.animateCamera(cameraUpdate)
+
+                    if (itineraries.size == 1) {
+                        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(itineraries.first().let {
+                            LatLng(it.latLong.split(", ")[0].toDouble(), it.latLong.split(", ")[1].toDouble())
+                        }, 10f))
+                    } else {
+                        val bounds = boundsBuilder.build()
+                        val width = mapView.width
+                        val height = mapView.height
+                        val padding = 200
+                        if (width > 0 && height > 0) {
+                            val cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding)
+                            googleMap.animateCamera(cameraUpdate)
+                        }
                     }
                 }
             } else {
@@ -98,6 +103,7 @@ class UserProfile : Fragment(), OnMapReadyCallback {
             }
         }
     }
+
 
 
     override fun onStart() {
