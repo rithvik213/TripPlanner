@@ -1,12 +1,23 @@
 package com.example.tripplanner.apis.tripadvisor
 
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Url
+import java.net.URLEncoder
+import java.util.concurrent.CountDownLatch
 
 // Specifies the callbacks for TripAdvisor responses and the API interface
 class TripAdvisorManager {
@@ -39,171 +50,159 @@ class TripAdvisorManager {
 
     private val service = retrofit.create(TripAdvisorService::class.java)
 
-    // Fetches the images and the attraction names for a give city
     fun fetchData(context: Context, searchQuery: String, latLong: String?, category: String?, listener: AttractionFetchListener) {
-        fetchAttractions(context, searchQuery, latLong, category, object : AttractionFetchListener {
-            override fun onAttractionsFetched(attractions: List<AttractionDetail>) {
-                // Process each fetched attraction to get images
-                attractions.forEach { attraction ->
-                    fetchImage(attraction.locationID) { imageUrl ->
-                        // Update the attraction with the fetched image URL and pass to listener
-                        val updatedAttraction = attraction.copy(imageUrl = imageUrl)
-                        listener.onAttractionsFetched(listOf(updatedAttraction))
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                // Call the internal fetchAttractions to get basic attraction data
+                val attractions = fetchAttractions(context, searchQuery, latLong, category)
+
+                // Concurrently fetch images for each attraction
+                val updatedAttractions = attractions.map { attraction ->
+                    async {
+                        val imageUrl = fetchImage(attraction.locationID)
+                        attraction.copy(imageUrl = imageUrl)  // Update each attraction with its image URL
                     }
+                }.awaitAll()
+
+                // Notify the listener on the main thread
+                withContext(Dispatchers.Main) {
+                    listener.onAttractionsFetched(updatedAttractions)
+                }
+            } catch (e: Exception) {
+                // Move error handling also to the main thread to handle UI updates
+                withContext(Dispatchers.Main) {
+                    listener.onAttractionFetchFailed(e.message ?: "Failed to fetch attractions")
                 }
             }
-
-            override fun onAttractionFetchFailed(errorMessage: String) {
-                listener.onAttractionFetchFailed(errorMessage)
-            }
-        })
+        }
     }
 
 
-    fun fetchCityImage(cityName: String, callback: (String) -> Unit) {
-        fetchLocationId(cityName) { locationId ->
-            if (locationId.isNotEmpty()) {
-                fetchImage(locationId, callback)
+
+
+    suspend fun fetchImage(locationId: String): String = withContext(Dispatchers.IO) {
+        try {
+            val url = "$locationId/photos?language=en&key=$apiKey"
+            val response = service.getLocationPhotos(url).execute()
+            if (response.isSuccessful) {
+                response.body()?.data?.firstOrNull()?.images?.original?.url.orEmpty()
             } else {
-                callback("")
+                Log.e("TripAdvisorManager", "Error fetching image for location ID $locationId: ${response.errorBody()?.string()}")
+                ""
             }
+        } catch (e: Exception) {
+            Log.e("TripAdvisorManager", "Failed to fetch image for location ID $locationId: ${e.message}")
+            ""
         }
     }
 
-    // Gets the first response to the location id endpoint to use for other endpoints in subsequent API calls
-    private fun fetchLocationId(cityName: String, callback: (String) -> Unit) {
-        val url = "search?searchQuery=$cityName&language=en&key=$apiKey"
-        val call = service.searchLocations(url)
-        call.enqueue(object : retrofit2.Callback<LocationSearchResponse> {
-            override fun onResponse(call: Call<LocationSearchResponse>, response: retrofit2.Response<LocationSearchResponse>) {
-                if (response.isSuccessful) {
-                    val locationId = response.body()?.data?.firstOrNull()?.location_id ?: ""
-                    callback(locationId)
-                } else {
-                    //Handle error, could log or display to user
-                }
-            }
 
-            override fun onFailure(call: Call<LocationSearchResponse>, t: Throwable) {
-                //Handle error, could log or display to user
+    suspend fun fetchAttractions(context: Context, searchQuery: String, latLong: String?, category: String?): List<AttractionDetail> = withContext(Dispatchers.IO) {
+        try {
+            val url = buildString {
+                append("https://api.content.tripadvisor.com/api/v1/location/search?")
+                append("searchQuery=${URLEncoder.encode(searchQuery, "UTF-8")}")
+                if (!latLong.isNullOrEmpty()) append("&latLong=${URLEncoder.encode(latLong, "UTF-8")}")
+                if (!category.isNullOrEmpty()) append("&category=${URLEncoder.encode(category, "UTF-8")}")
+                append("&language=en&key=$apiKey")
             }
-        })
-    }
-
-    // Gets the largest image for a location ID after the fetchLocationId call
-    fun fetchImage(locationId: String, callback: ImageFetchCallback) {
-        val url = "$locationId/photos?language=en&key=$apiKey"
-        val call = service.getLocationPhotos(url)
-        call.enqueue(object : retrofit2.Callback<PhotoResponse> {
-            override fun onResponse(call: Call<PhotoResponse>, response: retrofit2.Response<PhotoResponse>) {
-                val imageUrl = response.body()?.data?.firstOrNull()?.images?.original?.url.orEmpty()
-                callback(imageUrl)
+            val response = service.searchLocations(url).execute()
+            if (response.isSuccessful) {
+                response.body()?.data?.map { locationData ->
+                    AttractionDetail(locationID = locationData.location_id, name = locationData.name, imageUrl = null)
+                } ?: emptyList()
+            } else {
+                throw Exception("Error fetching data: ${response.errorBody()?.string()}")
             }
-
-            override fun onFailure(call: Call<PhotoResponse>, t: Throwable) {
-                Log.e(
-                    "TripAdvisorManager",
-                    "Failed to fetch image for location ID $locationId: ${t.message}"
-                )
-                callback("")
-            }
-        })
-    }
-
-    fun fetchAttractions(context: Context, searchQuery: String, latLong: String?, category: String?, listener: AttractionFetchListener) {
-        // Constructing the URL to include necessary parameters
-        val url = buildString {
-            append("https://api.content.tripadvisor.com/api/v1/location/search?")
-            append("searchQuery=${searchQuery.urlEncode()}")
-            if (!latLong.isNullOrEmpty()) {
-                append("&latLong=${latLong.urlEncode()}")
-            }
-            if (!category.isNullOrEmpty()) {
-                append("&category=${category.urlEncode()}")
-            }
-            append("&language=en")
-            append("&key=$apiKey")
+        } catch (e: Exception) {
+            Log.e("TripAdvisorManager", "Network error: ${e.message}")
+            emptyList()
         }
-
-        val call = service.searchLocations(url)
-        call.enqueue(object : retrofit2.Callback<LocationSearchResponse> {
-            override fun onResponse(call: Call<LocationSearchResponse>, response: retrofit2.Response<LocationSearchResponse>) {
-                if (response.isSuccessful && response.body() != null) {
-                    val attractions = response.body()!!.data.map { locationData ->
-                        AttractionDetail(
-                            locationID = locationData.location_id,
-                            name = locationData.name,
-                            imageUrl = null
-                        )
-                    }
-                    listener.onAttractionsFetched(attractions)
-                } else {
-                    listener.onAttractionFetchFailed("Error fetching data: ${response.errorBody()?.string()}")
-                }
-            }
-
-            override fun onFailure(call: Call<LocationSearchResponse>, t: Throwable) {
-                listener.onAttractionFetchFailed("Network error: ${t.message}")
-            }
-        })
     }
 
 
 
-    // Gets images for our home screen based on our current location
-    fun fetchSearchTheLocation(context: Context, cityName: String, category: String, latLong: String, searchQuery: String, listener: AttractionFetchListener) {
-        val url = "search?key=$apiKey&searchQuery=${searchQuery.urlEncode()}&category=$category&latLong=$latLong&language=en"
-        val call = service.searchLocations(baseUrl + url)
-        call.enqueue(object : retrofit2.Callback<LocationSearchResponse> {
-            val attractions = mutableMapOf<String, AttractionDetail>()
-            var pendingImageFetches = 0
+    suspend fun fetchCityImage(cityName: String): String = coroutineScope {
+        val locationId = fetchLocationId(cityName)
+        if (locationId.isNotEmpty()) {
+            fetchImage(locationId)
+        } else {
+            ""
+        }
+    }
 
-            override fun onResponse(call: Call<LocationSearchResponse>, response: retrofit2.Response<LocationSearchResponse>) {
-                if (response.isSuccessful && response.body() != null) {
-                    response.body()!!.data.forEach { locationData ->
+    suspend fun fetchLocationId(cityName: String): String = withContext(Dispatchers.IO) {
+        try {
+            val url = "search?searchQuery=$cityName&language=en&key=$apiKey"
+            val response = service.searchLocations(url).execute()
+            if (response.isSuccessful) {
+                response.body()?.data?.firstOrNull()?.location_id ?: ""
+            } else {
+                Log.e("API", "Failed to fetch location ID: ${response.errorBody()?.string()}")
+                ""
+            }
+        } catch (e: Exception) {
+            Log.e("API", "Exception fetching location ID: ${e.message}")
+            ""
+        }
+    }
+
+    suspend fun fetchSearchTheLocation(
+        cityName: String,
+        category: String,
+        latLong: String,
+        searchQuery: String
+    ): List<AttractionDetail> = withContext(Dispatchers.IO) {
+        val attractions = mutableMapOf<String, AttractionDetail>()
+        try {
+            // Build the search URL
+            val url = "search?key=$apiKey&searchQuery=${searchQuery.urlEncode()}&category=$category&latLong=$latLong&language=en"
+            val response = service.searchLocations(baseUrl + url).execute()
+
+            if (response.isSuccessful && response.body() != null) {
+                val locationDataList = response.body()!!.data
+
+                // Fetch images concurrently for each location
+                val deferredAttractions = locationDataList.map { locationData ->
+                    async {
                         val attractionDetail = AttractionDetail(
                             locationID = locationData.location_id,
                             name = locationData.name,
                             imageUrl = null
                         )
-                        attractions[locationData.location_id] = attractionDetail
-                        pendingImageFetches++
-                        fetchImage(locationData.location_id) { imageUrl ->
-                            synchronized(this) {
-                                attractions[locationData.location_id]?.imageUrl = imageUrl
-                                pendingImageFetches--
-                                Log.d(
-                                    "TripAdvisorManager",
-                                    "Fetched image for ${locationData.name}: $imageUrl"
-                                )
-                                if (pendingImageFetches == 0) {
-                                    Log.d(
-                                        "TripAdvisorManager",
-                                        "All images fetched, updating listener."
-                                    )
-                                    listener?.onAttractionsFetched(attractions.values.toList())
-                                }
-                            }
-                        }
-                    }
-                    if (attractions.isEmpty()) {
-                        listener?.onAttractionsFetched(listOf()) // Handle case with no attractions
-                    }
-                } else {
-                    listener?.onAttractionFetchFailed("Error fetching data: ${response.errorBody()?.string()}")
-                }
-            }
 
-            override fun onFailure(call: Call<LocationSearchResponse>, t: Throwable) {
-                synchronized(this) {
-                    listener?.onAttractionFetchFailed("Network error: ${t.message}")
-                    if (attractions.isEmpty() && pendingImageFetches == 0) {
-                        listener?.onAttractionsFetched(listOf())
+                        // Fetch the image URL
+                        val imageUrl = fetchImageSynchronously(locationData.location_id)
+                        attractionDetail.copy(imageUrl = imageUrl)
                     }
                 }
+
+                // Await all async tasks to complete
+                deferredAttractions.awaitAll().forEach { updatedAttraction ->
+                    attractions[updatedAttraction.locationID] = updatedAttraction
+                }
+            } else {
+                Log.e("TripAdvisorManager", "Error fetching data: ${response.errorBody()?.string()}")
             }
-        })
+        } catch (e: Exception) {
+            Log.e("TripAdvisorManager", "Network error: ${e.message}")
+        }
+
+        return@withContext attractions.values.toList()
     }
+
+    //This helper function fetches images synchronously.
+    private suspend fun fetchImageSynchronously(locationId: String): String = withContext(Dispatchers.IO) {
+        try {
+            val url = "$locationId/photos?language=en&key=$apiKey"
+            val response = service.getLocationPhotos(url).execute()
+            response.body()?.data?.firstOrNull()?.images?.original?.url.orEmpty()
+        } catch (e: Exception) {
+            Log.e("TripAdvisorManager", "Failed to fetch image for location ID $locationId: ${e.message}")
+            ""
+        }
+    }
+
 
     // Gets the details for our home page attractions based on our current coordinates
     fun fetchAttractionDetails(context: Context, locationId: String, listener: DetailFetchListener) {
