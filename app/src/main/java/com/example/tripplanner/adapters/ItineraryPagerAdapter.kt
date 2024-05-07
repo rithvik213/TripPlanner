@@ -9,7 +9,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.tripplanner.data.DayItinerary
 import com.example.tripplanner.R
 
-//Itinerary pager as used in Trip Page and Results
+
+/* Adapter class that allows for itineraries of multiple days to exist as
+scrollable element
+*/
+
 class ItineraryPagerAdapter(private val daysItinerary: List<DayItinerary>, private val fragment: Fragment)
     : RecyclerView.Adapter<ItineraryPagerAdapter.ItineraryViewHolder>() {
 

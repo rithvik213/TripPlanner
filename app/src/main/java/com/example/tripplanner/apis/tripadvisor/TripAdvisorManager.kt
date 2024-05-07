@@ -77,9 +77,6 @@ class TripAdvisorManager {
         }
     }
 
-
-
-
     suspend fun fetchImage(locationId: String): String = withContext(Dispatchers.IO) {
         try {
             val url = "$locationId/photos?language=en&key=$apiKey"
