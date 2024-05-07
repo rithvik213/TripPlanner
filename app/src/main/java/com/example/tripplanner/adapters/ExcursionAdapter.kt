@@ -10,7 +10,8 @@ import com.example.tripplanner.R
 
 /* Adapter class needed for both our trip_page and result fragments for displaying our
 excursions that make up our itinerary to display in a RecyclerView
-* */
+*/
+
 class ExcursionAdapter(private var excursionList: MutableList<Excursion>) :
     RecyclerView.Adapter<ExcursionAdapter.ExcursionViewHolder>() {
 

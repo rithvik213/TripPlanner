@@ -80,6 +80,7 @@ class Results : Fragment() {
     private lateinit var arrivalTerminal2: String
     private lateinit var price: String
 
+    //Date and Time formatters for time and date of departure
     private val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US)
     private val dateFormatter = SimpleDateFormat("EEEE, MMMM d, yyyy", Locale.US)
     private val timeFormatter = SimpleDateFormat("HH:mm", Locale.US)
@@ -116,6 +117,7 @@ class Results : Fragment() {
         leftArrowButton = view.findViewById(R.id.leftArrow)
         rightArrowButton = view.findViewById(R.id.rightArrow)
 
+        //Move left and right through itinerary
         leftArrowButton.setOnClickListener {
             val currentItem = viewPager.currentItem
             if (currentItem > 0) {
@@ -146,6 +148,8 @@ class Results : Fragment() {
             findNavController().navigate(R.id.action_resultsFragment_to_tripSearchFragment)
         }
 
+        //Save all relevant information to the database once user has approved it
+        //This is so we can display it later on the 'My Trips' page
         saveButton.setOnClickListener {
             val formattedItinerary = formatItineraryForSaving(daysItinerary) // turns the list of excursions into a string
             if (this::departAirport.isInitialized && this::arrivalAirport.isInitialized) {
@@ -182,6 +186,7 @@ class Results : Fragment() {
         viewModel = ViewModelProvider(requireActivity()).get(ExcursionsViewModel::class.java)
         viewModel.excursions.observe(viewLifecycleOwner) { updateRecyclerView() }
 
+        //Unpack bundle from flight_results fragment
         arguments?.let {
             cityName = it.getString("cityName", "Austin")
             departDate = it.getString("departDate","")
@@ -199,12 +204,12 @@ class Results : Fragment() {
     }
 
 
+    //Update label with the date information based on the current page index and a list of itinerary days
     private fun updateDayLabel(currentPage: Int) {
         if (daysItinerary.isNotEmpty() && currentPage >= 0 && currentPage < daysItinerary.size) {
+            //Extract the date part from the itinerary for the current page
             val fullDateString = daysItinerary[currentPage].date.trim()
-
             val datePart = fullDateString.replace(Regex("Day \\d+:\\s*"), "")
-
             try {
                 val parsedDate = parseDate(datePart)
                 val formattedDate = SimpleDateFormat("EEEE, MMMM d, yyyy", Locale.US).format(parsedDate)
@@ -218,22 +223,25 @@ class Results : Fragment() {
         }
     }
 
+    //Parse date with java's simpleDateFormat
     private fun parseDate(dateStr: String): Date {
         val dateFormat = SimpleDateFormat("MMMM d, yyyy", Locale.US)
         return try {
-            dateFormat.parse(dateStr)
+            dateFormat.parse(dateStr)!!
         } catch (e: ParseException) {
+            //Try to fix ParseException by adding year retroactively
             val yearAddedDateStr = "$dateStr, ${Calendar.getInstance().get(Calendar.YEAR)}"
             dateFormat.parse(yearAddedDateStr) ?: throw ParseException("Unparseable date: $dateStr", 0)
         }
     }
 
-
+    //Enable or disable update buttons depending on position in itinerary
     private fun updateNavigationButtons() {
         leftArrowButton.isEnabled = viewPager.currentItem > 0
         rightArrowButton.isEnabled = viewPager.currentItem < daysItinerary.size - 1
     }
 
+    //Show the loading dialog and prevent user from interacting with app while loading
     private fun showLoadingDialog(message: String) {
         if (loadingDialog == null) {
             val dialogView = LayoutInflater.from(context).inflate(R.layout.results_itinerary_loading, null)
@@ -242,7 +250,6 @@ class Results : Fragment() {
                 .setCancelable(false)
                 .create()
         }
-
         val textView = loadingDialog?.findViewById<TextView>(R.id.userpromptname)
         textView?.text = message
 
@@ -251,11 +258,10 @@ class Results : Fragment() {
         loadingDialog?.show()
     }
 
-
     private fun dismissLoadingDialog() {
         loadingDialog?.dismiss()
     }
-
+    //Initialize the user so that we can save trip to database under their ID
     private fun initializeGoogleUser() {
         val account = GoogleSignIn.getLastSignedInAccount(requireContext())
         if (account != null) {
@@ -272,31 +278,27 @@ class Results : Fragment() {
 
         val tripAdvisorManager = TripAdvisorManager()
 
+        //Get images for the database with a coroutine so we don't bog down the main thread
         lifecycleScope.launch {
             try {
                 val fetchedImageUrl = tripAdvisorManager.fetchCityImage(cityName)
                 imageUrl = fetchedImageUrl
-                // Update the UI or do further processing with the fetched image URL
             } catch (e: Exception) {
-                // Handle any errors, such as a failed network request
                 Log.e("ImageFetch", "Failed to fetch image URL: ${e.message}")
             }
         }
 
+        //Fetch the 3 main things we need to display
         fetchFlights(view)
-
         fetchAttractions(cityName)
-
         fetchEvents(cityName)
-
-
     }
 
     private fun updateRecyclerView() {
         adapter.updateExcursions(ArrayList(excursions))
     }
 
-    // Only generates the full itinerary once calls to both SerpAPI and TripAdvisor have been made
+    //Only generates the full itinerary once calls to both SerpAPI and TripAdvisor have been made
     private fun tryGenerateItinerary() {
         Log.d("ResultsFragment", "Attempting to generate itinerary. Attractions Fetched: $isAttractionsFetched, Events Fetched: $isEventsFetched")
         synchronized(this) {
@@ -310,7 +312,7 @@ class Results : Fragment() {
     }
 
 
-
+    //Fetch all the flights info from bundle and populate UI (not visible in current version)
     private fun fetchFlights(view: View){
         val bundle = requireArguments()
         val cityName = bundle.getString("cityName")
@@ -333,12 +335,15 @@ class Results : Fragment() {
         view.findViewById<TextView>(R.id.arrivalAirportCode).text = arrivalAirport
         view.findViewById<TextView>(R.id.departureAirportCode2).text = departAirport2
         view.findViewById<TextView>(R.id.arrivalAirportCode2).text = arrivalAirport2
+
+        //Use dateformatter for dates and timeformatter for times since time values come with dates
         view.findViewById<TextView>(R.id.departuredate).text = dateFormatter.format(departTime)
         view.findViewById<TextView>(R.id.returndates).text = dateFormatter.format(arrivalTime2)
         view.findViewById<TextView>(R.id.departureTime).text = timeFormatter.format(departTime)
         view.findViewById<TextView>(R.id.arrivalTime).text = timeFormatter.format(arrivalTime)
         view.findViewById<TextView>(R.id.departureTime2).text = timeFormatter.format(departTime2)
         view.findViewById<TextView>(R.id.arrivalTime2).text = timeFormatter.format(arrivalTime2)
+
         view.findViewById<TextView>(R.id.departureTerminal).text = "Terminal $departTerminal"
         view.findViewById<TextView>(R.id.arrivalTerminal).text = "Terminal $arrivalTerminal"
         view.findViewById<TextView>(R.id.departureTerminal2).text = "Terminal $departTerminal2"
@@ -347,6 +352,7 @@ class Results : Fragment() {
 
     }
 
+    //Get the attractions within the chosen city from TripAdvisor API
     private fun fetchAttractions(cityName: String) {
         val tripAdvisorManager = TripAdvisorManager()
         showLoadingDialog("Please wait as we generate your itinerary...")
@@ -362,6 +368,7 @@ class Results : Fragment() {
                             imageUrl = detail.imageUrl ?: "default_image_url"
                         )
                     }
+                    //Add all our excursions/attractions and then try to generate the itinerary
                     excursions.addAll(newExcursions)
                     viewModel.addExcursions(newExcursions)
                     isAttractionsFetched = true
@@ -371,6 +378,7 @@ class Results : Fragment() {
 
             override fun onAttractionFetchFailed(errorMessage: String) {
                 lifecycleScope.launch(Dispatchers.Main) {
+                    //Also try to generate itinerary on failure, but make sure to notify first
                     Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
                     dismissLoadingDialog()
                     isAttractionsFetched = true
@@ -385,38 +393,26 @@ class Results : Fragment() {
 
 
 
-    //fetches events from SerpAPI and turns them into type excursions
+    //Fetches events from SerpAPI and turns them into type excursions
     private fun fetchEvents(cityName: String) {
         Log.d("ResultsFragment", "Starting to fetch events.")
 
+        //Need a number of date formats because SerpAPI could be in any of them
         val possibleDateFormats = arrayOf(
             "yyyy-MM-dd",        //Standard ISO format
-            "EEE, MMM dd",       //e.g., "Sun, May 26"
-            "MMM dd",            //e.g., "May 26"
-            "EEE, MMM dd, yyyy", // Full date with year
-            "MM/dd/yyyy"         // US standard format
+            "EEE, MMM dd",       //Weekday + Month + Date (Sun, May 26)
+            "MMM dd",            //Month + date (May 26)
+            "EEE, MMM dd, yyyy", //Full date with year
+            "MM/dd/yyyy"         //US standard format
         )
 
-        val startDate = try {
-            DateUtils.parseDate(departDate, *possibleDateFormats).also {
-                Log.d("ResultsFragment", "Parsed start date: $it")
-            }
-        } catch (e: ParseException) {
-            Log.e("ResultsFragment", "Failed to parse start date: $departDate", e)
-            isEventsFetched = true
-            tryGenerateItinerary()
-            return
+        //Parse our known input dates
+        DateUtils.parseDate(departDate, "yyyy-MM-dd").also {
+            Log.d("ResultsFragment", "Parsed start date: $it")
         }
 
-        val endDate = try {
-            DateUtils.parseDate(returnDate, *possibleDateFormats).also {
-                Log.d("ResultsFragment", "Parsed end date: $it")
-            }
-        } catch (e: ParseException) {
-            Log.e("ResultsFragment", "Failed to parse end date: $returnDate", e)
-            isEventsFetched = true
-            tryGenerateItinerary()
-            return
+        DateUtils.parseDate(returnDate, "yyyy-MM-dd").also {
+            Log.d("ResultsFragment", "Parsed end date: $it")
         }
 
         try {
@@ -431,6 +427,7 @@ class Results : Fragment() {
                         val eventsExcursions = events.filter { event ->
                             val dateString = extractDatePart(event.date.`when`)
                             Log.d("ResultsFragment", "Processing event date: ${event.date.`when`} extracted as: $dateString")
+                            //Try parsing our returned eventDate using our many formats and skip if none work
                             val eventDate = dateString?.let {
                                 try {
                                     DateUtils.parseDate(it, *possibleDateFormats)
@@ -439,6 +436,7 @@ class Results : Fragment() {
                                     null
                                 }
                             }
+                            //Filter the event results according to our trip dates
                             (eventDate != null && !eventDate.before(startDate) && !eventDate.after(endDate)).also {
                                 if (it) Log.d("ResultsFragment", "Included event: ${event.title} on $dateString")
                                 else Log.d("ResultsFragment", "Excluded event: ${event.title} on $dateString")
@@ -447,6 +445,7 @@ class Results : Fragment() {
                             Excursion(event.title, event.date.`when`)
                         }
 
+                        //Add excursions and try to generate itinerary once finished
                         activity?.runOnUiThread {
                             excursions.addAll(eventsExcursions)
                             viewModel.addExcursions(eventsExcursions)
@@ -454,7 +453,7 @@ class Results : Fragment() {
                             tryGenerateItinerary()
                         }
                     }
-
+                    //On failure, show to user and still try to generate itinerary
                     override fun onEventFetchFailed(errorMessage: String) {
                         Log.e("ResultsFragment", "Error fetching events: $errorMessage")
                         Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
@@ -470,7 +469,7 @@ class Results : Fragment() {
         }
     }
 
-
+    //Extract dates from the given string in two possible formats ("MMM d" or "EEE, MMM d")
     fun extractDatePart(dateStr: String): String? {
         val regex = Regex(
             pattern = """(\w{3}, \w{3} \d{1,2})|(\w{3} \d{1,2})""",
@@ -520,6 +519,7 @@ class Results : Fragment() {
         }
     }
 
+    //Create the prompt we feed into ChatGPT in order to generate the itinerary
     private fun buildItineraryPrompt(): String {
         val itineraryBuilder = StringBuilder()
 
@@ -530,11 +530,9 @@ class Results : Fragment() {
 
         for (excursion in excursions) {
             Log.d("BuildItinerary", "Processing Excursion: ${excursion.name} at ${excursion.time}")
+
             itineraryBuilder.append("- ${excursion.name}")
-
-
             itineraryBuilder.append(" at ${excursion.time}")
-
             itineraryBuilder.append("\n")
         }
 
@@ -555,30 +553,41 @@ class Results : Fragment() {
 
     //Based on the exact format for the itinerary specified to be responded with by the ChatGPT prompt
     private fun parseItinerary(itineraryString: String): List<DayItinerary> {
+        //Split the itinerary string into individual days
         val days = itineraryString.split(Regex("(?=Day \\d+:)"))
+            //Filter out blank lines
             .filter { it.isNotBlank() }
-
+        //Map each day section to a DayItinerary object
         return days.map { dayInfo ->
+            //Split the day section into lines and trim whitespace
             val lines = dayInfo.trim().split("\n")
+            //Extract date
             val date = lines.first().trim()
-
-            val activities = lines.drop(1) // Drop the date line
+            val activities = lines.drop(1)
+                //Filter lines starting with "- ".
                 .filter { it.startsWith("- ") }
+                //Map each activity line to an Excursion object.
                 .map { activity ->
-                    val detail = activity.drop(2).trim() // Remove the leading "- "
+                    //Remove the hyphens and trim
+                    val detail = activity.drop(2).trim()
+                    //Find where " - " is to separate activity name and time.
                     val timeIndex = detail.lastIndexOf(" - ")
                     if (timeIndex > -1) {
+                        //Get activity name and time
                         val name = detail.substring(0, timeIndex).trim()
                         val time = detail.substring(timeIndex + 3).trim()
                         Excursion(name, time)
                     } else {
+                        //If there isn't a time is specified it can be empty
                         Excursion(detail, "")
                     }
                 }
 
+            //Create and return the DayItinerary
             DayItinerary(date, activities)
         }
     }
+
 
     //Turning the itinerary into a string to save into the database that can also then be easily parsed again later
     private fun formatItineraryForSaving(daysItinerary: List<DayItinerary>): String {
@@ -587,6 +596,7 @@ class Results : Fragment() {
         }
     }
 
+    //Save the itinerary to our database using a coroutine
     fun saveItinerary(
         cityName: String,
         itineraryDetails: String,

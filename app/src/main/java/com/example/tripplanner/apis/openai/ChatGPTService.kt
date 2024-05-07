@@ -7,9 +7,11 @@ import retrofit2.Response
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
+
 /* Retrofit Instance of the OpenAIService class using our apiKey
 * and specifies the parameters needed to make our requests
- */
+*/
+
 class ChatGPTService(private val apiKey: String) {
     private val client = OkHttpClient.Builder()
         .addInterceptor { chain ->
@@ -35,6 +37,7 @@ class ChatGPTService(private val apiKey: String) {
     // tokens is roughly $.01, so we had to limit the length of the itinerary
     // in order to not get our response cut off
     suspend fun generateResponse(prompt: String): String = withContext(Dispatchers.IO) {
+        //More tokens than this and it ends up being expensive for little gain
         val requestBody = CompletionRequest(
             prompt = prompt,
             maxTokens = 1000,

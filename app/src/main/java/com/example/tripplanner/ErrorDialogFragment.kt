@@ -22,16 +22,21 @@ class ErrorDialogFragment : DialogFragment() {
 
         view.findViewById<TextView>(R.id.error_message).text = arguments?.getString("errorMessage")
 
+        //Ensure that user goes back after error
         view.findViewById<Button>(R.id.go_back_button).setOnClickListener {
             dismiss()
             activity?.onBackPressed()
         }
     }
+
+    //Companion object to create a new instance of error dialog as needed with a single line
     companion object {
         fun newInstance(errorMessage: String): ErrorDialogFragment {
             val fragment = ErrorDialogFragment()
             val args = Bundle()
             args.putString("errorMessage", errorMessage)
+
+            //Pass in args into the fragment
             fragment.arguments = args
             return fragment
         }

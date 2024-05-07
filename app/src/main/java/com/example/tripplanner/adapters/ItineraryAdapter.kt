@@ -10,9 +10,11 @@ import com.bumptech.glide.Glide
 import com.example.tripplanner.data.Itinerary
 import com.example.tripplanner.R
 
+
 /* Adapter to allow us to display our itineraries on our home screen as scrollable
 * element and populates image and text for each of these trips
- */
+*/
+
 class ItineraryAdapter(private var itineraries: List<Itinerary>, private val onItineraryClicked: (Int) -> Unit) :
     RecyclerView.Adapter<ItineraryAdapter.ItineraryViewHolder>() {
 
@@ -29,6 +31,8 @@ class ItineraryAdapter(private var itineraries: List<Itinerary>, private val onI
     override fun onBindViewHolder(holder: ItineraryViewHolder, position: Int) {
         val itinerary = itineraries[position]
         holder.textView.text = itinerary.cityName
+
+        //Use Glide to load the images with the image URLs
         Glide.with(holder.itemView.context).load(itinerary.imageUrl).into(holder.imageViewTrip)
         holder.itemView.setOnClickListener {
             onItineraryClicked(itinerary.id)
