@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import com.example.tripplanner.apis.ApiKeyProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -39,7 +40,7 @@ class TripAdvisorManager {
         fun onDetailsFetchFailed(errorMessage: String)
     }
 
-    private val apiKey = "8F662D5533D74F3AAAF65FBC98BE1703"
+    private val apiKey = ApiKeyProvider.getTripAdvisorApiKey()
     private val baseUrl = "https://api.content.tripadvisor.com/api/v1/location/"
 
     // retrofit instance for location search endpoint

@@ -1,5 +1,7 @@
 package com.example.tripplanner.apis.amadeus
 
+import android.content.Context
+import com.example.tripplanner.apis.ApiKeyProvider
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Response
@@ -35,38 +37,32 @@ object AmadeusApiClient {
 
 class TokenInterceptor : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
+        val clientId = ApiKeyProvider.getAmadeusClientId()
+        val clientSecret = ApiKeyProvider.getAmadeusClientSecret()
         val token = SimpleTokenManager.getToken()
 
-        val request = if (token != null) {
-            val originalRequest = chain.request()
-            val newRequestBuilder = originalRequest.newBuilder()
-
-            //Use the bearer token from our SimpleTokenManager if it's a GET call
-            //The only non-GET call is when we're trying to get another bearer token
-            if (originalRequest.method() == "GET") {
-                newRequestBuilder.header("Authorization", "Bearer $token")
+        val request = chain.request().newBuilder()
+            .apply {
+                if (token != null) {
+                    header("Authorization", "Bearer $token")
+                }
             }
-
-            newRequestBuilder.build()
-
-        } else {
-            chain.request()
-        }
+            .build()
 
         var response = chain.proceed(request)
 
-        //401 is the error code received if our token isn't valid anymore
         if (response.code() == 401) {
-
-            //Get a new token
-            val refreshTokenResponse = AmadeusApiClient.client.getToken().execute()
+            val refreshTokenResponse = AmadeusApiClient.client.getToken(
+                clientId = clientId,
+                clientSecret = clientSecret,
+                grantType = "client_credentials"
+            ).execute()
 
             if (refreshTokenResponse.isSuccessful) {
                 val newToken = refreshTokenResponse.body()?.accessToken
                 newToken?.let {
                     SimpleTokenManager.setToken(newToken)
 
-                    //Resend the request that returned 401 with the new token
                     val newRequest = request.newBuilder()
                         .header("Authorization", "Bearer $newToken")
                         .build()
