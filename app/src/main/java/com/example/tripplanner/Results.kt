@@ -198,7 +198,7 @@ class Results : Fragment() {
             Log.i("latLong", latLong)
         }
 
-        chatGPTService = ChatGPTService("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")
+        chatGPTService = ChatGPTService()
         leftArrowButton.isEnabled = false
         rightArrowButton.isEnabled = false
     }
