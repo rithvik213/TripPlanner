@@ -7,7 +7,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import android.content.Context;
-import android.widget.Toast;
+import com.example.tripplanner.apis.ApiKeyProvider;
 
 import com.example.tripplanner.apis.serp.SerpApiService;
 import com.google.gson.Gson;
@@ -56,7 +56,7 @@ public class EventFetcher {
         parameters.put("hl", "en");
         parameters.put("gl", "us");
         //parameters.put("api_key", "SERP_API_KEY");
-        parameters.put("api_key", "SERP_KEY");
+        parameters.put("api_key", ApiKeyProvider.INSTANCE.getSerpAPIKey());
 
         Call<JsonObject> call = service.getEvents(parameters);
         call.enqueue(new Callback<JsonObject>() {
@@ -97,5 +97,3 @@ public class EventFetcher {
     }
 
 }
-
-

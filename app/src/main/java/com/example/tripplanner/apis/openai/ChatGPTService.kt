@@ -1,5 +1,6 @@
 package com.example.tripplanner.apis.openai
 
+import com.example.tripplanner.apis.ApiKeyProvider
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -12,7 +13,9 @@ import kotlinx.coroutines.withContext
 * and specifies the parameters needed to make our requests
 */
 
-class ChatGPTService(private val apiKey: String) {
+class ChatGPTService {
+    private val apiKey = ApiKeyProvider.getOpenAiApiKey()
+
     private val client = OkHttpClient.Builder()
         .addInterceptor { chain ->
             val request = chain.request().newBuilder()
@@ -56,4 +59,3 @@ class ChatGPTService(private val apiKey: String) {
         }
     }
 }
-

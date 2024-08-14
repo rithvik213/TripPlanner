@@ -198,7 +198,7 @@ class Results : Fragment() {
             Log.i("latLong", latLong)
         }
 
-        chatGPTService = ChatGPTService("OPEN_AI_KEY")
+        chatGPTService = ChatGPTService()
         leftArrowButton.isEnabled = false
         rightArrowButton.isEnabled = false
     }
